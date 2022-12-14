@@ -1,0 +1,188 @@
+name: facebook_auth
+description: A new Flutter project.
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.17.6 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_launcher_icons: "^0.10.0"
+
+  cupertino_icons: ^1.0.2
+  lottie: ^1.4.2
+  flutter_bloc: ^8.1.1
+  equatable: ^2.0.3
+  flutter_secure_storage: ^6.0.0
+  http: ^0.13.5
+  formz: ^0.4.1
+  get_it: ^7.2.0
+  webview_flutter: ^3.0.4
+
+  provider: ^6.0.4
+  flutter_gen: ^5.1.0+1
+  camera: ^0.10.0+4
+  image_picker: ^0.8.6
+  image_gallery_saver: ^1.7.1
+  path_provider: ^2.0.11
+  gallery_saver: ^2.3.2
+  torch_light: ^1.0.0
+  socket_io_client: ^2.0.0
+
+  # support for API
+  retrofit: ">=3.0.0 <4.0.0"
+  dio: ^4.0.4
+  json_annotation: ^4.7.0
+  pretty_dio_logger: ^1.1.1
+
+  shared_preferences: ^2.0.15
+  dartz: ^0.10.1
+  pull_to_refresh: ^2.0.0
+  web_socket_channel: ^2.2.0
+  intl: ^0.17.0
+  firebase_messaging: ^14.1.3
+  firebase_core: ^2.3.0
+  flutter_local_notifications: ^12.0.4
+dependency_overrides:
+  freezed: 2.1.0
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  retrofit_generator: ">=4.0.0 <5.0.0"
+  build_runner: ">2.3.0 <4.0.0"
+  json_serializable: ">4.4.0"
+
+  flutter_lints: ^2.0.0
+flutter_icons:
+  ios: true
+  android: true
+  image_path: "assets/images/facebook.png"
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/images/top_background.jpg
+    - assets/images/facebook_splash.png
+    - assets/images/meta.png
+    - assets/images/video.png
+    - assets/images/video_non.png
+    - assets/images/messenger.png
+    - assets/images/messenger_non.png
+    - assets/images/home.png
+    - assets/images/home_non.png
+    - assets/images/bell.png
+    - assets/images/bell_non.png
+    - assets/images/menu.png
+    - assets/images/menu_non.png
+    - assets/images/add.png
+    - assets/images/loupe.png
+    - assets/images/LogoFb.png
+    - assets/images/logo_signup.png
+    - assets/images/text_start_register.png
+    - assets/webview/register_success.html
+    - assets/images/avatarDefault.png
+    - assets/images/setting.png
+
+  fonts:
+    - family: Mic
+      fonts:
+        - asset: assets/icons/Mic.ttf
+    - family: Send
+      fonts:
+        - asset: assets/icons/Send.ttf
+    - family: Smile
+      fonts:
+        - asset: assets/icons/Smile.ttf
+    - family: Hide
+      fonts:
+        - asset: assets/icons/Hide.ttf
+    - family: Photo
+      fonts:
+        - asset: assets/icons/Photo.ttf
+    - family: Menu
+      fonts:
+        - asset: assets/icons/Menu.ttf
+    - family: Info
+      fonts:
+        - asset: assets/icons/Info.ttf
+    - family: Video
+      fonts:
+        - asset: assets/icons/Video.ttf
+    - family: Phone
+      fonts:
+        - asset: assets/icons/Phone.ttf
+    - family: Pencil
+      fonts:
+        - asset: assets/icons/Pencil.ttf
+    - family: Person
+      fonts:
+        - asset: assets/icons/Person.ttf
+    - family: Camera
+      fonts:
+        - asset: assets/icons/Camera.ttf
+    - family: Add
+      fonts:
+        - asset: assets/icons/Add.ttf
+    - family: Loupe
+      fonts:
+        - asset: assets/icons/Loupe.ttf
+    - family: Setting
+      fonts:
+        - asset: assets/icons/Setting.ttf
+    - family: Dropdown
+      fonts:
+        - asset: assets/icons/Dropdown.ttf
+    - family: Dropup
+      fonts:
+        - asset: assets/icons/Dropup.ttf
+    - family: Like
+      fonts:
+        - asset: assets/icons/Like.ttf
+    - family: Anima
+      fonts:
+        - asset: assets/animator_flutter.json
+    - family: Ruda
+      fonts:
+        - asset: assets/font/font_logo/Ruda-Bold.ttf
+        - asset: assets/font/font_logo/Ruda-ExtraBold.ttf
+          style: italic
+
+    - family: AnimationSplash
+      fonts:
+        - asset: assets/anima_splash.json
+
+  # To add assets to your application, add an assets section, like this:
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages
