@@ -1,33 +1,35 @@
 
-import 'package:facebook_auth/data/models/user_info.dart';
-import 'package:facebook_auth/screen/user_screen/user_avatar/user_avatar.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_avatar.dart';
 import 'package:flutter/material.dart';
-
-import 'user_header.dart';
+import '../user_header.dart';
 
 // ignore: must_be_immutable
-class UserLoading extends StatelessWidget{
-  User user;
-  UserLoading({super.key, required this.user});
+class UserLoading extends UserScreenComponent {
+  UserLoading({super.key, required super.main});
 
+  @override
+  State<StatefulWidget> createState() => UserLoadingState();
+}
+
+class UserLoadingState extends UserScreenComponentState<UserLoading>{
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         const SizedBox(height: 28),
-        UserHeader(user: user),
+        UserHeader(main: main),
         Expanded(
           flex: 1,
           child: Column(
             children: [
               Expanded(
                   child: ListView(
+                      addAutomaticKeepAlives: true,
                       padding: const EdgeInsets.all(0),
                       children: [
-                        UserAvatar(user: this.user),
+                        UserAvatar(main: main),
                         Container(
                             height: 1000,
                             decoration: const BoxDecoration(

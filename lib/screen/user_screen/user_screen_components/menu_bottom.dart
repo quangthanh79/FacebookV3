@@ -1,10 +1,10 @@
 
 
 import 'package:facebook_auth/data/models/user_info.dart';
-import 'package:facebook_auth/screen/user_screen/user_avatar/user_buttons.dart';
-import 'package:facebook_auth/screen/user_screen/user_avatar/user_buttons_bloc/user_buttons_bloc.dart';
-import 'package:facebook_auth/screen/user_screen/user_avatar/user_buttons_bloc/user_buttons_event.dart';
-import 'package:facebook_auth/screen/user_screen/user_avatar/user_buttons_bloc/user_buttons_state.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons_bloc/user_buttons_bloc.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons_bloc/user_buttons_event.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons_bloc/user_buttons_state.dart';
 import 'package:flutter/material.dart';
 
 
@@ -49,7 +49,7 @@ abstract class MenuBottom extends StatelessWidget{
         onTap: (){
           closeBottomMenu();
           if (function != null) {
-            print("call");
+            // print("call");
             function();
           }
         },
@@ -101,7 +101,7 @@ class UserMenuBottom extends MenuBottom{
   static void showBottomMenu({
     required BuildContext context,
     required UserButtonStatus status,
-    required UserButtons main
+    required UserButtonsState_ main
   }){
     showModalBottomSheet(
         context: context,
@@ -120,7 +120,7 @@ class UserMenuBottom extends MenuBottom{
   UserButtonsBloc? userButtonsBloc;
   User? user;
   UserButtonStatus status;
-  UserButtons main;
+  UserButtonsState_ main;
 
   UserMenuBottom({
     super.key,

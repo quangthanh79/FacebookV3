@@ -3,81 +3,114 @@ import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/friend_repository.dart';
 import 'package:facebook_auth/data/repository/user_repository.dart';
-import 'package:facebook_auth/screen/user_screen/user_body.dart';
-import 'package:facebook_auth/screen/user_screen/user_components/user_loading.dart';
-import 'package:facebook_auth/screen/user_screen/user_friend/user_friend_bloc/user_friend_bloc.dart';
-import 'package:facebook_auth/screen/user_screen/user_friend/user_friend_bloc/user_friend_event.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_components/user_body/user_body.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_bloc.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_event.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_state.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_components/user_body/user_loading.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_components/user_friend/user_friend_bloc/user_friend_bloc.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_components/user_friend/user_friend_bloc/user_friend_event.dart';
 import 'package:facebook_auth/utils/injection.dart';
 import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
-
 // ignore: must_be_immutable
 class UserScreen extends StatefulWidget{
-  User? user;
-  ListFriend listFriend = ListFriend(total: 0, list: []);
+  late User user;
 
-  UserRepository userRepository = UserRepository();
-  FriendRepository friendRepository = FriendRepository();
-
-  UserScreen({this.user});
+  UserScreen({super.key, User? user}){
+    if (user?.id == null){
+      this.user = User(id: SessionUser.idUser);
+    } else {
+      this.user = user!;
+    }
+  }
 
   @override
-  State<StatefulWidget> createState() => UserScreenState();
+  // ignore: no_logic_in_create_state
+  State<StatefulWidget> createState() => UserScreenState(user: user);
 
-  // void back(){
-  //   if (context == null) return;
-  //   Navigator.pop(context!);
-  // }
   static Route<void> route({
     required User? user,
   }) {
     return MaterialPageRoute(
         builder: (context) =>  UserScreen(
-          user: user
+            user: user
         )
+    );
+  }
+
+  static Route<void> routeReady({required UserScreen userScreen}){
+    return MaterialPageRoute(
+        builder: (context) => userScreen
     );
   }
 }
 
-
 class UserScreenState extends State<UserScreen>{
+  User user;
+  ListFriend listFriend = ListFriend(list: [], total: 0);
+  late UserInforBloc userInforBloc;
+  late UserFriendBloc userFriendBloc;
+
+  UserScreenState({required this.user}) {
+    
+    userInforBloc = UserInforBloc(
+        userRepository: getIt<UserRepository>(),
+        // friendRepository: getIt<FriendRepository>(),
+        user: user,
+        // listFriend: listFriend
+    )..add(LoadUserEvent());
+
+    userFriendBloc = UserFriendBloc(
+        friendRepository: getIt<FriendRepository>(),
+        user: user,
+        listFriend: listFriend
+    )..add(LoadFriendEvent());
+  }
+
+  @override void initState(){
+    super.initState();
+  }
+
+  // @override void dispose(){
+  //   userInforBloc.close();
+  //   userFriendBloc.close();
+  //   super.dispose();
+  // }
+
+  Future<void> refresh() async {
+    userInforBloc.add(BackgroundLoadUserEvent());
+    userFriendBloc.add(LoadFriendEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'OpenSans', platform: TargetPlatform.iOS, backgroundColor: Colors.black12),
       home: Scaffold(
           resizeToAvoidBottomInset: true,
           body: BlocProvider<UserInforBloc>(
-            create: (context) => UserInforBloc(
-                userRepository: getIt.get<UserRepository>(),
-                friendRepository: getIt.get<FriendRepository>(),
-                user: widget.user ?? User()
-            )..add(LoadUserEvent()),
+            create: (context) => userInforBloc,
             child: BlocBuilder<UserInforBloc, UserInforState>(
-                // bloc: widget.userInforBloc!,
+                bloc: userInforBloc,
                 builder: (context, state){
-                  // return Text("123\n1\n2\n3");
                   Widget content;
                   switch(state.statusLoadInfo){
                     case FormzStatus.submissionInProgress:
-                      content =  UserLoading(user: widget.user ?? User());
+                      content = UserLoading(main: this);
                       break;
                     case FormzStatus.submissionSuccess:
-                      content =  UserBody(user: state.user?? User(),listFriend: state.listFriend ?? ListFriend(total: 0, list: []));
+                      content = UserBody(main: this);
                       break;
                     case FormzStatus.submissionFailure:
-                      content =  UserBody(user: widget.user?? User(),listFriend: ListFriend(total: 0, list: []));
+                      content = UserBody(main: this);
                       break;
                     default:
-                      content =  UserLoading(user: state.user ?? User());
+                      content = UserLoading(main: this);
                       break;
                   }
                   return content;
@@ -90,8 +123,26 @@ class UserScreenState extends State<UserScreen>{
 }
 
 
+// ignore: must_be_immutable
+abstract class UserScreenComponent extends StatefulWidget{
+  late UserScreenState main;
+  late User user;
+  UserScreenComponent({super.key, required this.main}){
+    user = main.user;
+  }
+}
 
-
-
+abstract class UserScreenComponentState<T extends UserScreenComponent> extends State<T>{
+  late User user;
+  late UserScreenState main;
+  @override void initState(){
+    super.initState();
+    user = widget.user;
+    main = widget.main;
+  }
+  void back(){
+    Navigator.pop(main.context);
+  }
+}
 
 

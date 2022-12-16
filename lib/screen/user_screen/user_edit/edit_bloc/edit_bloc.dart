@@ -9,14 +9,14 @@ import 'package:facebook_auth/screen/user_screen/user_edit/edit_bloc/edit_state.
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BlocSystem {
-  EditUsernameBloc? usernameBloc;
-  EditAvatarBloc? avatarBloc;
-  EditCoverImageBloc? coverImageBloc;
-  EditDescriptionBloc? descriptionBloc;
-  EditCountryBloc? countryBloc;
-  EditCityBloc? cityBloc;
-  EditAddressBloc? addressBloc;
-  EditLinkBloc? linkBloc;
+  late EditUsernameBloc usernameBloc;
+  late EditAvatarBloc avatarBloc;
+  late EditCoverImageBloc coverImageBloc;
+  late EditDescriptionBloc descriptionBloc;
+  late EditCountryBloc countryBloc;
+  late EditCityBloc cityBloc;
+  late EditAddressBloc addressBloc;
+  late EditLinkBloc linkBloc;
 
   BlocSystem({
     required User user,
@@ -46,13 +46,21 @@ class EditBloc extends Bloc<EditEvent, EditState>{
   }
 
   Future<void> reloadInfor(ReloadEvent e, Emitter<EditState> emit) async{
-    print("reload ${user.description}");
-    emit(EditState(random: Random().nextInt(10000)));
+    // print("reload ${user.description}");
+    emit(EditState());
   }
   Future<void> commitChange(CommitChangeEvent e, Emitter<EditState> emit) async{
     bool? okay = await userRepository.setUserInfor(user);
     if (okay) {
       // emit(EditState());
+      add(ReloadEvent());
+    }
+  }
+  Future<void> commit(User previousUser) async {
+    add(ReloadEvent());
+    bool? okay = await userRepository.setUserInfor(user);
+    if (!okay) {
+      user.copyFrom(previousUser);
       add(ReloadEvent());
     }
   }

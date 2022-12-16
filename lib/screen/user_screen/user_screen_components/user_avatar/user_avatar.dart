@@ -1,20 +1,20 @@
 
-
-import 'package:facebook_auth/screen/user_screen/user_avatar/user_buttons.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_bloc.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_state.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons.dart';
 import 'package:facebook_auth/utils/image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../data/models/user_info.dart';
-
 // ignore: must_be_immutable
-class UserAvatar extends StatelessWidget{
-  User user;
+class UserAvatar extends UserScreenComponent {
+  UserAvatar({super.key, required super.main});
+  @override
+  State<StatefulWidget> createState() => UserAvatarState();
+}
 
-  UserAvatar({super.key, required this.user});
-
+class UserAvatarState extends UserScreenComponentState<UserAvatar>{
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -23,7 +23,7 @@ class UserAvatar extends StatelessWidget{
         getAvatar(context),
         getName(context),
         const SizedBox(height: 12,),
-        UserButtons(user: this.user),
+        UserButtons(main: main),
         const SizedBox(height: 12,)
       ],
     );
@@ -66,8 +66,8 @@ class UserAvatar extends StatelessWidget{
               ]
           ),
           Positioned(
-              bottom: 50,
-              left: 10,
+              top: 100,
+              left: 16,
               child: Stack(
                 children: [
                   Container(
@@ -81,8 +81,8 @@ class UserAvatar extends StatelessWidget{
                       child: getImage(
                         uri: user.avatar ?? 'assets/images/default_avatar_image.jpg',
                         defaultUri: 'assets/images/default_avatar_image.jpg',
-                        width: 120,
-                        height: 120,
+                        width: 180,
+                        height: 180,
                       ),
                     ),
                   ),
@@ -126,7 +126,7 @@ class UserAvatar extends StatelessWidget{
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(username!,
+                  Text(username,
                     style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold

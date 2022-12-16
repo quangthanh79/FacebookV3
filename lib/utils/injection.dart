@@ -60,7 +60,6 @@ Future<void> configureDependencies() async {
     return UserLocalDataSource(await SharedPreferences.getInstance());
   });
 
-
   // repositories
   getIt.registerSingleton<UserRepository>(UserRepository());
   getIt.registerSingleton<FriendRepository>(FriendRepository());

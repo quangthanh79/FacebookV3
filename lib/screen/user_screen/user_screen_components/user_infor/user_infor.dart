@@ -1,15 +1,19 @@
 
 
-import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/user_edit_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_event.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
-class UserInfor extends StatelessWidget{
-  User user;
-  UserInfor({super.key, required this.user});
+class UserInfor extends UserScreenComponent {
+  UserInfor({super.key, required super.main});
 
+  @override
+  State<StatefulWidget> createState() => UserInforState();
+}
+
+class UserInforState extends UserScreenComponentState<UserInfor>{
   @override
   Widget build(BuildContext context){
     return Column(
@@ -53,36 +57,39 @@ class UserInfor extends StatelessWidget{
             label: "Có ",
             value: "${user.listing ?? 0} bạn bè"
         ),
-        // user.isMe ? GestureDetector(
-        //   onTap: () => UserEditScreen.edit(
-        //     context: main.context!,
-        //     main: main
-        //   ),
-        //   child: Container(
-        //     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        //     padding: const EdgeInsets.symmetric(vertical: 12),
-        //     decoration: BoxDecoration(
-        //       borderRadius: BorderRadius.circular(8),
-        //       color: Colors.blue.withOpacity(0.25),
-        //
-        //     ),
-        //     alignment: Alignment.center,
-        //     child: Text(
-        //       "Chỉnh sửa chi tiết công khai",
-        //       style: TextStyle(
-        //           color: Colors.blue.shade800,
-        //           fontWeight: FontWeight.w500
-        //       ),
-        //     ),
-        //   ),
-        // ) : GestureDetector(
-        //     child: getItem(
-        //         icon: Icons.more_horiz,
-        //         label: "Xem thông tin giới thiệu của ",
-        //         value: main.user!.username ?? "Người dùng facebook"
-        //     ),
-        //     onTap: (){}
-        // ),
+        user.isMe ? GestureDetector(
+          onTap: () => Navigator.push(
+              context,
+              UserEditScreen.route(
+                user: user,
+                onBack: () => main.userInforBloc.add(ReloadUserEvent())
+            )
+          ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.blue.withOpacity(0.25),
+
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              "Chỉnh sửa chi tiết công khai",
+              style: TextStyle(
+                  color: Colors.blue.shade800,
+                  fontWeight: FontWeight.w500
+              ),
+            ),
+          ),
+        ) : GestureDetector(
+            child: getItem(
+                icon: Icons.more_horiz,
+                label: "Xem thông tin giới thiệu của ",
+                value: user.username ?? "Người dùng facebook"
+            ),
+            onTap: (){}
+        ),
         const SizedBox(height: 8,)
       ],
     );

@@ -1,17 +1,16 @@
 
 
-import 'package:facebook_auth/screen/user_screen/user_avatar/user_avatar.dart';
-import 'package:facebook_auth/screen/user_screen/user_components/menu_bottom.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/edit_bloc/edit_event.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/input_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/user_edit_screen.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_components/menu_bottom.dart';
 import 'package:facebook_auth/utils/image.dart';
 import 'package:flutter/material.dart';
 
 
 // ignore: must_be_immutable
 class EditUsername extends StatelessWidget{
-  UserEditScreen main;
+  UserEditScreenState main;
   BuildContext? context;
 
   EditUsername({super.key, required this.main});
@@ -56,20 +55,27 @@ class EditUsername extends StatelessWidget{
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                GestureDetector(
-                    onTap: (){ onChangeUsername(); },
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            main.user.username ?? "Thêm tên của bạn",
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: main.user.username != null ? Colors.black : Colors.black38
-                            ),
-                          )
-                        ]
-                    )
+                Expanded(
+                  flex: 1,
+                  child: GestureDetector(
+                      onTap: (){ onChangeUsername(); },
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              fit: FlexFit.loose,
+                              child: Text(
+                                main.user.username ?? "Thêm tên của bạn",
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: main.user.username != null ? Colors.black : Colors.black38
+                                ),
+                              ),
+                            )
+                          ]
+                      )
+                  ),
                 )
               ],
             ),
@@ -94,17 +100,15 @@ class EditUsername extends StatelessWidget{
   }
 
   void changeUsername() {
-    InputScreen.show(
+    InputScreen.route(
         context: context!,
-        main: main,
         label: "Tên",
         value: main.user.username ?? "",
-        callback: (){
-          if (main.output != null){
+        onBackResponse: (response){
+          if (response != null){
             main.isChanged = true;
-            main.user.username = main.output;
-            // print(main.main.user!.username);
-            main.blocSystem!.usernameBloc!.add(CommitChangeEvent());
+            main.user.username = response;
+            main.blocSystem.usernameBloc.commit(main.tempUser);
           }
         }
     );
@@ -117,7 +121,7 @@ class EditUsername extends StatelessWidget{
 
 // ignore: must_be_immutable
 class EditAvatar extends StatelessWidget{
-  UserEditScreen main;
+  UserEditScreenState main;
   BuildContext? context;
 
   EditAvatar({super.key, required this.main});
@@ -196,18 +200,18 @@ class EditAvatar extends StatelessWidget{
   }
 
   void changeAvatar(){
-    // to do
+    // todo
   }
 
   void removeAvatar(){
-    // to do
+    // todo
   }
 }
 
 
 // ignore: must_be_immutable
 class EditCoverImage extends StatelessWidget{
-  UserEditScreen main;
+  UserEditScreenState main;
   BuildContext? context;
 
   EditCoverImage({super.key, required this.main});

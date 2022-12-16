@@ -1,16 +1,30 @@
 
-import 'package:facebook_auth/data/models/user_info.dart';
-import 'package:facebook_auth/screen/user_screen/user_edit/user_edit_screen.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_list_screen.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_screen_components/friend_screen.dart';
 import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
-class UserHeader extends StatelessWidget{
-  User user;
+class FriendHeader extends FriendScreenComponent {
+  FriendHeader({super.key, required super.main});
+  @override
+  State<StatefulWidget> createState() => FriendHeaderState();
+}
 
-  UserHeader({super.key,required this.user});
-
+class FriendHeaderState extends FriendScreenComponentState<FriendHeader>{
+  late String label;
+  @override void initState(){
+    super.initState();
+    if (user.id! != SessionUser.idUser){
+      label = user.username!;
+    } else {
+      if (main is FriendListScreenState){
+        label = "Bạn bè";
+      } else {
+        label = user.username!;
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,18 +44,22 @@ class UserHeader extends StatelessWidget{
               child: Row(
                 children: [
                   GestureDetector(
+                    onTap: back,
                     child: const Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: 20, vertical: 12),
                       child: Icon(Icons.arrow_back),
                     ),
-                    // onTap: () => main.back(),
-                    onTap: (){},
                   ),
-                  Text(user?.username ?? "Người dùng Facebook",
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold
+                  Flexible(
+                    fit: FlexFit.loose,
+                    child: Text(
+                      label,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold
+                      ),
                     ),
                   )
                 ],
@@ -52,36 +70,15 @@ class UserHeader extends StatelessWidget{
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    user!.isMe ? GestureDetector(
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 0, vertical: 12),
-                        child: Icon(
-                          Icons.edit,
-
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            UserEditScreen.route(this.user)
-                        );
-                      }
-                      // => UserEditScreen.edit(
-                      //   context: main.context!,
-                      //   main: main
-                      // ),
-                    ) : Container(),
                     GestureDetector(
+                        onTap: (){},
                         child: const Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: 12.0, vertical: 12),
                           child: Icon(
                             Icons.search,
-
                           ),
-                        ),
-                        onTap: () {}
+                        )
                     )
                   ]
               ))

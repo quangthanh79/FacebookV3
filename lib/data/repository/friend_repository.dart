@@ -3,6 +3,8 @@ import '../datasource/remote/friend_api_provider.dart';
 import '../models/friend.dart';
 
 class FriendRepository{
+  FriendRepository();
+
   Future<ResponseListFriend?> getRequestedFriends(int index, int count)
     => friendApiProvider.getRequestedFriends(index, count);
 
