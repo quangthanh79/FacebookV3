@@ -17,19 +17,7 @@ class FriendHeaderState extends FriendScreenComponentState<FriendHeader>{
   late String label;
   @override void initState(){
     super.initState();
-    if (user.id! != SessionUser.idUser){
-      label = user.username!;
-    } else {
-      if (main is FriendListScreenState){
-        label = "Bạn bè";
-      } else if (main is FriendRequestScreenState){
-        label = "Lời mời kết bạn";
-      } else if (main is FriendSuggestScreenState){
-        label = "Gợi ý";
-      } else {
-        label = user.username!;
-      }
-    }
+    label = main.label;
   }
   @override
   Widget build(BuildContext context) {

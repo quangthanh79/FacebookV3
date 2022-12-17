@@ -8,6 +8,7 @@ import 'package:facebook_auth/screen/friend_screen/friend_screen_components/frie
 import 'package:facebook_auth/screen/friend_screen/friend_screen_components/friend_body/friend_loading.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_screen_components/friend_body/friend_nofriends.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_screen_components/friend_screen.dart';
+import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -33,6 +34,11 @@ class FriendListScreenState extends FriendScreenState<FriendListScreen>{
   @override void initState(){
     super.initState();
     friendListBloc.add(LoadListFriendEvent());
+    label = "Bạn bè";
+    if (user.id != SessionUser.idUser){
+      label = user.username ?? "Người dùng facebook";
+    }
+    responseForNoFriends = "Bạn hiện không có bạn bè nào để hiển thị.";
   }
 
 }

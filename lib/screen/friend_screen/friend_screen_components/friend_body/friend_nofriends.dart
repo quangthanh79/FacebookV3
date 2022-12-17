@@ -24,15 +24,7 @@ class FriendNoFriendsState extends FriendScreenComponentState<FriendNoFriends>{
   @override
   void initState() {
     super.initState();
-    if (main is FriendListScreenState){
-      label = "Không có bạn bè để hiển thị.";
-    } else if (main is FriendRequestScreenState ){
-      label = "Không có lời mời kết bạn nào.";
-    } else if (main is FriendSuggestScreenState ){
-      label = "Không có người nào được gợi ý kết bạn.";
-    } else {
-      label = "Không có gì để hiển thị.";
-    }
+    label = main.responseForNoFriends;
   }
   @override
   Widget build(BuildContext context) {

@@ -24,6 +24,8 @@ abstract class FriendScreenState<T extends FriendScreen> extends State<T> with A
   late User user;
   late ListFriend listFriend;
   late FriendListBloc friendListBloc;
+  late String label, responseForNoFriends;
+
   @override void initState(){
     super.initState();
     user = widget.user;
@@ -79,10 +81,7 @@ abstract class FriendScreenState<T extends FriendScreen> extends State<T> with A
 // ignore: must_be_immutable
 abstract class FriendScreenComponent extends StatefulWidget{
   late FriendScreenState main;
-  late User user;
-  FriendScreenComponent({super.key, required this.main}){
-    user = main.user;
-  }
+  FriendScreenComponent({super.key, required this.main});
 }
 
 abstract class FriendScreenComponentState<T extends FriendScreenComponent> extends State<T> with AutomaticKeepAliveClientMixin{
@@ -90,8 +89,8 @@ abstract class FriendScreenComponentState<T extends FriendScreenComponent> exten
   late User user;
   @override void initState(){
     super.initState();
-    user = widget.user;
     main = widget.main;
+    user = main.user;
   }
   void back(){
     main.back();

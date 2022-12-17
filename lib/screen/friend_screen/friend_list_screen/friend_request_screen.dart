@@ -34,6 +34,8 @@ class FriendRequestScreenState extends FriendScreenState<FriendRequestScreen>{
   @override void initState(){
     super.initState();
     friendListBloc.add(LoadListRequestEvent());
+    label = "Lời mời kết bạn";
+    responseForNoFriends = "Không có lời mời kết bạn nào.";
   }
 
 }
