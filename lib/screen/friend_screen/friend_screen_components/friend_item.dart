@@ -1,20 +1,194 @@
 
 
 
+import 'package:facebook_auth/blocs/block/BlockApiProvider.dart';
 import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
+import 'package:facebook_auth/data/repository/friend_repository.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_item_bloc/friend_item_bloc.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_item_bloc/friend_item_event.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_item_bloc/friend_item_state.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_screen_components/my_button_style.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen.dart';
+import 'package:facebook_auth/utils/image.dart';
+import 'package:facebook_auth/utils/injection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 
 // ignore: must_be_immutable
-class FriendItem extends StatelessWidget{
+class FriendItem extends StatefulWidget{
   Friend friend;
-  late User user;
-
   FriendItem({super.key, required this.friend});
+  @override FriendItemState_ createState() => FriendItemState_();
+}
+
+// ignore: must_be_immutable, camel_case_types
+class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMixin{
+  late Friend friend;
+  late User user;
+  late FriendItemBloc friendItemBloc;
+
+  @override void initState(){
+    super.initState();
+    friend = widget.friend;
+    user = User(id: friend.user_id);
+    friendItemBloc = FriendItemBloc(
+        user: user,
+        friendRepository: getIt<FriendRepository>()
+    )..add(UpdateButtonsEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Text(friend.username!);
+    super.build(context);
+    // return Text(friend.username!);
+    return BlocProvider<FriendItemBloc>(
+      create: (ctx) => friendItemBloc,
+      child: BlocBuilder<FriendItemBloc, FriendItemState>(
+        bloc: friendItemBloc,
+        builder: (context, state){
+          return TextButton(
+            onPressed: (){},
+            style: MyButtonStyle(
+              padding: const EdgeInsets.symmetric(vertical: 0),
+              backgroundColor: Colors.white.withAlpha(0)
+            ),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: viewUser,
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: getImage(
+                          uri: user.avatar ?? 'assets/images/default_avatar_image.jpg',
+                          defaultUri: 'assets/images/default_avatar_image.jpg',
+                          width: 60,
+                          height: 60,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8,),
+                  Expanded(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: viewUser,
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  fit: FlexFit.loose,
+                                  child: Text(user.username ?? "Người dùng Facebook",
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          state.status != FriendItemStatus.ME ?
+                          Text(
+                            "${friend.same_friends} bạn chung",
+                            style: const TextStyle(
+                              color: Colors.black45,
+                              fontSize: 13
+                            ),
+                          ) : Container()
+                        ],
+                      )
+                  ),
+                  getButtons(context, state.status)
+                ]
+            )
+          );
+        },
+      )
+    );
   }
 
+  void viewUser(){
+    Navigator.push(
+      context,
+      UserScreen.route(user: user)
+    );
+  }
+
+  Widget getButtons(BuildContext context, FriendItemStatus status){
+    switch (status){
+      case FriendItemStatus.NOT_FRIEND:
+        return getButton(
+          theme: Theme.BLUE,
+          label: "Thêm bạn bè",
+        );
+      case FriendItemStatus.IS_FRIEND:
+        return getButton(
+          theme: Theme.DARK,
+          label: "Hủy kết bạn",
+        );
+      case FriendItemStatus.REQUESTED:
+        return Row(
+          children: [
+            getButton(
+                theme: Theme.BLUE,
+                label: "Chấp nhận"
+            ),
+            const SizedBox(width: 3,),
+            getButton(
+                theme: Theme.DARK,
+                label: "Từ chối"
+            ),
+          ],
+        );
+      case FriendItemStatus.REQUESTING:
+        return getButton(
+          theme: Theme.DARK,
+          label: "Hủy lời mời",
+        );
+      case FriendItemStatus.INITIAL:
+      case FriendItemStatus.ME:
+      default:
+        return Container();
+    }
+  }
+
+  TextButton getButton({
+    Theme theme = Theme.BLUE,
+    String label = "Kết bạn",
+    void Function()? function,
+  }){
+    return TextButton(
+        onPressed: function?? (){},
+        style: MyButtonStyle(
+          backgroundColor: theme == Theme.DARK ? Colors.black12 : Colors.blue,
+          borderRadius: const BorderRadius.all(Radius.circular(8))
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: theme == Theme.DARK ? Colors.black : Colors.white
+          ),
+        )
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }
+
+enum Theme { DARK, BLUE }

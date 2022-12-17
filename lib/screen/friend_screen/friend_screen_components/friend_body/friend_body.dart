@@ -1,9 +1,9 @@
 
-
-
-
 import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_list_bloc/friend_list_event.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_list_screen.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_request_screen.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_suggest_screen.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_screen_components/friend_header.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_screen_components/friend_item.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_screen_components/friend_screen.dart';
@@ -22,13 +22,17 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
   TextEditingController textEditingController = TextEditingController();
   ScrollController scrollController = ScrollController();
   late int numFriends;
+
   @override
   void initState() {
     super.initState();
     numFriends = main.listFriend.total!;
     scrollController.addListener(() {
-      if (numFriends < main.user.listing!){
-        if (scrollController.offset / scrollController.position.maxScrollExtent < 0.25){
+      print("scroll controller: ");
+      print("offset: ${scrollController.offset}");
+      print("maxExtent: ${scrollController.position.maxScrollExtent}");
+      if (numFriends + 2 < main.user.listing!){
+        if (scrollController.offset / scrollController.position.maxScrollExtent > 0.75){
           main.friendListBloc.add(
               LoadListFriendInNumberEvent(
                   number: (numFriends * 1.25).ceil()
@@ -40,6 +44,7 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
   }
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -65,13 +70,16 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
               children: [
                 Expanded(
                     child: RefreshIndicator(
+                      onRefresh: () => Future.delayed(
+                        const Duration(seconds: 1),
+                        () {},
+                      ),
                       child: ListView(
                           controller: scrollController,
                           addAutomaticKeepAlives: true,
                           padding: const EdgeInsets.all(0),
                           children: getListWidgetFriends()
                       ),
-                      onRefresh: () async {},
                     ),
 
                 )
@@ -85,54 +93,22 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
 
   List<Widget> getListWidgetFriends(){
     List<Widget> list = [
-      getButtonsBar(context),
-      const SizedBox(height: 16,)
+      main is FriendListScreenState && user.isMe ?
+        getButtonsBar(context) : Container(),
+      const SizedBox(height: 8,),
+      Text(
+        main is FriendListScreenState ? "$numFriends bạn bè" :
+        main is FriendRequestScreenState ?
+          "$numFriends lời mời" : "$numFriends gợi ý",
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600
+        ),
+      ),
     ];
     for (Friend friend in main.listFriend.list!) {
       list.add(FriendItem(friend: friend,));
     }
-    for (Friend friend in main.listFriend.list!) {
-      list.add(FriendItem(friend: friend,));
-    }
-    for (Friend friend in main.listFriend.list!) {
-      list.add(FriendItem(friend: friend,));
-    }for (Friend friend in main.listFriend.list!) {
-      list.add(FriendItem(friend: friend,));
-    }for (Friend friend in main.listFriend.list!) {
-      list.add(FriendItem(friend: friend,));
-    }for (Friend friend in main.listFriend.list!) {
-      list.add(FriendItem(friend: friend,));
-    }
-    for (Friend friend in main.listFriend.list!) {
-      list.add(FriendItem(friend: friend,));
-    }
-    for (Friend friend in main.listFriend.list!) {
-      list.add(FriendItem(friend: friend,));
-    }
-    for (Friend friend in main.listFriend.list!) {
-      list.add(FriendItem(friend: friend,));
-    }
-    for (Friend friend in main.listFriend.list!) {
-      list.add(FriendItem(friend: friend,));
-    }
-    for (Friend friend in main.listFriend.list!) {
-      list.add(FriendItem(friend: friend,));
-    }
-    for (Friend friend in main.listFriend.list!) {
-      list.add(FriendItem(friend: friend,));
-    }
-    for (Friend friend in main.listFriend.list!) {
-      list.add(FriendItem(friend: friend,));
-    }for (Friend friend in main.listFriend.list!) {
-      list.add(FriendItem(friend: friend,));
-    }
-    for (Friend friend in main.listFriend.list!) {
-      list.add(FriendItem(friend: friend,));
-    }
-    for (Friend friend in main.listFriend.list!) {
-      list.add(FriendItem(friend: friend,));
-    }
-
     return list;
   }
 
@@ -141,10 +117,22 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         getButton(
-          label: "Lời mời"
+          label: "Lời mời",
+          callback: (){
+            Navigator.push(
+              context,
+              FriendRequestScreen.route(user: user)
+            );
+          }
         ),
         getButton(
-          label: "Gợi ý"
+          label: "Gợi ý",
+            callback: (){
+              Navigator.push(
+                  context,
+                  FriendSuggestScreen.route(user: user)
+              );
+            }
         )
       ],
     );

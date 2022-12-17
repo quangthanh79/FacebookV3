@@ -1,5 +1,7 @@
 
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_list_screen.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_request_screen.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_suggest_screen.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_screen_components/friend_screen.dart';
 import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +22,10 @@ class FriendHeaderState extends FriendScreenComponentState<FriendHeader>{
     } else {
       if (main is FriendListScreenState){
         label = "Bạn bè";
+      } else if (main is FriendRequestScreenState){
+        label = "Lời mời kết bạn";
+      } else if (main is FriendSuggestScreenState){
+        label = "Gợi ý";
       } else {
         label = user.username!;
       }
@@ -27,6 +33,7 @@ class FriendHeaderState extends FriendScreenComponentState<FriendHeader>{
   }
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       decoration: const BoxDecoration(
         border: Border(

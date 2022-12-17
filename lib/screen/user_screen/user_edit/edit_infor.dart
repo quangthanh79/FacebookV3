@@ -183,7 +183,7 @@ class EditInformation extends StatelessWidget{
                 builder: (context, state){
                   return getItem(
                       icon: Icons.location_on,
-                      label: main.user.country != null ? "Đến từ " : "Thêm địa quê quán",
+                      label: main.user.country != null ? "Đến từ " : "Thêm quê quán",
                       value: main.user.country,
                       function: onChangeCountry
                   );

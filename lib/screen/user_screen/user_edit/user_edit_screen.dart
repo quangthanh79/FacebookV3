@@ -133,11 +133,13 @@ abstract class MyPage extends StatefulWidget{
     }
   }
 }
-abstract class MyPageState<T extends MyPage> extends State<T>{
+abstract class MyPageState<T extends MyPage> extends State<T> with AutomaticKeepAliveClientMixin{
   void back(){
     widget.back();
     Navigator.pop(context);
   }
+
+  @override get wantKeepAlive => true;
 }
 
 class MyDivider extends SizedBox{
@@ -152,7 +154,7 @@ class MyDivider extends SizedBox{
 }
 
 // ignore: must_be_immutable
-class Header extends StatelessWidget{
+class Header extends StatelessWidget {
   String label = "";
   void Function()? back;
   Header({super.key, String? label, this.back}){

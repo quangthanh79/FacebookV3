@@ -5,6 +5,7 @@ import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/friend_repository.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_list_bloc/friend_list_event.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_list_bloc/friend_list_state.dart';
+import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
@@ -42,7 +43,6 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
       emit(FriendListState(status: FriendListStatus.NO_FRIENDS));
     } else {
       emit(FriendListState(status: FriendListStatus.LOADED));
-      print("vào đây");
     }
   }
   Future<void> backgroundLoadFriend(BackgroundLoadListFriendEvent e, Emitter<FriendListState> emit) async{
@@ -63,6 +63,7 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
     if (responseListFriend2 != null && responseListFriend2!.data != null){
       listFriend.list!.addAll(responseListFriend2!.data!.list!);
     }
+    // listFriend.list!.removeWhere((element) => element.user_id == SessionUser.idUser);
     listFriend.total = listFriend.list!.length;
     add(ReloadListFriendEvent());
   }
@@ -73,7 +74,7 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
 
   Future<void> loadRequest(LoadListRequestEvent e, Emitter<FriendListState> emit) async{
     emit(FriendListState(status: FriendListStatus.LOADING));
-
+    add(BackgroundLoadListRequestEvent());
   }
   Future<void> reloadRequest(ReloadListRequestEvent e, Emitter<FriendListState> emit) async{
     if (listFriend.total! <= 0){
@@ -83,8 +84,21 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
     }
   }
   Future<void> backgroundLoadRequest(BackgroundLoadListRequestEvent e, Emitter<FriendListState> emit) async{
-
+    ResponseListFriend? responseListFriend1;
+    await Future.wait([
+      Future( () async {
+        responseListFriend1 = await friendRepository.getRequestedFriends(0, 20);
+      }),
+    ]);
+    // combines to listFriend:
+    if (responseListFriend1 != null && responseListFriend1!.data != null){
+      listFriend.list!.addAll(responseListFriend1!.data!.list!);
+    }
+    // listFriend.list!.removeWhere((element) => element.user_id == SessionUser.idUser);
+    listFriend.total = listFriend.list!.length;
+    add(ReloadListRequestEvent());
   }
+
   Future<void> loadRequestInNumber(LoadListRequestInNumberEvent e, Emitter<FriendListState> emit) async{
 
   }
@@ -92,7 +106,7 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
 
   Future<void> loadSuggest(LoadListSuggestEvent e, Emitter<FriendListState> emit) async{
     emit(FriendListState(status: FriendListStatus.LOADING));
-
+    add(BackgroundLoadListSuggestEvent());
   }
   Future<void> reloadSuggest(ReloadListSuggestEvent e, Emitter<FriendListState> emit) async{
     if (listFriend.total! <= 0){
@@ -102,7 +116,19 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
     }
   }
   Future<void> backgroundLoadSuggest(BackgroundLoadListSuggestEvent e, Emitter<FriendListState> emit) async{
-
+    ResponseListFriend? responseListFriend1;
+    await Future.wait([
+      Future( () async {
+        responseListFriend1 = await friendRepository.getListSuggestedFriends(0, 20);
+      }),
+    ]);
+    // combines to listFriend:
+    if (responseListFriend1 != null && responseListFriend1!.data != null){
+      listFriend.list!.addAll(responseListFriend1!.data!.list!);
+    }
+    // listFriend.list!.removeWhere((element) => element.user_id == SessionUser.idUser);
+    listFriend.total = listFriend.list!.length;
+    add(ReloadListSuggestEvent());
   }
   Future<void> loadSuggestInNumber(LoadListSuggestInNumberEvent e, Emitter<FriendListState> emit) async{
 

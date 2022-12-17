@@ -70,6 +70,8 @@ class ListFriend{
       key = "friends";
     } else if (json.containsKey("list_users")){
       key = "list_users";
+    } else if (json.containsKey('request')){
+      key = "request";
     }
     if (json[key] != null) {
       list = <Friend>[];

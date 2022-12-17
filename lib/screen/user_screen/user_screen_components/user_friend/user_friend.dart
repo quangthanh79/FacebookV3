@@ -182,6 +182,7 @@ class UserFriendState_ extends UserScreenComponentState<UserFriend>{
                         ),
                         child: Text(
                           friend.username ?? "Người dùng Facebook",
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                               fontWeight: FontWeight.w500
                           ),

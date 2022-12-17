@@ -132,7 +132,7 @@ abstract class UserScreenComponent extends StatefulWidget{
   }
 }
 
-abstract class UserScreenComponentState<T extends UserScreenComponent> extends State<T>{
+abstract class UserScreenComponentState<T extends UserScreenComponent> extends State<T> with AutomaticKeepAliveClientMixin{
   late User user;
   late UserScreenState main;
   @override void initState(){
@@ -143,6 +143,8 @@ abstract class UserScreenComponentState<T extends UserScreenComponent> extends S
   void back(){
     Navigator.pop(main.context);
   }
+
+  @override get wantKeepAlive => true;
 }
 
 
