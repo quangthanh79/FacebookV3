@@ -34,6 +34,8 @@ class FriendSuggestScreenState extends FriendScreenState<FriendSuggestScreen>{
   @override void initState(){
     super.initState();
     friendListBloc.add(LoadListSuggestEvent());
+    label = "Những người bạn có thể biết";
+    responseForNoFriends = "Không có ai được gợi ý kết bạn với bạn.";
   }
 
 }
