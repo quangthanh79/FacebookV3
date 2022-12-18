@@ -50,16 +50,16 @@ class EditBloc extends Bloc<EditEvent, EditState>{
     emit(EditState());
   }
   Future<void> commitChange(CommitChangeEvent e, Emitter<EditState> emit) async{
-    bool? okay = await userRepository.setUserInfor(user);
-    if (okay) {
+    ResponseUser? responseUser = await userRepository.setUserInfor(user);
+    if (responseUser != null && responseUser.code == "1000") {
       // emit(EditState());
       add(ReloadEvent());
     }
   }
   Future<void> commit(User previousUser) async {
     add(ReloadEvent());
-    bool? okay = await userRepository.setUserInfor(user);
-    if (!okay) {
+    ResponseUser? responseUser = await userRepository.setUserInfor(user);
+    if (responseUser == null || responseUser.code != "1000") {
       user.copyFrom(previousUser);
       add(ReloadEvent());
     }
@@ -69,31 +69,24 @@ class EditBloc extends Bloc<EditEvent, EditState>{
 class EditUsernameBloc extends EditBloc{
   EditUsernameBloc({required super.user, required super.userRepository});
 }
-
 class EditAvatarBloc extends EditBloc{
   EditAvatarBloc({required super.user, required super.userRepository});
 }
-
 class EditCoverImageBloc extends EditBloc{
   EditCoverImageBloc({required super.user, required super.userRepository});
 }
-
 class EditDescriptionBloc extends EditBloc{
   EditDescriptionBloc({required super.user, required super.userRepository});
 }
-
 class EditCityBloc extends EditBloc{
   EditCityBloc({required super.user, required super.userRepository});
 }
-
 class EditAddressBloc extends EditBloc{
   EditAddressBloc({required super.user, required super.userRepository});
 }
-
 class EditCountryBloc extends EditBloc{
   EditCountryBloc({required super.user, required super.userRepository});
 }
-
 class EditLinkBloc extends EditBloc{
   EditLinkBloc({required super.user, required super.userRepository});
 }

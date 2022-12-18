@@ -1,21 +1,19 @@
 
-class ResponseListFriend {
-  String? code;
-  String? message;
+import 'package:facebook_auth/data/models/user_info.dart';
+
+class ResponseListFriend extends Response{
   ListFriend? data;
 
-  ResponseListFriend({this.code, this.message, this.data});
+  ResponseListFriend({super.code, super.message, this.data, super.details});
 
   ResponseListFriend.fromJson(Map<String, dynamic> json) {
-    code = json['code'];
-    message = json['message'];
+    copyFrom(Response.fromJson(json));
     data = json['data'] != null ? ListFriend.fromJson(json['data']) : null;
   }
 
+  @override
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['code'] = code;
-    data['message'] = message;
+    final Map<String, dynamic> data = super.toJson();
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
@@ -96,3 +94,5 @@ class ListFriend{
     total = listFriend.total;
   }
 }
+
+

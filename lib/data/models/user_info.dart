@@ -2,30 +2,57 @@
 
 import 'package:facebook_auth/utils/session_user.dart';
 
-class ResponseUser{
+
+class Response{
   String? code;
   String? message;
-  User? data;
+  String? details;
 
-  ResponseUser({
-    this.code, this.message, this.data
+  Response({
+    this.code, this.message, this.details
   });
 
-  ResponseUser.fromJson(Map<String, dynamic> json){
+  Response.fromJson(Map<String, dynamic> json){
     code = json['code'];
     message = json['message'];
-    data = json['data'] != null ? User.fromJson(json['data']) : null;
+    details = json['details'];
   }
 
   Map<String, dynamic> toJson(){
     Map<String, dynamic> json = <String, dynamic>{};
     json['code'] = code;
     json['message'] = message;
-    json['data'] = data != null ? data!.toJson() : null;
+    if (details != null) json['details'] = details;
     return json;
   }
 
+  void copyFrom(Response? response){
+    if (response != null){
+      code = response.code;
+      message = response.message;
+      details = response.details;
+    }
+  }
+}
 
+class ResponseUser extends Response{
+  User? data;
+
+  ResponseUser({
+    super.code, super.message, this.data, super.details
+  });
+
+  ResponseUser.fromJson(Map<String, dynamic> json){
+    copyFrom(Response.fromJson(json));
+    data = json['data'] != null ? User.fromJson(json['data']) : null;
+  }
+
+  @override
+  Map<String, dynamic> toJson(){
+    Map<String, dynamic> json = super.toJson();
+    json['data'] = data != null ? data!.toJson() : null;
+    return json;
+  }
 }
 
 class User {

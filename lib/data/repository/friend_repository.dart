@@ -11,10 +11,10 @@ class FriendRepository{
   Future<ResponseListFriend?> getListSuggestedFriends(int index, int count)
     => friendApiProvider.getListSuggestedFriends(index, count);
 
-  Future<bool> setRequestFriend(String user_id)
+  Future<ResponseListFriend?> setRequestFriend(String user_id)
     => friendApiProvider.setRequestFriend(user_id);
 
-  Future<bool> setAcceptFriend(String user_id, bool is_accept)
+  Future<ResponseListFriend?> setAcceptFriend(String user_id, bool is_accept)
     => friendApiProvider.setAcceptFriend(user_id, is_accept);
 
   Future<ResponseListFriend?> getUserFriends(String user_id, int page)
@@ -23,7 +23,7 @@ class FriendRepository{
   Future<ResponseListFriend?> getListBlocks(int index, int count)
     => friendApiProvider.getListBlocks(index, count);
 
-  Future<bool> setBlock(String user_id, int type)
+  Future<ResponseListFriend?> setBlock(String user_id, int type)
     => friendApiProvider.setBlock(user_id, type);
 
 }

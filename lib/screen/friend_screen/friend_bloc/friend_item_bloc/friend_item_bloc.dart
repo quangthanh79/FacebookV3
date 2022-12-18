@@ -1,5 +1,6 @@
 
 
+import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/friend_repository.dart';
 import 'package:facebook_auth/data/repository/user_repository.dart';
@@ -25,8 +26,8 @@ class FriendItemBloc extends Bloc<FriendItemEvent, FriendItemState>{
   Future<void> sendRequestFriend(SendRequestEvent e, Emitter<FriendItemState> emit) async{
     if (user.is_friend == null || user.is_friend != "NOT_FRIEND") return;
     emit(FriendItemState(status: FriendItemStatus.REQUESTING));
-    bool? okay = await friendRepository.setRequestFriend(user.id!);
-    if (okay){
+    ResponseListFriend? responseListFriend = await friendRepository.setRequestFriend(user.id!);
+    if (responseListFriend != null && responseListFriend.code == "1000"){
       user.is_friend = "REQUESTED";
     } else {
       emit(FriendItemState(status: FriendItemStatus.NOT_FRIEND));
@@ -36,8 +37,8 @@ class FriendItemBloc extends Bloc<FriendItemEvent, FriendItemState>{
     if (user.is_friend == null || user.is_friend != "REQUESTED") return;
     user.is_friend = "NOT_FRIEND";
     emit(FriendItemState(status: FriendItemStatus.NOT_FRIEND));
-    bool? okay = await friendRepository.setRequestFriend(user.id!);
-    if (okay) {
+    ResponseListFriend? responseListFriend = await friendRepository.setRequestFriend(user.id!);
+    if (responseListFriend != null && responseListFriend.code == "1000") {
       user.is_friend = "NOT_FRIEND";
     } else {
       emit(FriendItemState(status: FriendItemStatus.REQUESTING));
@@ -50,8 +51,8 @@ class FriendItemBloc extends Bloc<FriendItemEvent, FriendItemState>{
     } else {
       emit(FriendItemState(status: FriendItemStatus.NOT_FRIEND));
     }
-    bool? okay = await friendRepository.setAcceptFriend(user.id!, e.code == Acceptable.ACCEPT);
-    if (okay) {
+    ResponseListFriend? responseListFriend = await friendRepository.setAcceptFriend(user.id!, e.code == Acceptable.ACCEPT);
+    if (responseListFriend != null && responseListFriend.code == "1000") {
       if (e.code == Acceptable.ACCEPT) {
         user.is_friend = "IS_FRIEND";
       } else {
@@ -64,8 +65,8 @@ class FriendItemBloc extends Bloc<FriendItemEvent, FriendItemState>{
   Future<void> cancelFriend(CancelFriendEvent e, Emitter<FriendItemState> emit) async{
     if (user.is_friend == null || user.is_friend != "IS_FRIEND") return;
     emit(FriendItemState(status: FriendItemStatus.NOT_FRIEND));
-    bool? okay = await friendRepository.setRequestFriend(user.id!);
-    if (okay) {
+    ResponseListFriend? responseListFriend = await friendRepository.setRequestFriend(user.id!);
+    if (responseListFriend != null && responseListFriend.code == "1000") {
       user.is_friend = "NOT_FRIEND";
     } else {
       emit(FriendItemState(status: FriendItemStatus.IS_FRIEND));
