@@ -163,23 +163,27 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
         return getButton(
           theme: Theme.BLUE,
           label: "Thêm bạn bè",
+          function: () => friendItemBloc.add(SendRequestEvent())
         );
       case FriendItemStatus.IS_FRIEND:
         return getButton(
           theme: Theme.DARK,
           label: "Hủy kết bạn",
+          function: () => friendItemBloc.add(CancelFriendEvent())
         );
       case FriendItemStatus.REQUESTED:
         return Row(
           children: [
             getButton(
                 theme: Theme.BLUE,
-                label: "Chấp nhận"
+                label: "Chấp nhận",
+                function: () => friendItemBloc.add(AcceptRequestEvent(code: Acceptable.ACCEPT))
             ),
             const SizedBox(width: 3,),
             getButton(
                 theme: Theme.DARK,
-                label: "Từ chối"
+                label: "Từ chối",
+                function: () => friendItemBloc.add(AcceptRequestEvent(code: Acceptable.DECLINE))
             ),
           ],
         );
@@ -187,6 +191,7 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
         return getButton(
           theme: Theme.DARK,
           label: "Hủy lời mời",
+            function: () => friendItemBloc.add(CancelRequestEvent())
         );
       case FriendItemStatus.LOADING:
       case FriendItemStatus.ME:

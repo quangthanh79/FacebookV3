@@ -1,8 +1,6 @@
 
 
-class FriendItemEvent{
-
-}
+class FriendItemEvent{}
 
 enum Acceptable{
   ACCEPT, DECLINE
