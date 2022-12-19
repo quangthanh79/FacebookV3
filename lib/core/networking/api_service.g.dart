@@ -57,6 +57,7 @@ class _ApiService implements ApiService {
     required token,
     required described,
     image,
+    video,
   }) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -76,6 +77,15 @@ class _ApiService implements ApiService {
     ));
     if (image != null) {
       _data.files.addAll(image.map((i) => MapEntry('image', i)));
+    }
+    if (video != null) {
+      _data.files.add(MapEntry(
+        'video',
+        MultipartFile.fromFileSync(
+          video.path,
+          filename: video.path.split(Platform.pathSeparator).last,
+        ),
+      ));
     }
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<ApiResponse<AddPostResponse>>(Options(

@@ -30,10 +30,11 @@ class PostRepositoryImpl implements PostRepository {
   Future<Either<Failure, String>> addPost(
       {required String token,
       required String described,
-      List<File>? image}) async {
+      List<File>? image,
+      File? video}) async {
     try {
       return Right(await dataSource.addPost(
-          token: token, described: described, image: image));
+          token: token, described: described, image: image, video: video));
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     }

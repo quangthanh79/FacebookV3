@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:facebook_auth/screen/home_screen/video/video_demo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -227,6 +228,9 @@ class AssetsContent extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ));
+    }
+    if (post.assetType != null && post.assetType == TYPE_VIDEO) {
+      return VideoDemo(url: post.assetContentUrl![0]);
     }
     return Container();
   }

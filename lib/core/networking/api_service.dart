@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:facebook_auth/data/models/comment_response.dart';
 import 'package:facebook_auth/data/models/post_response.dart';
@@ -56,7 +58,8 @@ abstract class ApiService {
   Future<ApiResponse<AddPostResponse>> addPost(
       {@Part() @Query("token") required String token,
       @Part() @Query("described") required String described,
-      @Part() List<MultipartFile>? image});
+      @Part() List<MultipartFile>? image,
+      @Part(name: 'video') File? video});
 
   @POST(API.getComment)
   Future<ApiResponse<List<CommentModel>>> getComment(

@@ -23,6 +23,9 @@ class AddPostBloc extends Bloc<AddPostEvent, AddPostState> {
     on<AddPost>(_onAddPost);
     on<PostContentChange>(_onPostContentChange);
     on<PickImage>(_onPickImage);
+    on<PickVideo>(_onPickVideo);
+    on<StartPickImage>(_onStartPickImage);
+    on<StartPickVideo>(_onStartPickVideo);
   }
 
   _onAddPost(AddPost event, Emitter emit) async {
@@ -30,6 +33,7 @@ class AddPostBloc extends Bloc<AddPostEvent, AddPostState> {
     var result = await useCase.call(AddPostParams(
         token: SessionUser.token!,
         described: state.content,
+        video: state.image != null ? state.image! : null,
         image: state.image != null ? [state.image!] : null));
     result.fold((l) {
       emit(state.copyWith(status: AddPostStatus.failure, error: l.message));
@@ -53,5 +57,17 @@ class AddPostBloc extends Bloc<AddPostEvent, AddPostState> {
 
   _onPickImage(PickImage event, Emitter emit) {
     emit(state.copyWith(image: event.image));
+  }
+
+  _onPickVideo(PickVideo event, Emitter emit) {
+    emit(state.copyWith(video: event.video));
+  }
+
+  _onStartPickImage(StartPickImage event, Emitter emit) {
+    emit(state.copyWith(isImage: true));
+  }
+
+  _onStartPickVideo(StartPickVideo event, Emitter emit) {
+    emit(state.copyWith(isImage: false));
   }
 }

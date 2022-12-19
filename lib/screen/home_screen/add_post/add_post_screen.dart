@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:facebook_auth/core/helper/current_user.dart';
+import 'package:facebook_auth/screen/home_screen/video/video_demo.dart';
 import 'package:facebook_auth/utils/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -118,9 +119,16 @@ class AddPostView extends StatelessWidget {
                   ),
                   Expanded(
                       child: state.image != null
-                          ? Container(
-                              padding: const EdgeInsets.all(8),
-                              child: Image.file(state.image!))
+                          ? (state.isImage!
+                              ? Container(
+                                  padding: const EdgeInsets.all(8),
+                                  child: Image.file(state.image!))
+                              : Container(
+                                  height: 300,
+                                  padding: const EdgeInsets.all(8),
+                                  child: VideoDemo(
+                                    isFile: state.video,
+                                  )))
                           : Container())
                 ],
               );
@@ -133,7 +141,10 @@ class AddPostView extends StatelessWidget {
 
   Widget buildBottom(BuildContext context) {
     imagePicked(File image) =>
-        context.read<AddPostBloc>().add(PickImage(image: image));
+        context.read<AddPostBloc>().add(PickImage(image: image, isImage: true));
+    videoPicked(File video) => context
+        .read<AddPostBloc>()
+        .add(PickVideo(video: video, isImage: false));
     return Column(
       children: [
         Container(
@@ -152,14 +163,81 @@ class AddPostView extends StatelessWidget {
                 builder: (context, state) {
                   return GestureDetector(
                     onTap: () async {
-                      final ImagePicker picker = ImagePicker();
-                      XFile? image =
-                          await picker.pickImage(source: ImageSource.gallery);
-                      if (image != null) {
-                        var file = File(image.path);
-                        file.absolute;
-                        imagePicked(file);
-                      }
+                      showDialog(
+                        context: context,
+                        builder: (context2) => Dialog(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 16),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                GestureDetector(
+                                  onTap: () async {
+                                    context
+                                        .read<AddPostBloc>()
+                                        .add(StartPickImage());
+                                    Navigator.pop(context2);
+                                    final ImagePicker picker = ImagePicker();
+                                    XFile? image = await picker.pickImage(
+                                        source: ImageSource.gallery);
+                                    if (image != null) {
+                                      var file = File(image.path);
+                                      imagePicked(file);
+                                    }
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: const [
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Icon(Icons.image),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text('Add image'),
+                                      Spacer()
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    context
+                                        .read<AddPostBloc>()
+                                        .add(StartPickVideo());
+                                    Navigator.pop(context2);
+                                    final ImagePicker picker = ImagePicker();
+                                    XFile? video = await picker.pickVideo(
+                                        source: ImageSource.gallery);
+                                    if (video != null) {
+                                      var file = File(video.path);
+                                      videoPicked(file);
+                                    }
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: const [
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Icon(Icons.video_camera_front),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text('Add video'),
+                                      Spacer()
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
                     },
                     child: const Icon(
                       Icons.image,

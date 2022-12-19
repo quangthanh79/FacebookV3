@@ -12,7 +12,10 @@ abstract class PostDataSource {
   Future<PostListResponse> loadListPosts(
       {required String token, required int count, required int index});
   Future<String> addPost(
-      {required String token, required String described, List<File>? image});
+      {required String token,
+      required String described,
+      List<File>? image,
+      File? video});
   Future<Author> getUserInfo(String token);
 }
 
@@ -45,7 +48,8 @@ class PostDataSourceImpl implements PostDataSource {
   Future<String> addPost(
       {required String token,
       required String described,
-      List<File>? image}) async {
+      List<File>? image,
+      File? video}) async {
     try {
       List<MultipartFile>? multipartFiles;
       if (image != null) {
@@ -62,7 +66,10 @@ class PostDataSourceImpl implements PostDataSource {
         }
       }
       var response = await apiService.addPost(
-          token: token, described: described, image: multipartFiles);
+          token: token,
+          described: described,
+          image: multipartFiles,
+          video: video);
       if (response.statusCode == '1000') {
         return response.data!.id!;
       }

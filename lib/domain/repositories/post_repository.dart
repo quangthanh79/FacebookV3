@@ -9,6 +9,9 @@ abstract class PostRepository {
   Future<Either<Failure, PostListResponse>> loadListPosts(
       {required String token, required int index, required int count});
   Future<Either<Failure, String>> addPost(
-      {required String token, required String described, List<File>? image});
+      {required String token,
+      required String described,
+      List<File>? image,
+      File? video});
   Future<Either<Failure, Author>> getUserInfo(String token);
 }
