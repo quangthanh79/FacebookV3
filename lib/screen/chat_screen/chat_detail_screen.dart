@@ -64,7 +64,7 @@ class ChatDetailScreen extends StatefulWidget{
   ChatDetailScreenState createState() => ChatDetailScreenState();
 }
 class ChatDetailScreenState extends State<ChatDetailScreen> with WidgetsBindingObserver{
-  final chatDetailBloc = ChatDetailBloc(getIt.get<ChatRepository>());
+  late final chatDetailBloc = ChatDetailBloc(getIt.get<ChatRepository>(),widget.partner);
   final _controller = TextEditingController();
 
   @override

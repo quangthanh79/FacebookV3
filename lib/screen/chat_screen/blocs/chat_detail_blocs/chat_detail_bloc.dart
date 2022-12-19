@@ -1,4 +1,5 @@
 
+import 'package:facebook_auth/data/models/chat.dart';
 import 'package:facebook_auth/data/models/chat_detail.dart';
 import 'package:facebook_auth/data/repository/chat_repository.dart';
 import 'package:facebook_auth/exception/not_data_exception.dart';
@@ -13,7 +14,8 @@ import 'package:formz/formz.dart';
 
 class ChatDetailBloc extends Bloc<ChatDetailEvent,ChatDetailState>{
   final ChatRepository chatRepository;
-  ChatDetailBloc(this.chatRepository): super(ChatDetailState()){
+  final Partner partner;
+  ChatDetailBloc(this.chatRepository,this.partner): super(ChatDetailState()){
     connectSocket();
     on<SendMessageChanged>(_sendMessage);
     on<BindingResumeChanged>(_setReadMessage);
@@ -99,7 +101,8 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent,ChatDetailState>{
             message: dataList[1] as String,
             unread: "1",
             sender: Sender(
-                id: dataList[0] as String
+                id: dataList[0] as String,
+                avatar: partner.avatar
             )
         );
         var newCountMessage = state.countMessage+1;
