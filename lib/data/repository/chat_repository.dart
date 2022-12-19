@@ -17,6 +17,7 @@ class ChatRepository {
   Future<bool> sendMessage(String message, String partner_id)=> chatApiProvider.sendMessage(message,partner_id);
   Future<ResponseListConversation?> getListConversation(int page) => chatApiProvider.getListConversation(page);
   Future<ResponseChatDetail?> getDetailConversation(int index, String partner_id) => chatApiProvider.getDetailConversation(index,partner_id);
+  Future<bool?> setReadMessage(String partner_id) => chatApiProvider.setReadMessage(partner_id);
   Future<ResponseUserFriendsChat?> getUserFriends(String user_id, int page) => chatApiProvider.getUserFriends(user_id, page);
 
 }
