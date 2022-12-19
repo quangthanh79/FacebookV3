@@ -14,10 +14,12 @@ import 'package:formz/formz.dart';
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final ChatRepository chatRepository;
   final FriendRepository friendRepository;
+  int flagLoaddata  = 0;
+
 
   ChatBloc(this.chatRepository,this.friendRepository) : super(ChatState()) {
     // connectSocket();
-    // on<LoadListConversationChanged>(_getListConversation);
+    on<LoadListConversationChanged>(_loadData);
   }
 
   // Future<void> _getListConversation(
@@ -33,6 +35,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   //     print(" Get List Conversation Error!!");
   //   }
   // }
+  Future<void> _loadData(
+      LoadListConversationChanged event,
+      Emitter<ChatState> emit) async
+  {
+    emit(state.copyWith(flagLoadData: ++flagLoaddata));
+  }
+
   Future<ResponseListConversation?> tryFetchListConversation(int page) async {
     try {
       ResponseListConversation? responseFetchListConversation = await chatRepository.getListConversation(page);

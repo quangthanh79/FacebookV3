@@ -16,6 +16,7 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent,ChatDetailState>{
   ChatDetailBloc(this.chatRepository): super(ChatDetailState()){
     connectSocket();
     on<SendMessageChanged>(_sendMessage);
+    on<BindingResumeChanged>(_setReadMessage);
     on<WidthInputChanged>(_changeWidthInput);
   }
 
@@ -23,7 +24,9 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent,ChatDetailState>{
   Future<ResponseChatDetail?> getDetailConversation(String partner_id) async {
     try{
       final resultDetailConversation = await chatRepository.getDetailConversation(-1, partner_id);
-      if (resultDetailConversation != null) {
+      final resultSetReadMessage = await chatRepository.setReadMessage(partner_id);
+
+      if (resultDetailConversation != null && resultSetReadMessage != null) {
         return resultDetailConversation;
       } else {
         return null;
@@ -60,6 +63,18 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent,ChatDetailState>{
 
     }
   }
+
+  Future<void> _setReadMessage(
+      BindingResumeChanged event,
+      Emitter<ChatDetailState> emit
+      ) async{
+    print("-------------------CHAT DETAIL BLOC: SET READ MESSAGE-------------------");
+
+    final result = await chatRepository.setReadMessage(event.partner_id);
+    if(result != null){
+      print("CHAT DETAIL BLOC: Set read message success: ");
+    }
+  }
   void _changeWidthInput(
       WidthInputChanged event,
       Emitter<ChatDetailState> emit
@@ -91,6 +106,7 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent,ChatDetailState>{
         print("OLD COUNT MESSAGE: "+ newCountMessage.toString());
         emit(state.copyWith(
             message: newMessageDetail,
+            statusHasMessgage: StatusHasMessgage.ReceiveMessage,
             countMessage: newCountMessage
         ));
       }

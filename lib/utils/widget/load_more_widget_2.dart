@@ -7,6 +7,7 @@ class LoadMoreWidget2<T> extends StatefulWidget {
   final Future<PageData<T>> Function(int) onLoadData;
   final Widget Function(T) itemBuilder;
   final Widget itemNoData;
+  final Function? reloadRefresh;
   final int? countReload;
   final Axis? axisContent;
   final Widget? itemFinish;
@@ -15,6 +16,7 @@ class LoadMoreWidget2<T> extends StatefulWidget {
       { required this.onLoadData,
         required this.itemBuilder,
         required this.itemNoData,
+        this.reloadRefresh,
         this.countReload,
         this.axisContent,
         this.itemFinish = null,
@@ -75,47 +77,51 @@ class _LoadMoreWidgetState<T> extends State<LoadMoreWidget2> {
   // This function will be triggered whenver the user scroll
   // to near the bottom of the list view
   void _loadMore() async {
-    if (_hasNextPage == true &&
-        _isFirstLoadRunning == false &&
-        _isLoadMoreRunning == false &&
-        _controller.position.extentAfter < 300) {
-      setState(() {
-        _isLoadMoreRunning = true; // Display a progress indicator at the bottom
-      });
-      _page += 1;// Increase _page by 1
-      try {
-        if (_page > (_currentPageData?.data?.length ?? 0)) {
-          setState(() {
-            _hasNextPage = false;
-            _isLoadMoreRunning = false;
-          });
-        } else {
-          _currentPageData = (await widget.onLoadData(_page)) as PageData<T>?;
-          final List<T>? fetchedList = _currentPageData?.data;
-          if (fetchedList != null && fetchedList.isNotEmpty == true) {
-            print("FETCHEDLIST LENGTH = "+ fetchedList.length.toString());
-            setState(() {
-              _data.addAll(fetchedList);
-            });
-          } else {
-            // This means there is no more data
-            // and therefore, we will not send another GET request
-            setState(() {
-              _hasNextPage = false;
-              _isLoadMoreRunning = false;
-            });
-          }
-        }
-      } catch (err) {
-        if (kDebugMode) {
-          print('Something went wrong!');
-        }
-      }
-
-      setState(() {
-        _isLoadMoreRunning = false;
-      });
-    }
+    // print("POSITION : "+ _controller.position.extentAfter.toString());
+    // if (_hasNextPage == true &&
+    //     _isFirstLoadRunning == false &&
+    //     _isLoadMoreRunning == false &&
+    //     _controller.position.extentAfter < 300 &&
+    //     _controller.position.extentAfter > 0
+    // ) {
+    //   setState(() {
+    //     _isLoadMoreRunning = true; // Display a progress indicator at the bottom
+    //   });
+    //   _page += 1;// Increase _page by 1
+    //   try {
+    //     if (_page > (_currentPageData?.data?.length ?? 0)) {
+    //       setState(() {
+    //         _hasNextPage = false;
+    //         _isLoadMoreRunning = false;
+    //       });
+    //     } else {
+    //       _currentPageData = (await widget.onLoadData(_page)) as PageData<T>?;
+    //       final List<T>? fetchedList = _currentPageData?.data;
+    //       if (fetchedList != null && fetchedList.isNotEmpty == true) {
+    //         print("FETCHEDLIST LENGTH = "+ fetchedList.length.toString());
+    //         setState(() {
+    //           _data.addAll(fetchedList);
+    //         });
+    //       } else {
+    //         // This means there is no more data
+    //         // and therefore, we will not send another GET request
+    //         print("FETCHEDLIST LENGTH = 0");
+    //         setState(() {
+    //           _hasNextPage = false;
+    //           _isLoadMoreRunning = false;
+    //         });
+    //       }
+    //     }
+    //   } catch (err) {
+    //     if (kDebugMode) {
+    //       print('Something went wrong!');
+    //     }
+    //   }
+    //
+    //   setState(() {
+    //     _isLoadMoreRunning = false;
+    //   });
+    // }
   }
 
   // The controller for the ListView
@@ -157,58 +163,43 @@ class _LoadMoreWidgetState<T> extends State<LoadMoreWidget2> {
     )
         : (_data.length == 0 ?
     widget.itemNoData :
-    ListView.separated(
-      controller: _controller,
-      scrollDirection: widget.axisContent ?? Axis.vertical,
-      separatorBuilder: (context, index) => const SizedBox(height: 15),
-      itemCount: _data.length + (_hasNextPage || _isLoadMoreRunning ? 1 : 0),
-      itemBuilder:  (_, index) {
-        if (index < _data.length) {
-          return itemBuilder(_data[index]);
+
+    RefreshIndicator(
+        child: ListView.separated(
+          controller: _controller,
+          scrollDirection: widget.axisContent ?? Axis.vertical,
+          physics: const AlwaysScrollableScrollPhysics(),
+          separatorBuilder: (context, index) => const SizedBox(height: 15),
+          itemCount: _data.length + (_hasNextPage || _isLoadMoreRunning ? 1 : 0),
+          itemBuilder:  (_, index) {
+            if (index < _data.length) {
+              return itemBuilder(_data[index]);
+            }
+            // when the _loadMore function is running
+            if (_isLoadMoreRunning == true ) {
+              return  Padding(
+                padding: EdgeInsets.only(top: 10, bottom: 40),
+                child: Center(
+                  child: Lottie.asset(
+                    'assets/animator_flutter.json',
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.fill,
+                  ),
+                ),
+              );
+            }
+            return widget.itemFinish ?? SizedBox();
+          },
+        ),
+        onRefresh: () async {
+          print("------------- REFRESH -------------");
+          if(widget.reloadRefresh != null){
+            print("RELOAD");
+            widget.reloadRefresh!();
+          }
         }
-        // when the _loadMore function is running
-        if (_isLoadMoreRunning == true) {
-          return  Padding(
-            padding: EdgeInsets.only(top: 10, bottom: 40),
-            child: Center(
-              child: Lottie.asset(
-                'assets/animator_flutter.json',
-                width: 60,
-                height: 60,
-                fit: BoxFit.fill,
-              ),
-            ),
-          );
-        }
-        return widget.itemFinish ?? SizedBox();
-      },
     )
-        //   ListView.separated(
-        //       controller: _controller,
-        //       padding: EdgeInsets.only(top: 20,bottom: 30),
-        //       separatorBuilder: (context, index) => const SizedBox(height: 18),
-        //       itemCount: _data.length + (!_hasNextPage || _isLoadMoreRunning ? 1 : 0),
-        //       itemBuilder: (_, index) {
-        //           if (index < _data.length) {
-        //           return itemBuilder(_data[index]);
-        //           }
-        // // when the _loadMore function is running
-        //           if (_isLoadMoreRunning == true) {
-        //               return  Padding(
-        //                   padding: EdgeInsets.only(top: 10, bottom: 40),
-        //                   child: Center(
-        //                     child: Lottie.asset(
-        //                       'assets/animator_flutter.json',
-        //                       width: 60,
-        //                       height: 60,
-        //                       fit: BoxFit.fill,
-        //                     ),
-        //                       ),
-        //               );
-        //           }
-        //           return widget.itemFinish ?? SizedBox();
-        //       },
-        // )
 
 
     );
