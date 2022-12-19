@@ -16,6 +16,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
+import 'package:shimmer/shimmer.dart';
+
+
 // ignore: must_be_immutable
 class FriendItem extends StatefulWidget{
   Friend friend;
@@ -42,12 +45,14 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // return Text(friend.username!);
     return BlocProvider<FriendItemBloc>(
       create: (ctx) => friendItemBloc,
       child: BlocBuilder<FriendItemBloc, FriendItemState>(
         bloc: friendItemBloc,
         builder: (context, state){
+          if (state.status == FriendItemStatus.LOADING){
+            return getShimmer();
+          }
           return TextButton(
             onPressed: (){},
             style: MyButtonStyle(
@@ -120,6 +125,31 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
     );
   }
 
+  Widget getShimmer(){
+    return TextButton(onPressed: (){},
+        style: MyButtonStyle(
+            padding: const EdgeInsets.symmetric(vertical: 0),
+            backgroundColor: Colors.white.withAlpha(0)
+        ),
+        child: Shimmer.fromColors(
+            baseColor: Colors.black12.withAlpha(15),
+            highlightColor: Colors.transparent,
+            child: Row(
+              children: [
+                Expanded(child: Container(
+                  height: 60,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(8)),
+                      color: Colors.black
+                  ),
+                ))
+              ],
+            )
+        )
+    );
+  }
+
   void viewUser(){
     Navigator.push(
       context,
@@ -158,7 +188,7 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
           theme: Theme.DARK,
           label: "Hủy lời mời",
         );
-      case FriendItemStatus.INITIAL:
+      case FriendItemStatus.LOADING:
       case FriendItemStatus.ME:
       default:
         return Container();

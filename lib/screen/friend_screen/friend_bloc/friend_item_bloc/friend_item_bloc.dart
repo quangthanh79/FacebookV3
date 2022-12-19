@@ -14,7 +14,7 @@ class FriendItemBloc extends Bloc<FriendItemEvent, FriendItemState>{
   UserRepository userRepository = getIt<UserRepository>();
   FriendRepository friendRepository;
   FriendItemBloc({required this.user, required this.friendRepository})
-  :super(FriendItemState(status: FriendItemStatus.INITIAL)){
+  :super(FriendItemState(status: FriendItemStatus.LOADING)){
     on<SendRequestEvent>(sendRequestFriend);
     on<CancelRequestEvent>(cancelRequestFriend);
     on<AcceptRequestEvent>(acceptRequestFriend);
@@ -76,6 +76,7 @@ class FriendItemBloc extends Bloc<FriendItemEvent, FriendItemState>{
     emit(getState());
   }
   Future<void> updateButtons(UpdateButtonsEvent e, Emitter<FriendItemState> emit) async{
+    emit(FriendItemState(status: FriendItemStatus.LOADING));
     ResponseUser? responseUser = await userRepository.getUserInfor(user.id!);
     if (responseUser != null && responseUser.code == "1000"){
       user.copyFrom(responseUser.data!);
@@ -84,7 +85,7 @@ class FriendItemBloc extends Bloc<FriendItemEvent, FriendItemState>{
   }
 
   FriendItemState getState(){
-    FriendItemStatus status = FriendItemStatus.INITIAL;
+    FriendItemStatus status = FriendItemStatus.LOADING;
     if (user.isMe) {
       status = FriendItemStatus.ME;
     } else {
@@ -102,7 +103,7 @@ class FriendItemBloc extends Bloc<FriendItemEvent, FriendItemState>{
           status = FriendItemStatus.REQUESTED;
           break;
         case null:
-          status = FriendItemStatus.INITIAL;
+          status = FriendItemStatus.LOADING;
           break;
       }
     }
