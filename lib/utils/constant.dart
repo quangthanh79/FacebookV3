@@ -6,8 +6,10 @@ const String TYPE_VIDEO = 'TPYE_VIDEO';
 const int MAX_LENGTH_TEXT = 100;
 
 const String baseIP = "http://184.169.213.180:3000";
+const String testIP = "http://10.0.2.2:3000";
 // const String baseIP = "http://192.168.1.127:3000";
 const String baseUrl = baseIP + "/it4788/";
+const String testUrl = testIP + "/it4788/";
 
 Future<String?> token = const FlutterSecureStorage().read(key: 'token');
 

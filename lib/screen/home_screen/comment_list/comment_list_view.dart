@@ -1,5 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -114,8 +112,9 @@ class _CommentListViewState extends State<CommentListView> {
                           //     ? MediaQuery.of(context).size.height * 8.4 / 10 -
                           //         viewInsets.bottom
                           //     : MediaQuery.of(context).size.height * 8.4 / 10,
-                          height: MediaQuery.of(context).size.height * 8.4 / 10 -
-                              viewInsets.bottom,
+                          height:
+                              MediaQuery.of(context).size.height * 8.4 / 10 -
+                                  viewInsets.bottom,
                           child: BlocBuilder<CommentBloc, CommentState>(
                             builder: (context, state) {
                               if (state.status == CommentStatus.loading) {
@@ -196,13 +195,7 @@ class _CommentListViewState extends State<CommentListView> {
                                                     Radius.circular(40))),
                                         child: TextField(
                                           controller: _controller,
-                                          onChanged: (value) {
-                                            if (value != '') {
-                                              context2.read<CommentBloc>().add(
-                                                  CommentContentChange(
-                                                      content: value));
-                                            }
-                                          },
+                                          onChanged: (value) {},
                                           keyboardType: TextInputType.text,
                                           minLines: 1,
                                           maxLines: 4,
@@ -236,11 +229,9 @@ class _CommentListViewState extends State<CommentListView> {
                                           ?.unfocus();
                                       context2.read<ListComments>().addFirst(
                                           Comment(
-                                              avatarUrl: avatarUrl,
                                               userName: userName,
                                               time: 'Commenting...',
-                                              content:
-                                                  state.addCommentContent!));
+                                              content: _controller.text));
                                       _controller.clear();
                                     },
                                     child: const Icon(

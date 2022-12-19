@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:facebook_auth/core/helper/current_user.dart';
 
 import 'package:facebook_auth/data/models/comment_response.dart';
 import 'package:facebook_auth/domain/use_cases/load_comment_use_case.dart';
@@ -8,7 +9,7 @@ import 'package:facebook_auth/domain/use_cases/set_comment_use_case.dart';
 import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../../../../utils/constant.dart';
+import '../../../../utils/constant.dart' as constant;
 import '../../model/comment.dart';
 
 part 'comment_event.dart';
@@ -23,7 +24,6 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
   ) : super(const CommentState(status: CommentStatus.initial)) {
     on<LoadCommentEvent>(_onLoadComment);
     on<AddComment>(_onAddComment);
-    on<CommentContentChange>(_onCommentChange);
   }
 
   _onLoadComment(LoadCommentEvent event, Emitter emit) async {
@@ -31,7 +31,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     var result = await useCase.call(LoadCommentsParams(
         token: SessionUser.token!,
         postId: event.postId,
-        count: count,
+        count: constant.count,
         index: 0));
     result.fold((l) {
       emit(state.copyWith(
@@ -44,25 +44,27 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
   }
 
   _onAddComment(AddComment event, Emitter emit) async {
-    if (state.addCommentContent == '') return;
+    if (event.content == '') return;
     if (state.itemList.isEmpty) {
+      var myAvatar = CurrentUser.avatar;
+      var userName = CurrentUser.userName;
       emit(state.copyWith(
           status: CommentStatus.loadedSuccess,
           itemList: [
             Comment(
-                avatarUrl: avatarUrl,
+                avatarUrl: myAvatar,
                 userName: userName,
                 time: 'Just ago',
-                content: state.addCommentContent!)
+                content: event.content)
           ],
           newComment: Comment(
-              avatarUrl: avatarUrl,
+              avatarUrl: myAvatar,
               userName: userName,
               time: 'Just ago',
-              content: state.addCommentContent!)));
+              content: event.content)));
     }
     var result = await setCommentUseCase.call(SetCommentsParams(
-        token: postToken,
+        token: SessionUser.token!,
         postId: event.postId,
         comment: event.content,
         count: 20,
@@ -78,18 +80,14 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
       //         avatarUrl: avatarUrl,
       //         userName: userName,
       //         time: 'Just ago',
-      //         content: state.addCommentContent!));
+      //         content: event.content));
       emit(state.copyWith(
           status: CommentStatus.loadedSuccess,
           newComment: Comment(
-              avatarUrl: avatarUrl,
-              userName: userName,
+              avatarUrl: CurrentUser.avatar,
+              userName: CurrentUser.userName,
               time: 'Just ago',
-              content: state.addCommentContent!)));
+              content: event.content)));
     });
-  }
-
-  _onCommentChange(CommentContentChange event, Emitter emit) {
-    emit(state.copyWith(addCommentContent: event.content));
   }
 }

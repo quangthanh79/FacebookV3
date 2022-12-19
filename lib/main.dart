@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget {
         child: MultiBlocProvider(
           providers: [
             BlocProvider(
-              create: (context) => HomeBloc(getIt()),
+              create: (context) => HomeBloc(getIt(), getIt()),
             ),
             BlocProvider(create: (context) => AuthenticationBloc())
           ],

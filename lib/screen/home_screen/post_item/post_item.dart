@@ -1,11 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:facebook_auth/data/models/user_info.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
+import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/screen/home_screen/comment_list/comment_list_view.dart';
 import 'package:facebook_auth/screen/home_screen/home_body.dart';
 import 'package:facebook_auth/screen/home_screen/post_in_image_screen/post_in_image_screen.dart';
@@ -70,63 +69,53 @@ class Header extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          children: [
-            GestureDetector(
-              child: Image.asset(
-                post.avatarUrl!,
-                width: 32,
-                height: 32,
-              ),
-              onTap: () {
-                User user = User(
-                    id: post.user_id,
-                    avatar: post.avatarUrl,
-                    username: post.userName
-                );
-                // Navigate to UserScreen
-                Navigator.push(
-                    context,
-                    UserScreen.route(
-                        user: user
+        GestureDetector(
+          onTap: () {
+            User user = User(
+                id: post.user_id,
+                avatar: post.avatarUrl,
+                username: post.userName);
+            // Navigate to UserScreen
+            Navigator.push(context, UserScreen.route(user: user));
+          },
+          child: Row(
+            children: [
+              post.avatarUrl != null
+                  ? CircleAvatar(
+                      radius: 16.0,
+                      backgroundImage: NetworkImage(
+                        post.avatarUrl!,
+                      ),
+                      backgroundColor: Colors.transparent,
                     )
-                );
-              }
-            ),
-            const SizedBox(
-              width: 6,
-            ),
-            GestureDetector(
-              child: Column(
+                  : Image.asset(
+                      defaultAvatar,
+                      width: 32,
+                      height: 32,
+                    ),
+              const SizedBox(
+                width: 6,
+              ),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    post.userName,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    child: Text(
+                      post.userName,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   Text(post.time,
                       style: const TextStyle(
                         fontSize: 12,
                       ))
                 ],
-              ),
-              onTap: (){
-                User user = User(
-                    id: post.user_id,
-                    avatar: post.avatarUrl,
-                    username: post.userName
-                );
-                // Navigate to UserScreen
-                Navigator.push(
-                    context,
-                    UserScreen.route(
-                        user: user
-                    )
-                );
-              }
-            )
-          ],
+              )
+            ],
+          ),
         ),
         Container(
           margin: const EdgeInsets.only(bottom: 8),
@@ -220,8 +209,9 @@ class AssetsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (post.assetType != null && post.assetType == TYPE_IMAGE) {
-      return SizedBox(
-          width: double.infinity,
+      return Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          height: 300,
           child: GestureDetector(
             onTap: () {
               Navigator.push(
@@ -232,7 +222,7 @@ class AssetsContent extends StatelessWidget {
                     ),
                   ));
             },
-            child: Image.asset(
+            child: Image.network(
               post.assetContentUrl![0],
               fit: BoxFit.cover,
             ),
@@ -394,11 +384,13 @@ class Bottom extends StatelessWidget {
 class ContentText extends StatefulWidget {
   final String content;
   final Color textColor;
+  final Color? showMoreColor;
   final VoidCallback? voidCallback;
   const ContentText({
     Key? key,
     required this.content,
     required this.textColor,
+    this.showMoreColor,
     this.voidCallback,
   }) : super(key: key);
 
@@ -430,14 +422,25 @@ class _ContentTextState extends State<ContentText> {
                     });
                   },
                 text: 'Show more',
-                style: const TextStyle(color: Colors.black54)),
+                style:
+                    TextStyle(color: widget.showMoreColor ?? Colors.black54)),
           ],
         ),
       );
     }
     if (isShowMore == true) {
-      return Text(widget.content, textAlign: TextAlign.start);
+      return Text(widget.content,
+          textAlign: TextAlign.start,
+          style: TextStyle(
+            fontSize: 14.0,
+            color: widget.textColor,
+          ));
     }
-    return Text(widget.content, textAlign: TextAlign.start);
+    return Text(widget.content,
+        textAlign: TextAlign.start,
+        style: TextStyle(
+          fontSize: 14.0,
+          color: widget.textColor,
+        ));
   }
 }

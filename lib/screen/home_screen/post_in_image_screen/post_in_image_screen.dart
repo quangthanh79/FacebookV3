@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:facebook_auth/screen/home_screen/home_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,7 +47,7 @@ class PostInImageScreen extends StatelessWidget {
                       value.changeState();
                     },
                     child: SizedBox.expand(
-                      child: Image.asset(
+                      child: Image.network(
                         context
                             .read<ListPostNotify>()
                             .items[index]
@@ -102,7 +101,42 @@ class _ControllerState extends State<Controller> {
           Container(
               alignment: Alignment.topRight,
               padding: const EdgeInsets.only(top: 4, right: 4),
-              child: Image.asset('assets/images/menu_3_dots_vertical.png')),
+              child: GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context2) => Dialog(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 16),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context2);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text("Report post success!")));
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: const [
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Icon(Icons.report),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                Text('Report this post'),
+                                Spacer()
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  child:
+                      Image.asset('assets/images/menu_3_dots_vertical.png'))),
           Container(
             color: Colors.black.withOpacity(0.4),
             padding: const EdgeInsets.all(6),
@@ -112,18 +146,24 @@ class _ControllerState extends State<Controller> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    widget.post.userName,
-                    style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    child: Text(
+                      widget.post.userName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
                   ),
                   const SizedBox(
                     height: 4,
                   ),
                   !showMoreText
                       ? ContentText(
+                          showMoreColor: Colors.grey,
                           content: widget.post.content,
                           textColor: Colors.white,
                           voidCallback: () {

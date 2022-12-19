@@ -5,14 +5,15 @@ import 'package:dio/dio.dart';
 import 'package:facebook_auth/core/networking/api_service.dart';
 import 'package:facebook_auth/data/models/post_response.dart';
 import 'package:facebook_auth/utils/constant.dart';
-
+import 'package:http_parser/http_parser.dart';
 import '../../../core/common/error/exceptions.dart';
 
 abstract class PostDataSource {
   Future<PostListResponse> loadListPosts(
       {required String token, required int count, required int index});
   Future<String> addPost(
-      {required String token, required String described, File? image});
+      {required String token, required String described, List<File>? image});
+  Future<Author> getUserInfo(String token);
 }
 
 class PostDataSourceImpl implements PostDataSource {
@@ -42,12 +43,46 @@ class PostDataSourceImpl implements PostDataSource {
 
   @override
   Future<String> addPost(
-      {required String token, required String described, File? image}) async {
+      {required String token,
+      required String described,
+      List<File>? image}) async {
     try {
+      List<MultipartFile>? multipartFiles;
+      if (image != null) {
+        multipartFiles = <MultipartFile>[];
+
+        for (final file in image) {
+          final fileBytes = await file.readAsBytes();
+          final multipartFile = MultipartFile.fromBytes(
+            fileBytes,
+            filename: file.path.split('/').last,
+            contentType: MediaType('application', 'octet-stream'),
+          );
+          multipartFiles.add(multipartFile);
+        }
+      }
       var response = await apiService.addPost(
-          token: token, described: described, image: image);
+          token: token, described: described, image: multipartFiles);
       if (response.statusCode == '1000') {
         return response.data!.id!;
+      }
+      throw ServerException(response.messages ?? unexpectedError);
+    } on DioError catch (e) {
+      throw ServerException.handleError(e);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<Author> getUserInfo(String token) async {
+    try {
+      var response = await apiService.getUserInfo(token);
+      if (response.statusCode == '1000' && response.data != null) {
+        return Author(
+            avatarUrl: response.data!.avatarUrl,
+            userName: response.data!.userName,
+            id: response.data!.id);
       }
       throw ServerException(response.messages ?? unexpectedError);
     } on DioError catch (e) {

@@ -23,7 +23,7 @@ class AddPostUseCase implements UseCase<String, AddPostParams> {
 class AddPostParams {
   final String token;
   final String described;
-  final File? image;
+  final List<File>? image;
   const AddPostParams({
     required this.token,
     required this.described,

@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:facebook_auth/core/helper/current_user.dart';
 
 import 'package:facebook_auth/domain/use_cases/add_post_use_case.dart';
 import 'package:facebook_auth/screen/home_screen/home_body.dart';
 import 'package:facebook_auth/screen/home_screen/model/post.dart';
-import 'package:facebook_auth/utils/constant.dart';
 import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -30,13 +30,14 @@ class AddPostBloc extends Bloc<AddPostEvent, AddPostState> {
     var result = await useCase.call(AddPostParams(
         token: SessionUser.token!,
         described: state.content,
-        image: state.image));
+        image: state.image != null ? [state.image!] : null));
     result.fold((l) {
       emit(state.copyWith(status: AddPostStatus.failure, error: l.message));
     }, (r) {
       event.context.read<ListPostNotify>().addPost(Post(
           postId: r,
-          userName: userName,
+          userName: CurrentUser.userName,
+          avatarUrl: CurrentUser.avatar,
           content: state.content,
           time: 'Just ago',
           likesNumber: 0,

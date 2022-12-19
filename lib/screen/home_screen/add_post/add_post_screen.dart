@@ -1,8 +1,5 @@
 import 'dart:io';
-
-import 'package:facebook_auth/screen/home_screen/home_body.dart';
-import 'package:facebook_auth/screen/home_screen/model/post.dart';
-import 'package:facebook_auth/utils/constant.dart';
+import 'package:facebook_auth/core/helper/current_user.dart';
 import 'package:facebook_auth/utils/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -54,9 +51,12 @@ class AddPostView extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.asset(
-                defaultAvatar,
-                scale: 20,
+              CircleAvatar(
+                radius: 20.0,
+                backgroundImage: NetworkImage(
+                  CurrentUser.avatar,
+                ),
+                backgroundColor: Colors.transparent,
               ),
               const SizedBox(
                 width: 12,
@@ -64,9 +64,9 @@ class AddPostView extends StatelessWidget {
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Text(userName,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text(CurrentUser.userName,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16)),
                   Container(
                       padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
@@ -94,25 +94,35 @@ class AddPostView extends StatelessWidget {
             height: 12,
           ),
           Expanded(child: BlocBuilder<AddPostBloc, AddPostState>(
-            builder: (context, state) {
-              return TextField(
-                onChanged: (value) {
-                  context
-                      .read<AddPostBloc>()
-                      .add(PostContentChange(content: value));
-                },
-                maxLength: 500,
-                maxLines: 20,
-                style: const TextStyle(fontSize: 20),
-                decoration: const InputDecoration(
-                  hintText: "What do you think?",
-                  hintStyle: TextStyle(fontSize: 20, color: Colors.grey),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.teal,
+            builder: (contextBloc, state) {
+              return Column(
+                children: [
+                  TextField(
+                    onChanged: (value) {
+                      contextBloc
+                          .read<AddPostBloc>()
+                          .add(PostContentChange(content: value));
+                    },
+                    maxLength: 500,
+                    maxLines: null,
+                    style: const TextStyle(fontSize: 20),
+                    decoration: const InputDecoration(
+                      hintText: "What do you think?",
+                      hintStyle: TextStyle(fontSize: 20, color: Colors.grey),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.teal,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  Expanded(
+                      child: state.image != null
+                          ? Container(
+                              padding: const EdgeInsets.all(8),
+                              child: Image.file(state.image!))
+                          : Container())
+                ],
               );
             },
           ))
@@ -145,9 +155,10 @@ class AddPostView extends StatelessWidget {
                       final ImagePicker picker = ImagePicker();
                       XFile? image =
                           await picker.pickImage(source: ImageSource.gallery);
-
                       if (image != null) {
-                        imagePicked(File(image.path));
+                        var file = File(image.path);
+                        file.absolute;
+                        imagePicked(file);
                       }
                     },
                     child: const Icon(

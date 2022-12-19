@@ -66,14 +66,16 @@ class _ApiService implements ApiService {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
+    _data.fields.add(MapEntry(
+      'token',
+      token,
+    ));
+    _data.fields.add(MapEntry(
+      'described',
+      described,
+    ));
     if (image != null) {
-      _data.files.add(MapEntry(
-        'image',
-        MultipartFile.fromFileSync(
-          image.path,
-          filename: image.path.split(Platform.pathSeparator).last,
-        ),
-      ));
+      _data.files.addAll(image.map((i) => MapEntry('image', i)));
     }
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<ApiResponse<AddPostResponse>>(Options(
@@ -204,6 +206,33 @@ class _ApiService implements ApiService {
     final value = ApiResponse<bool>.fromJson(
       _result.data!,
       (json) => json as bool,
+    );
+    return value;
+  }
+
+  @override
+  Future<ApiResponse<Author>> getUserInfo(token) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'token': token};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ApiResponse<Author>>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+            .compose(
+              _dio.options,
+              '/user/get_user_info',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = ApiResponse<Author>.fromJson(
+      _result.data!,
+      (json) => Author.fromJson(json as Map<String, dynamic>),
     );
     return value;
   }
