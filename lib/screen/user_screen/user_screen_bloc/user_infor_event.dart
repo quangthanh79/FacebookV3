@@ -1,7 +1,6 @@
 
 
-import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
+part of 'user_infor_bloc.dart';
 
 abstract class UserInforEvent extends Equatable{
   @override

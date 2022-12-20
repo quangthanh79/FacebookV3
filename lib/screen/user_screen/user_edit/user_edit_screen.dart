@@ -5,60 +5,77 @@ import 'package:facebook_auth/data/repository/user_repository.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/edit_avatar.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/edit_bloc/edit_bloc.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/edit_infor.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_event.dart';
 import 'package:facebook_auth/utils/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
+
 // ignore: must_be_immutable
-class UserEditScreen extends StatelessWidget with MyPage{
+class UserEditScreen extends MyPage{
   User user;
-  User tempUser = User();
-  // UserScreen main;
-  bool isChanged = false;
-  BlocSystem? blocSystem;
-  String? output;
-
   UserEditScreen({
-    super.key,
-    required this.user
-  }){
-    user = user;
-    tempUser.copyFrom(user);
-    blocSystem = BlocSystem(user: user, userRepository: getIt.get<UserRepository>());
-  }
+    required this.user,
+    super.onBack,
+    super.onBackResponse,
+    super.key
+  });
 
+  @override
+  State<StatefulWidget> createState() => UserEditScreenState();
 
-
-  static Route<void> route(User user) {
+  static Route<void> route({
+    required User user,
+    void Function()? onBack,
+    void Function(dynamic)? onBackResponse
+  }) {
     return MaterialPageRoute(
         builder: (context) {
           return UserEditScreen(
-              user: user
+            user: user,
+            onBack: onBack,
+            onBackResponse: onBackResponse,
           );
         }
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class UserEditScreenState extends MyPageState<UserEditScreen>{
+  late User user;
+  User tempUser = User();
+  bool isChanged = false;
+  late BlocSystem blocSystem;
+
+  @override
+  void initState(){
+    super.initState();
+    user = widget.user;
+    tempUser.copyFrom(user);
+    blocSystem = BlocSystem(
+        user: user,
+        userRepository: getIt<UserRepository>()
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    this.context = context;
+    super.build(context);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(fontFamily: 'OpenSans', platform: TargetPlatform.iOS, backgroundColor: Colors.black12),
         home: Scaffold(
             body: MultiBlocProvider(
               providers: [
-                BlocProvider<EditUsernameBloc>(create: (context) => blocSystem!.usernameBloc!),
-                BlocProvider<EditAvatarBloc>(create: (context) => blocSystem!.avatarBloc!),
-                BlocProvider<EditCoverImageBloc>(create: (context) => blocSystem!.coverImageBloc!),
-                BlocProvider<EditDescriptionBloc>(create: (context) => blocSystem!.descriptionBloc!),
-                BlocProvider<EditCountryBloc>(create: (context) => blocSystem!.countryBloc!),
-                BlocProvider<EditAddressBloc>(create: (context) => blocSystem!.addressBloc!),
-                BlocProvider<EditCityBloc>(create: (context) => blocSystem!.cityBloc!),
-                BlocProvider<EditLinkBloc>(create: (context) => blocSystem!.linkBloc!),
+                BlocProvider<EditUsernameBloc>(create: (context) => blocSystem.usernameBloc),
+                BlocProvider<EditAvatarBloc>(create: (context) => blocSystem.avatarBloc),
+                BlocProvider<EditCoverImageBloc>(create: (context) => blocSystem.coverImageBloc),
+                BlocProvider<EditDescriptionBloc>(create: (context) => blocSystem.descriptionBloc),
+                BlocProvider<EditCountryBloc>(create: (context) => blocSystem.countryBloc),
+                BlocProvider<EditAddressBloc>(create: (context) => blocSystem.addressBloc),
+                BlocProvider<EditCityBloc>(create: (context) => blocSystem.cityBloc),
+                BlocProvider<EditLinkBloc>(create: (context) => blocSystem.linkBloc),
               ],
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -66,24 +83,29 @@ class UserEditScreen extends StatelessWidget with MyPage{
                   const SizedBox(height: 28),
                   Header(
                     label: "Chỉnh sửa trang cá nhân",
-                    main: this,
+                    back: back,
                   ),
                   Expanded(
                       flex: 1,
                       child: ListView(
+                          addAutomaticKeepAlives: true,
                           padding: const EdgeInsets.all(0),
                           children: [
-                            EditUsername(
-                                main: this
+                            BlocBuilder<EditUsernameBloc, EditState>(
+                                bloc: blocSystem.usernameBloc,
+                                builder: (context, state) => EditUsername(main: this)
                             ),
-                            EditAvatar(
-                              main: this,
+                            BlocBuilder<EditAvatarBloc, EditState>(
+                                bloc: blocSystem.avatarBloc,
+                                builder: (context, state) => EditAvatar(main: this)
                             ),
-                            EditCoverImage(
-                              main: this,
+                            BlocBuilder<EditCoverImageBloc, EditState>(
+                                bloc: blocSystem.coverImageBloc,
+                                builder: (context, state) => EditCoverImage(main: this)
                             ),
-                            EditDescription(
-                                main: this
+                            BlocBuilder<EditDescriptionBloc, EditState>(
+                                bloc: blocSystem.descriptionBloc,
+                                builder: (context, state) => EditDescription(main: this)
                             ),
                             EditInformation(
                                 main: this
@@ -98,26 +120,30 @@ class UserEditScreen extends StatelessWidget with MyPage{
         )
     );
   }
-
-  @override
-  void back(){
-    // if (isChanged) {
-    //   main.userInforBloc!.add(LoadUserEvent());
-    // }
-
-
-    // main.userInforBloc!.add(LoadUserEvent());
-    // Navigator.pop(context!);
-  }
 }
 
 // ignore: must_be_immutable
-mixin MyPage{
-  BuildContext? context;
+abstract class MyPage extends StatefulWidget{
+  void Function()? onBack;
+  void Function(dynamic)? onBackResponse;
+  dynamic response;
+  MyPage({this.onBack, this.onBackResponse, super.key});
   void back(){
-    if (context == null) return;
-    Navigator.pop(context!);
+    if (onBack != null){
+      onBack!();
+    }
+    if (onBackResponse != null){
+      onBackResponse!(response);
+    }
   }
+}
+abstract class MyPageState<T extends MyPage> extends State<T> with AutomaticKeepAliveClientMixin{
+  void back(){
+    widget.back();
+    Navigator.pop(context);
+  }
+
+  @override get wantKeepAlive => true;
 }
 
 class MyDivider extends SizedBox{
@@ -132,10 +158,10 @@ class MyDivider extends SizedBox{
 }
 
 // ignore: must_be_immutable
-class Header extends StatelessWidget{
+class Header extends StatelessWidget {
   String label = "";
-  MyPage main;
-  Header({super.key, String? label, required this.main}){
+  void Function()? back;
+  Header({super.key, String? label, this.back}){
     this.label = label ?? "";
   }
 
@@ -158,12 +184,12 @@ class Header extends StatelessWidget{
               child: Row(
                 children: [
                   GestureDetector(
+                    onTap: back ?? (){},
                     child: const Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: 20, vertical: 12),
                       child: Icon(Icons.arrow_back),
                     ),
-                    onTap: () => main.back(),
                   ),
                   Text(
                     label,
@@ -175,10 +201,6 @@ class Header extends StatelessWidget{
                 ],
               )
           ),
-          Expanded(
-              flex: 2,
-              child: Container()
-          )
         ],
       ),
     );

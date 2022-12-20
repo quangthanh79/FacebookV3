@@ -1,19 +1,16 @@
 
 
-import 'dart:io';
 
-import 'package:facebook_auth/screen/user_screen/user_components/menu_bottom.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/edit_bloc/edit_bloc.dart';
-import 'package:facebook_auth/screen/user_screen/user_edit/edit_bloc/edit_event.dart';
-import 'package:facebook_auth/screen/user_screen/user_edit/edit_bloc/edit_state.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/input_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/user_edit_screen.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_components/menu_bottom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // ignore: must_be_immutable
 class EditDescription extends StatelessWidget{
-  UserEditScreen main;
+  UserEditScreenState main;
   BuildContext? context;
 
   EditDescription({super.key, required this.main});
@@ -21,72 +18,73 @@ class EditDescription extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     this.context = context;
-    return BlocBuilder<EditDescriptionBloc, EditState>(
-      buildWhen: (previous, current) => true,
-      bloc: main.blocSystem!.descriptionBloc!,
-      builder: (context, state){
-        return Container(
-            margin: const EdgeInsets.only(
-                top: 12,
-                left: 12,
-                right: 12
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+    return Container(
+        margin: const EdgeInsets.only(
+            top: 12,
+            left: 12,
+            right: 12
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () => main.blocSystem!.descriptionBloc!.add(ReloadEvent()),
-                      child: Text(
-                          "Tiểu sử",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 20
-                          )
-                      ),
-                    ),
-                    GestureDetector(
-                        onTap: (){ onChangeDescription(); },
-                        child: Text(
-                          main.user.description == null ? "Thêm" : "Chỉnh sửa",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18,
-                              color: Colors.blue.shade700
-                          ),
-                        )
-                    )
-                  ],
+                GestureDetector(
+                  onTap: () => main.blocSystem.descriptionBloc.add(ReloadEvent()),
+                  child: const Text(
+                      "Tiểu sử",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 20
+                      )
+                  ),
                 ),
-                const SizedBox(height: 16,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                        onTap: (){ onChangeDescription(); },
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
+                GestureDetector(
+                    onTap: (){ onChangeDescription(); },
+                    child: Text(
+                      main.user.description == null ? "Thêm" : "Chỉnh sửa",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18,
+                          color: Colors.blue.shade700
+                      ),
+                    )
+                )
+              ],
+            ),
+            const SizedBox(height: 16,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: GestureDetector(
+                      onTap: (){ onChangeDescription(); },
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              fit: FlexFit.loose,
+                              child: Text(
                                 main.user.description ?? "Thêm tiểu sử của bạn",
+                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                     fontSize: 16,
                                     color: main.user.description != null ? Colors.black : Colors.black38
                                 ),
                               )
-                            ]
-                        )
-                    )
-                  ],
-                ),
-                const SizedBox(height: 16,),
-                MyDivider()
+                            )
+                          ]
+                      )
+                  ),
+                )
               ],
-            )
-        );
-      },
+            ),
+            const SizedBox(height: 16,),
+            MyDivider()
+          ],
+        )
     );
   }
 
@@ -104,17 +102,15 @@ class EditDescription extends StatelessWidget{
   }
 
   void changeDescription() async{
-    InputScreen.show(
+    InputScreen.route(
         context: context!,
-        main: main,
         label: "Tiểu sử",
         value: main.user.description ?? "",
-        callback: (){
-          if (main.output != null){
+        onBackResponse: (response){
+          if (response != null){
             main.isChanged = true;
-            main.user.description = main.output;
-            // print(main.main.user!.username);
-            main.blocSystem!.descriptionBloc!.add(CommitChangeEvent());
+            main.user.description = response;
+            main.blocSystem.descriptionBloc.commit(main.tempUser);
           }
         }
     );
@@ -122,7 +118,7 @@ class EditDescription extends StatelessWidget{
 
   void removeDescription(){
     main.user.description = "";
-    main.blocSystem!.descriptionBloc!.add(CommitChangeEvent());
+    main.blocSystem.descriptionBloc.commit(main.tempUser);
   }
 
 }
@@ -131,7 +127,7 @@ class EditDescription extends StatelessWidget{
 
 // ignore: must_be_immutable
 class EditInformation extends StatelessWidget{
-  UserEditScreen main;
+  UserEditScreenState main;
   BuildContext? context;
 
   EditInformation({super.key, required this.main});
@@ -161,29 +157,49 @@ class EditInformation extends StatelessWidget{
               ],
             ),
             const SizedBox(height: 16,),
-            getItem(
-                icon: Icons.home_repair_service,
-                label: main.user.city != null ? "" : "Thêm thành phố",
-                value: main.user.city,
-                function: onChangeCity
+            BlocBuilder<EditCityBloc, EditState>(
+                bloc: main.blocSystem.cityBloc,
+                builder: (context, state){
+                  return getItem(
+                      icon: Icons.home_repair_service,
+                      label: main.user.city != null ? "" : "Thêm thành phố",
+                      value: main.user.city,
+                      function: onChangeCity
+                  );
+                }
             ),
-            getItem(
-                icon: Icons.home,
-                label: main.user.address != null ? "Sống tại " : "Thêm địa chỉ",
-                value: main.user.address,
-                function: onChangeAddress
+            BlocBuilder<EditAddressBloc, EditState>(
+                bloc: main.blocSystem.addressBloc,
+                builder: (context, state){
+                  return getItem(
+                      icon: Icons.home,
+                      label: main.user.address != null ? "Sống tại " : "Thêm địa chỉ",
+                      value: main.user.address,
+                      function: onChangeAddress
+                  );
+                }
             ),
-            getItem(
-                icon: Icons.location_on,
-                label: main.user.country != null ? "Đến từ " : "Thêm địa quê quán",
-                value: main.user.country,
-                function: onChangeCountry
+            BlocBuilder<EditCountryBloc, EditState>(
+                bloc: main.blocSystem.countryBloc,
+                builder: (context, state){
+                  return getItem(
+                      icon: Icons.location_on,
+                      label: main.user.country != null ? "Đến từ " : "Thêm quê quán",
+                      value: main.user.country,
+                      function: onChangeCountry
+                  );
+                }
             ),
-            getItem(
-                icon: Icons.link_rounded,
-                label: main.user.link != null ? "" : "Thêm liên kết mạng xã hội",
-                value: main.user.link,
-                function: onChangeLink
+            BlocBuilder<EditLinkBloc, EditState>(
+                bloc: main.blocSystem.linkBloc,
+                builder: (context, state){
+                  return getItem(
+                      icon: Icons.link_rounded,
+                      label: main.user.link != null ? "" : "Thêm liên kết mạng xã hội",
+                      value: main.user.link,
+                      function: onChangeLink
+                  );
+                }
             ),
             getItem(
                 icon: Icons.access_time_filled_sharp,
@@ -215,24 +231,22 @@ class EditInformation extends StatelessWidget{
     }
   }
   void changeCity(){
-    InputScreen.show(
+    InputScreen.route(
         context: context!,
-        main: main,
         label: "Thành phố sinh sống",
         value: main.user.city ?? "",
-        callback: (){
-          if (main.output != null){
+        onBackResponse: (response){
+          if (response != null){
             main.isChanged = true;
-            main.user.city = main.output;
-            // print(main.main.user!.username);
-            main.blocSystem!.usernameBloc!.add(CommitChangeEvent());
+            main.user.city = response;
+            main.blocSystem.cityBloc.commit(main.tempUser);
           }
         }
     );
   }
   void removeCity(){
     main.user.city = "";
-    main.blocSystem!.usernameBloc!.add(CommitChangeEvent());
+    main.blocSystem.cityBloc.commit(main.tempUser);
   }
 
   void onChangeAddress(){
@@ -248,24 +262,22 @@ class EditInformation extends StatelessWidget{
     }
   }
   void changeAddress(){
-    InputScreen.show(
+    InputScreen.route(
         context: context!,
-        main: main,
         label: "Địa chỉ hiện tại",
         value: main.user.address ?? "",
-        callback: (){
-          if (main.output != null){
+        onBackResponse: (response){
+          if (response != null){
             main.isChanged = true;
-            main.user.address = main.output;
-            // print(main.main.user!.username);
-            main.blocSystem!.usernameBloc!.add(CommitChangeEvent());
+            main.user.address = response;
+            main.blocSystem.addressBloc.add(CommitChangeEvent());
           }
         }
     );
   }
   void removeAddress(){
     main.user.address = "";
-    main.blocSystem!.usernameBloc!.add(CommitChangeEvent());
+    main.blocSystem.addressBloc.add(CommitChangeEvent());
   }
 
   void onChangeCountry(){
@@ -281,24 +293,22 @@ class EditInformation extends StatelessWidget{
     }
   }
   void changeCountry(){
-    InputScreen.show(
+    InputScreen.route(
         context: context!,
-        main: main,
         label: "Quê quán",
         value: main.user.country ?? "",
-        callback: (){
-          if (main.output != null){
+        onBackResponse: (response){
+          if (response != null){
             main.isChanged = true;
-            main.user.country = main.output;
-            // print(main.main.user!.username);
-            main.blocSystem!.usernameBloc!.add(CommitChangeEvent());
+            main.user.country = response;
+            main.blocSystem.countryBloc.commit(main.tempUser);
           }
         }
     );
   }
   void removeCountry(){
     main.user.country = "";
-    main.blocSystem!.usernameBloc!.add(CommitChangeEvent());
+    main.blocSystem.countryBloc.commit(main.tempUser);
   }
 
   void onChangeLink(){
@@ -314,24 +324,22 @@ class EditInformation extends StatelessWidget{
     }
   }
   void changeLink(){
-    InputScreen.show(
+    InputScreen.route(
         context: context!,
-        main: main,
         label: "Liên kết xã hội",
         value: main.user.link ?? "",
-        callback: (){
-          if (main.output != null){
+        onBackResponse: (response){
+          if (response != null){
             main.isChanged = true;
-            main.user.link = main.output;
-            // print(main.main.user!.username);
-            main.blocSystem!.usernameBloc!.add(CommitChangeEvent());
+            main.user.link = response;
+            main.blocSystem.linkBloc.commit(main.tempUser);
           }
         }
     );
   }
   void removeLink(){
     main.user.link = "";
-    main.blocSystem!.usernameBloc!.add(CommitChangeEvent());
+    main.blocSystem.linkBloc.commit(main.tempUser);
   }
 
   Widget getItem({

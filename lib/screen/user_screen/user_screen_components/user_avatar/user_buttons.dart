@@ -4,12 +4,11 @@ import 'package:facebook_auth/data/models/chat.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/friend_repository.dart';
 import 'package:facebook_auth/screen/chat_screen/chat_detail_screen.dart';
-import 'package:facebook_auth/screen/user_screen/user_avatar/user_buttons_bloc/user_buttons_bloc.dart';
-import 'package:facebook_auth/screen/user_screen/user_avatar/user_buttons_bloc/user_buttons_event.dart';
-import 'package:facebook_auth/screen/user_screen/user_avatar/user_buttons_bloc/user_buttons_state.dart';
-import 'package:facebook_auth/screen/user_screen/user_components/menu_bottom.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/user_edit_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_bloc.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_components/menu_bottom.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons_bloc/user_buttons_bloc.dart';
 import 'package:facebook_auth/utils/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,12 +17,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 enum Theme {blue, dark}
 
 // ignore: must_be_immutable
-class UserButtons extends StatelessWidget{
-  User user;
-  UserButtonsBloc? userButtonsBloc;
-  BuildContext? context;
+class UserButtons extends UserScreenComponent {
+  UserButtons({super.key, required super.main});
+  @override
+  State<StatefulWidget> createState() => UserButtonsState_();
+}
 
-  UserButtons({super.key, required this.user}){
+// ignore: camel_case_types
+class UserButtonsState_ extends UserScreenComponentState<UserButtons>{
+  late UserButtonsBloc userButtonsBloc;
+  @override void initState(){
+    super.initState();
     userButtonsBloc = UserButtonsBloc(
       user: user,
       friendRepository: getIt.get<FriendRepository>(),
@@ -32,11 +36,10 @@ class UserButtons extends StatelessWidget{
 
   @override
   Widget build(BuildContext context){
-    this.context = context;
     return BlocProvider<UserButtonsBloc>(
-      create: (context) => userButtonsBloc!,
+      create: (context) => userButtonsBloc,
       child: BlocBuilder<UserButtonsBloc, UserButtonsState>(
-        bloc: userButtonsBloc!,
+        bloc: userButtonsBloc,
         builder: (context, state){
           // ignore: unnecessary_type_check
           if (state is UserButtonsState){
@@ -51,6 +54,8 @@ class UserButtons extends StatelessWidget{
                 return getReceiveButtons(context);
               case UserButtonStatus.NOT_FRIEND:
                 return getNotRelativeButtons(context);
+              case UserButtonStatus.INITIAL:
+                return Container();
             }
             // return getNotRelativeButtons(context);
           }
@@ -103,20 +108,22 @@ class UserButtons extends StatelessWidget{
                   function: (){
                     Navigator.push(
                         context,
-                        UserEditScreen.route(this.user)
+                        UserEditScreen.route(
+                            user: user,
+                            onBack: main.onBackThisPage
+                        )
                     );
                   }
-                  //     UserEditScreen.route(
-                  //     context: main.context!,
-                  //     main: main
-                  // ),
               ),
               const SizedBox(width: 8,),
               getButtonMore(
                 function: (){
                   Navigator.push(
                       context,
-                      UserEditScreen.route(this.user)
+                      UserEditScreen.route(
+                        user: user,
+                        onBack: () => main.userInforBloc.add(ReloadUserEvent())
+                      )
                   );
                 },
               )
@@ -140,7 +147,7 @@ class UserButtons extends StatelessWidget{
               flex: 3,
               function: (){
                 UserMenuBottom.showBottomMenu(
-                    context: this.context!,
+                    context: context,
                     status: UserButtonStatus.IS_FRIEND,
                     main: this
                 );
@@ -167,7 +174,7 @@ class UserButtons extends StatelessWidget{
               flex: 3,
               function: (){
                 UserMenuBottom.showBottomMenu(
-                    context: this.context!,
+                    context: context,
                     status: UserButtonStatus.REQUESTING,
                     main: this
                 );
@@ -194,7 +201,7 @@ class UserButtons extends StatelessWidget{
               flex: 3,
               function: (){
                 UserMenuBottom.showBottomMenu(
-                    context: this.context!,
+                    context: context,
                     status: UserButtonStatus.REQUESTED,
                     main: this
                 );
@@ -219,7 +226,7 @@ class UserButtons extends StatelessWidget{
               label: "Thêm bạn bè",
               icon: Icons.person_add_alt_1,
               flex: 3,
-              function: (){ userButtonsBloc!.add(SendRequestFriendEvent()); }
+              function: (){ userButtonsBloc.add(SendRequestFriendEvent()); }
           ),
           const SizedBox(width: 8,),
           getButtonMessage(theme: Theme.dark),
@@ -304,7 +311,7 @@ class UserButtons extends StatelessWidget{
       function: (){
         if (user.isMe) return;
         Navigator.push(
-          context!,
+          main.context,
           MaterialPageRoute(
               builder: (context){
                 return ChatDetailScreen(

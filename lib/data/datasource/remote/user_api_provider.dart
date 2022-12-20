@@ -1,6 +1,8 @@
 
 
 
+import 'dart:io';
+
 import 'package:facebook_auth/base/base_client.dart';
 import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
@@ -8,29 +10,32 @@ import 'package:facebook_auth/utils/session_user.dart';
 
 class UserApiProvider extends BaseClient{
   // String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzODNhN2I3ZGE4YTViZGU4MzljNThjYyIsImRhdGVMb2dpbiI6IjIwMjItMTEtMzBUMTU6Mjg6MTQuMjQyWiIsImlhdCI6MTY2OTgyMjA5NCwiZXhwIjoxNjc5ODIyMDkzfQ.mac6fnO9WAreMl3_numHXMptxCsuP77bETtTYh4TARA";
-  String? token = SessionUser.token;
+  // String? token = SessionUser.token;
 
-
-  Future<bool> setUserInfor(User user) async {
+  Future<ResponseUser?> setUserInfor(User user) async {
     var url = "user/set_user_info";
     var params = {
-      "token" : token
+      "token" : SessionUser.token
     };
     params.addAll(user.toJson());
-    final response = await post(
-        url, params.map((key, value) => MapEntry(key, value.toString()))
+
+    var body = <String, File>{};
+    if (user.avatar_file != null) body['avatar'] = user.avatar_file!;
+    // print(user.avatar_file!.path);
+    if (user.cover_image_file != null) body['cover_image'] = user.cover_image_file!;
+
+
+    final response = await post_with_file(
+        url,
+        params.map((key, value) => MapEntry(key, value.toString())),
+        body
     );
-    if (response != null && response['code'] == "1000") {
-      return true;
-    } else {
-      return false;
-    }
+    if (response != null) return ResponseUser.fromJson(response);
+    print("null rồi bạn ơi");
+    return null;
   }
 
   Future<ResponseUser?> getUserInfor(String user_id) async {
-    // String? token = SessionUser.token;
-    // print("Token: "+ token.toString());
-    print("token: ${token}");
     var url = "user/get_user_info";
     final response = await post(
         url,
@@ -38,17 +43,6 @@ class UserApiProvider extends BaseClient{
             .map((key, value) => MapEntry(key, value.toString()))
     );
     if (response != null) return ResponseUser.fromJson(response);
-    return null;
-  }
-  Future<ResponseListFriend?> getUserFriends(String user_id, int page) async{
-    var url = "friend/get_user_friends";
-    String? token = SessionUser.token;
-    final response = await post(
-        url,
-        {"token": token,"user_id": user_id, "page": page}
-            .map((key, value) => MapEntry(key, value.toString()))
-    );
-    if (response != null) return ResponseListFriend.fromJson(response);
     return null;
   }
 

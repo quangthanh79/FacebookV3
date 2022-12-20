@@ -1,14 +1,18 @@
 
 
+import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/friend_repository.dart';
 import 'package:facebook_auth/data/repository/user_repository.dart';
-import 'package:facebook_auth/screen/user_screen/user_avatar/user_buttons_bloc/user_buttons_event.dart';
-import 'package:facebook_auth/screen/user_screen/user_avatar/user_buttons_bloc/user_buttons_state.dart';
+import 'package:facebook_auth/utils/injection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:equatable/equatable.dart';
+
+part 'user_buttons_state.dart';
+part 'user_buttons_event.dart';
 
 class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
-  UserRepository userRepository = UserRepository();
+  UserRepository userRepository = getIt<UserRepository>();
   FriendRepository friendRepository;
   User user;
 
@@ -29,8 +33,8 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
       Emitter<UserButtonsState> emit) async{
     if (user.is_friend == null || user.is_friend != "NOT_FRIEND") return;
     emit(UserButtonsState(userButtonStatus: UserButtonStatus.REQUESTING));
-    bool? okay = await friendRepository.setRequestFriend(user.id!);
-    if (okay){
+    ResponseListFriend? responseListFriend = await friendRepository.setRequestFriend(user.id!);
+    if (responseListFriend != null && responseListFriend.code == "1000"){
       user.is_friend = "REQUESTED";
     } else {
       emit(UserButtonsState(userButtonStatus: UserButtonStatus.NOT_FRIEND));
@@ -43,8 +47,8 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
     if (user.is_friend == null || user.is_friend != "REQUESTED") return;
     user.is_friend = "NOT_FRIEND";
     emit(UserButtonsState(userButtonStatus: UserButtonStatus.NOT_FRIEND));
-    bool? okay = await friendRepository.setRequestFriend(user.id!);
-    if (okay) {
+    ResponseListFriend? responseListFriend = await friendRepository.setRequestFriend(user.id!);
+    if (responseListFriend != null && responseListFriend.code == "1000") {
       user.is_friend = "NOT_FRIEND";
     } else {
       emit(UserButtonsState(userButtonStatus: UserButtonStatus.REQUESTING));
@@ -60,8 +64,8 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
     } else {
       emit(UserButtonsState(userButtonStatus: UserButtonStatus.NOT_FRIEND));
     }
-    bool? okay = await friendRepository.setAcceptFriend(user.id!, e.code == Acceptable.ACCEPT);
-    if (okay) {
+    ResponseListFriend? responseListFriend = await friendRepository.setAcceptFriend(user.id!, e.code == Acceptable.ACCEPT);
+    if (responseListFriend != null && responseListFriend.code == "1000") {
       if (e.code == Acceptable.ACCEPT) {
         user.is_friend = "IS_FRIEND";
       } else {
@@ -78,8 +82,8 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
       Emitter<UserButtonsState> emit) async{
     if (user.is_friend == null || user.is_friend != "IS_FRIEND") return;
     emit(UserButtonsState(userButtonStatus: UserButtonStatus.NOT_FRIEND));
-    bool? okay = await friendRepository.setRequestFriend(user.id!);
-    if (okay) {
+    ResponseListFriend? responseListFriend = await friendRepository.setRequestFriend(user.id!);
+    if (responseListFriend != null && responseListFriend.code == "1000") {
       user.is_friend = "NOT_FRIEND";
     } else {
       emit(UserButtonsState(userButtonStatus: UserButtonStatus.IS_FRIEND));
