@@ -12,15 +12,14 @@ class MyButtonStyle extends ButtonStyle{
     BorderRadiusGeometry borderRadius = BorderRadius.zero,
     BorderSide borderSide = BorderSide.none,
   }) : super(
-    padding: MaterialStatePropertyAll(padding),
-    backgroundColor: MaterialStatePropertyAll(backgroundColor),
-    foregroundColor: MaterialStatePropertyAll(foregroundColor),
+    padding: MaterialStateProperty.all(padding),
+    backgroundColor: MaterialStateProperty.all(backgroundColor),
+    foregroundColor: MaterialStateProperty.all(foregroundColor),
     alignment: alignment,
-    overlayColor: MaterialStatePropertyAll(overlayColor),
-    shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+    overlayColor: MaterialStateProperty.all(overlayColor),
+    shape: MaterialStateProperty.all(RoundedRectangleBorder(
       borderRadius: borderRadius,
       side: borderSide,
     )),
   );
-
 }
