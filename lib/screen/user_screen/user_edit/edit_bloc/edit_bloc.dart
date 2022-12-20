@@ -48,7 +48,6 @@ class EditBloc extends Bloc<EditEvent, EditState>{
   }
 
   Future<void> reloadInfor(ReloadEvent e, Emitter<EditState> emit) async{
-    // print("reload ${user.description}");
     emit(EditState());
   }
   Future<void> commitChange(CommitChangeEvent e, Emitter<EditState> emit) async{

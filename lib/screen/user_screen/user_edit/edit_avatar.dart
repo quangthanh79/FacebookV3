@@ -213,7 +213,6 @@ class EditAvatar extends StatelessWidget{
           main.isChanged = true;
           main.user.avatar_file = file;
           main.blocSystem.avatarBloc.commit(main.tempUser);
-          // print("committesd");
         }
     );
   }
