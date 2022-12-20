@@ -4,10 +4,11 @@ import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/friend_repository.dart';
 import 'package:facebook_auth/data/repository/user_repository.dart';
-import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_item_bloc/friend_item_event.dart';
-import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_item_bloc/friend_item_state.dart';
 import 'package:facebook_auth/utils/injection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+part 'friend_item_state.dart';
+part 'friend_item_event.dart';
 
 class FriendItemBloc extends Bloc<FriendItemEvent, FriendItemState>{
   User user;

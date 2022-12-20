@@ -3,10 +3,11 @@
 import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/friend_repository.dart';
-import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_list_bloc/friend_list_event.dart';
-import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_list_bloc/friend_list_state.dart';
-import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:equatable/equatable.dart';
+
+part 'friend_list_event.dart';
+part 'friend_list_state.dart';
 
 class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
   static const int numFriendsPerPage = 10;
@@ -56,6 +57,8 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
         responseListFriend2 = await friendRepository.getUserFriends(user.id!, 2);
       }),
     ]);
+    listFriend.list!.clear();
+    listFriend.total = 0;
     // combines to listFriend:
     if (responseListFriend1 != null && responseListFriend1!.data != null){
       listFriend.list!.addAll(responseListFriend1!.data!.list!);
@@ -68,7 +71,20 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
     add(ReloadListFriendEvent());
   }
   Future<void> loadFriendInNumber(LoadListFriendInNumberEvent e, Emitter<FriendListState> emit) async{
-
+    int numFriends = e.number;
+    int currentNumFriends = listFriend.total!;
+    if (numFriends <= currentNumFriends) return;
+    int currentPages = (currentNumFriends / numFriendsPerPage).floor();
+    int numPages = (numFriends / numFriendsPerPage).ceil();
+    Iterable<Future<void>> futures;
+    for (int i = currentPages; i <= numPages; i++) {
+      ResponseListFriend? responseListFriend = await friendRepository.getUserFriends(user.id!, i);
+      if (responseListFriend != null && responseListFriend.code == "1000"){
+        listFriend.list!.addAll(responseListFriend.data!.list!);
+      }
+    }
+    listFriend.total = listFriend.list!.length;
+    add(ReloadListFriendEvent());
   }
 
 
@@ -90,6 +106,8 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
         responseListFriend1 = await friendRepository.getRequestedFriends(0, 20);
       }),
     ]);
+    listFriend.list!.clear();
+    listFriend.total = 0;
     // combines to listFriend:
     if (responseListFriend1 != null && responseListFriend1!.data != null){
       listFriend.list!.addAll(responseListFriend1!.data!.list!);
@@ -100,7 +118,19 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
   }
 
   Future<void> loadRequestInNumber(LoadListRequestInNumberEvent e, Emitter<FriendListState> emit) async{
-
+    int numFriends = e.number;
+    int currentNumFriends = listFriend.total!;
+    if (numFriends <= currentNumFriends) return;
+    ResponseListFriend? responseListFriend =
+        await friendRepository.getRequestedFriends(
+            currentNumFriends,
+            numFriends - currentNumFriends + 1
+        );
+    if (responseListFriend != null && responseListFriend.code == "1000"){
+      listFriend.list!.addAll(responseListFriend.data!.list!);
+      listFriend.total = listFriend.list!.length;
+      add(ReloadListFriendEvent());
+    }
   }
 
 
@@ -122,6 +152,8 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
         responseListFriend1 = await friendRepository.getListSuggestedFriends(0, 20);
       }),
     ]);
+    listFriend.list!.clear();
+    listFriend.total = 0;
     // combines to listFriend:
     if (responseListFriend1 != null && responseListFriend1!.data != null){
       listFriend.list!.addAll(responseListFriend1!.data!.list!);
@@ -130,8 +162,19 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
     listFriend.total = listFriend.list!.length;
     add(ReloadListSuggestEvent());
   }
-  Future<void> loadSuggestInNumber(LoadListSuggestInNumberEvent e, Emitter<FriendListState> emit) async{
-
+  Future<void> loadSuggestInNumber(LoadListSuggestInNumberEvent e, Emitter<FriendListState> emit) async {
+    int numFriends = e.number;
+    int currentNumFriends = listFriend.total!;
+    if (numFriends <= currentNumFriends) return;
+    ResponseListFriend? responseListFriend =
+    await friendRepository.getListSuggestedFriends(
+        currentNumFriends,
+        numFriends - currentNumFriends + 1
+    );
+    if (responseListFriend != null && responseListFriend.code == "1000") {
+      listFriend.list!.addAll(responseListFriend.data!.list!);
+      listFriend.total = listFriend.list!.length;
+      add(ReloadListFriendEvent());
+    }
   }
-
 }

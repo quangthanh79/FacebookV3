@@ -1,6 +1,8 @@
 
 
 
+import 'dart:io';
+
 import 'package:facebook_auth/base/base_client.dart';
 import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
@@ -16,10 +18,20 @@ class UserApiProvider extends BaseClient{
       "token" : SessionUser.token
     };
     params.addAll(user.toJson());
-    final response = await post(
-        url, params.map((key, value) => MapEntry(key, value.toString()))
+
+    var body = <String, File>{};
+    if (user.avatar_file != null) body['avatar'] = user.avatar_file!;
+    // print(user.avatar_file!.path);
+    if (user.cover_image_file != null) body['cover_image'] = user.cover_image_file!;
+
+
+    final response = await post_with_file(
+        url,
+        params.map((key, value) => MapEntry(key, value.toString())),
+        body
     );
     if (response != null) return ResponseUser.fromJson(response);
+    print("null rồi bạn ơi");
     return null;
   }
 

@@ -15,7 +15,7 @@ class InputScreen extends MyPage{
     required String label,
     String value = "",
     void Function()? onBack,
-    void Function(String?)? onBackResponse
+    void Function(dynamic)? onBackResponse
   }) async {
     await Navigator.push(
         context,
@@ -47,6 +47,7 @@ class InputScreenState extends MyPageState<InputScreen>{
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'OpenSans', platform: TargetPlatform.iOS, backgroundColor: Colors.black12),

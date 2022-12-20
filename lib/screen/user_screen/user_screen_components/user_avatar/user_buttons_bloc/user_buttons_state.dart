@@ -1,11 +1,12 @@
 
 
-import 'package:equatable/equatable.dart';
+part of 'user_buttons_bloc.dart';
 
 enum UserButtonStatus{
   NOT_FRIEND, IS_FRIEND, REQUESTING, REQUESTED, ME, INITIAL
 }
 
+// ignore: must_be_immutable
 class UserButtonsState extends Equatable{
   UserButtonStatus userButtonStatus;
 

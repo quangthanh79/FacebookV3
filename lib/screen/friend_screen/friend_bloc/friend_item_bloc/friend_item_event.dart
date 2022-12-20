@@ -1,4 +1,5 @@
 
+part of 'friend_item_bloc.dart';
 
 class FriendItemEvent{}
 

@@ -5,8 +5,6 @@ import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_list_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/user_friend/user_friend_bloc/user_friend_bloc.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen_components/user_friend/user_friend_bloc/user_friend_event.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen_components/user_friend/user_friend_bloc/user_friend_state.dart';
 import 'package:flutter/material.dart';
 import 'package:facebook_auth/utils/image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

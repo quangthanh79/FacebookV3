@@ -1,7 +1,6 @@
 
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_bloc.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_state.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons.dart';
 import 'package:facebook_auth/utils/image.dart';
 import 'package:flutter/material.dart';

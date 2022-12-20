@@ -1,6 +1,5 @@
 
 
-import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_list_bloc/friend_list_state.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_list_screen.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_request_screen.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_suggest_screen.dart';

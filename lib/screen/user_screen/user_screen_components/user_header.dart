@@ -2,7 +2,6 @@
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/user_edit_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_event.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
@@ -63,7 +62,7 @@ class UserHeaderState extends UserScreenComponentState<UserHeader>{
                           context,
                           UserEditScreen.route(
                             user: user,
-                            onBack: () => main.userInforBloc.add(ReloadUserEvent())
+                            onBack: main.onBackThisPage
                           )
                       ),
                       child: const Padding(

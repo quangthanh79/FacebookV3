@@ -1,11 +1,5 @@
 
-import 'dart:math';
-
-import 'package:equatable/equatable.dart';
-import 'package:facebook_auth/data/models/friend.dart';
-import 'package:facebook_auth/data/models/user_info.dart';
-import 'package:formz/formz.dart';
-
+part of 'user_infor_bloc.dart';
 
 class UserInforState extends Equatable{
   final FormzStatus statusLoadInfo;

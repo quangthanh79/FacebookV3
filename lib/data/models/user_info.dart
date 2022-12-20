@@ -1,5 +1,7 @@
 
 
+import 'dart:io';
+
 import 'package:facebook_auth/utils/session_user.dart';
 
 
@@ -71,6 +73,8 @@ class User {
   int? online;
   String join = "";
   bool isMe = false;
+  File? avatar_file;
+  File? cover_image_file;
 
   User({
     this.id, this.username, this.created = 0, this.description,
@@ -140,5 +144,7 @@ class User {
     online = user.online;
     isMe = user.isMe;
     join = user.join;
+    avatar_file = user.avatar_file;
+    cover_image_file = user.cover_image_file;
   }
 }

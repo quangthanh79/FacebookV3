@@ -3,8 +3,6 @@
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons_bloc/user_buttons_bloc.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons_bloc/user_buttons_event.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons_bloc/user_buttons_state.dart';
 import 'package:flutter/material.dart';
 
 

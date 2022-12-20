@@ -1,6 +1,6 @@
 
 
-import 'package:equatable/equatable.dart';
+part of 'friend_list_bloc.dart';
 
 enum FriendListStatus{
   LOADING, NO_FRIENDS, LOADED

@@ -2,7 +2,6 @@
 
 import 'package:facebook_auth/screen/user_screen/user_edit/user_edit_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_event.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
@@ -16,6 +15,7 @@ class UserInfor extends UserScreenComponent {
 class UserInforState extends UserScreenComponentState<UserInfor>{
   @override
   Widget build(BuildContext context){
+    super.build(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -62,7 +62,7 @@ class UserInforState extends UserScreenComponentState<UserInfor>{
               context,
               UserEditScreen.route(
                 user: user,
-                onBack: () => main.userInforBloc.add(ReloadUserEvent())
+                onBack: main.onBackThisPage
             )
           ),
           child: Container(

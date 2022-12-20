@@ -6,8 +6,8 @@ import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/friend_repository.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_item_bloc/friend_item_bloc.dart';
-import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_item_bloc/friend_item_event.dart';
-import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_item_bloc/friend_item_state.dart';
+// import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_item_bloc/friend_item_event.dart';
+// import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_item_bloc/friend_item_state.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_screen_components/my_button_style.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
 import 'package:facebook_auth/utils/image.dart';
@@ -39,12 +39,13 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
     friendItemBloc = FriendItemBloc(
         user: user,
         friendRepository: getIt<FriendRepository>()
-    )..add(UpdateButtonsEvent());
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    friendItemBloc.add(UpdateButtonsEvent());
     return BlocProvider<FriendItemBloc>(
       create: (ctx) => friendItemBloc,
       child: BlocBuilder<FriendItemBloc, FriendItemState>(
@@ -126,34 +127,34 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
   }
 
   Widget getShimmer(){
-    return TextButton(onPressed: (){},
-        style: MyButtonStyle(
-            padding: const EdgeInsets.symmetric(vertical: 0),
-            backgroundColor: Colors.white.withAlpha(0)
-        ),
-        child: Shimmer.fromColors(
-            baseColor: Colors.black12.withAlpha(15),
-            highlightColor: Colors.transparent,
-            child: Row(
-              children: [
-                Expanded(child: Container(
-                  height: 60,
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      color: Colors.black
-                  ),
-                ))
-              ],
-            )
+    return Shimmer.fromColors(
+        baseColor: Colors.black12.withAlpha(15),
+        highlightColor: Colors.transparent,
+        child: Row(
+          children: [
+            Expanded(child: Container(
+              height: 60,
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  color: Colors.black
+              ),
+            ))
+          ],
         )
     );
+
   }
 
   void viewUser(){
     Navigator.push(
       context,
-      UserScreen.route(user: user)
+      UserScreen.route(
+          user: user,
+          onBack: (){
+            friendItemBloc.add(UpdateButtonsEvent());
+          }
+      )
     );
   }
 

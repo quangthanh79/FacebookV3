@@ -1,6 +1,5 @@
 
-
-import 'package:equatable/equatable.dart';
+part of 'user_friend_bloc.dart';
 
 class UserFriendState extends Equatable{
   @override

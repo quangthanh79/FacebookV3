@@ -9,7 +9,6 @@ import 'package:facebook_auth/utils/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'edit_bloc/edit_state.dart';
 
 
 // ignore: must_be_immutable
@@ -28,7 +27,7 @@ class UserEditScreen extends MyPage{
   static Route<void> route({
     required User user,
     void Function()? onBack,
-    void Function(String?)? onBackResponse
+    void Function(dynamic)? onBackResponse
   }) {
     return MaterialPageRoute(
         builder: (context) {
@@ -62,6 +61,7 @@ class UserEditScreenState extends MyPageState<UserEditScreen>{
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(fontFamily: 'OpenSans', platform: TargetPlatform.iOS, backgroundColor: Colors.black12),
@@ -92,15 +92,19 @@ class UserEditScreenState extends MyPageState<UserEditScreen>{
                           padding: const EdgeInsets.all(0),
                           children: [
                             BlocBuilder<EditUsernameBloc, EditState>(
+                                bloc: blocSystem.usernameBloc,
                                 builder: (context, state) => EditUsername(main: this)
                             ),
                             BlocBuilder<EditAvatarBloc, EditState>(
+                                bloc: blocSystem.avatarBloc,
                                 builder: (context, state) => EditAvatar(main: this)
                             ),
                             BlocBuilder<EditCoverImageBloc, EditState>(
+                                bloc: blocSystem.coverImageBloc,
                                 builder: (context, state) => EditCoverImage(main: this)
                             ),
                             BlocBuilder<EditDescriptionBloc, EditState>(
+                                bloc: blocSystem.descriptionBloc,
                                 builder: (context, state) => EditDescription(main: this)
                             ),
                             EditInformation(
@@ -121,8 +125,8 @@ class UserEditScreenState extends MyPageState<UserEditScreen>{
 // ignore: must_be_immutable
 abstract class MyPage extends StatefulWidget{
   void Function()? onBack;
-  void Function(String?)? onBackResponse;
-  String? response;
+  void Function(dynamic)? onBackResponse;
+  dynamic response;
   MyPage({this.onBack, this.onBackResponse, super.key});
   void back(){
     if (onBack != null){

@@ -1,7 +1,5 @@
 
-
-
-import 'package:equatable/equatable.dart';
+part of 'friend_list_bloc.dart';
 
 class FriendListEvent extends Equatable{
   @override

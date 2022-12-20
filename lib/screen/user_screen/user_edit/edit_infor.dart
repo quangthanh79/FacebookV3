@@ -2,8 +2,6 @@
 
 
 import 'package:facebook_auth/screen/user_screen/user_edit/edit_bloc/edit_bloc.dart';
-import 'package:facebook_auth/screen/user_screen/user_edit/edit_bloc/edit_event.dart';
-import 'package:facebook_auth/screen/user_screen/user_edit/edit_bloc/edit_state.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/input_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/user_edit_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/menu_bottom.dart';
@@ -160,6 +158,7 @@ class EditInformation extends StatelessWidget{
             ),
             const SizedBox(height: 16,),
             BlocBuilder<EditCityBloc, EditState>(
+                bloc: main.blocSystem.cityBloc,
                 builder: (context, state){
                   return getItem(
                       icon: Icons.home_repair_service,
@@ -170,6 +169,7 @@ class EditInformation extends StatelessWidget{
                 }
             ),
             BlocBuilder<EditAddressBloc, EditState>(
+                bloc: main.blocSystem.addressBloc,
                 builder: (context, state){
                   return getItem(
                       icon: Icons.home,
@@ -180,6 +180,7 @@ class EditInformation extends StatelessWidget{
                 }
             ),
             BlocBuilder<EditCountryBloc, EditState>(
+                bloc: main.blocSystem.countryBloc,
                 builder: (context, state){
                   return getItem(
                       icon: Icons.location_on,
@@ -190,6 +191,7 @@ class EditInformation extends StatelessWidget{
                 }
             ),
             BlocBuilder<EditLinkBloc, EditState>(
+                bloc: main.blocSystem.linkBloc,
                 builder: (context, state){
                   return getItem(
                       icon: Icons.link_rounded,

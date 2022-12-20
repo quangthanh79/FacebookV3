@@ -6,11 +6,9 @@ import 'package:facebook_auth/data/repository/friend_repository.dart';
 import 'package:facebook_auth/screen/chat_screen/chat_detail_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/user_edit_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_event.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_bloc.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/menu_bottom.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons_bloc/user_buttons_bloc.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons_bloc/user_buttons_event.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons_bloc/user_buttons_state.dart';
 import 'package:facebook_auth/utils/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -112,7 +110,7 @@ class UserButtonsState_ extends UserScreenComponentState<UserButtons>{
                         context,
                         UserEditScreen.route(
                             user: user,
-                            onBack: () => main.userInforBloc.add(ReloadUserEvent())
+                            onBack: main.onBackThisPage
                         )
                     );
                   }

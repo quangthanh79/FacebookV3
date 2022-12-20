@@ -1,6 +1,9 @@
 
 
-import 'package:facebook_auth/screen/user_screen/user_edit/edit_bloc/edit_event.dart';
+import 'dart:io';
+
+import 'package:facebook_auth/screen/user_screen/user_edit/input_avatar_screen.dart';
+import 'package:facebook_auth/screen/user_screen/user_edit/input_cover_image_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/input_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/user_edit_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/menu_bottom.dart';
@@ -170,6 +173,7 @@ class EditAvatar extends StatelessWidget{
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(100),
                   child: getImage(
+                    file: main.user.avatar_file,
                     uri: main.user.avatar,
                     defaultUri: 'assets/images/default_avatar_image.jpg',
                     width: 150,
@@ -200,7 +204,18 @@ class EditAvatar extends StatelessWidget{
   }
 
   void changeAvatar(){
-    // todo
+    InputAvatarScreen.route(
+        context: context!,
+        label: "Ảnh đại diện",
+        value: main.user.avatar,
+        onBackResponse: (file){
+          if (file == null) return;
+          main.isChanged = true;
+          main.user.avatar_file = file;
+          main.blocSystem.avatarBloc.commit(main.tempUser);
+          // print("committesd");
+        }
+    );
   }
 
   void removeAvatar(){
@@ -290,7 +305,16 @@ class EditCoverImage extends StatelessWidget{
   }
 
   void changeCoverImage(){
-    // todo
+    InputCoverImageScreen.route(
+        context: context!,
+        label: "Ảnh bìa",
+        value: main.user.cover_image,
+        onBackResponse: (file){
+          main.isChanged = true;
+          main.user.cover_image_file = file;
+          main.blocSystem.coverImageBloc.commit(main.tempUser);
+        }
+    );
   }
 
   void removeCoverImage(){

@@ -1,6 +1,5 @@
 
-
-import 'package:equatable/equatable.dart';
+part of 'user_buttons_bloc.dart';
 
 enum Acceptable{
   ACCEPT, DECLINE

@@ -1,15 +1,14 @@
 
+import 'dart:io';
+
 import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/friend_repository.dart';
 import 'package:facebook_auth/data/repository/user_repository.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/user_body/user_body.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_bloc.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_event.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_state.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/user_body/user_loading.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/user_friend/user_friend_bloc/user_friend_bloc.dart';
-import 'package:facebook_auth/screen/user_screen/user_screen_components/user_friend/user_friend_bloc/user_friend_event.dart';
 import 'package:facebook_auth/utils/injection.dart';
 import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +18,9 @@ import 'package:formz/formz.dart';
 // ignore: must_be_immutable
 class UserScreen extends StatefulWidget{
   late User user;
+  void Function()? onBack;
 
-  UserScreen({super.key, User? user}){
+  UserScreen({super.key, User? user, this.onBack}){
     if (user?.id == null){
       this.user = User(id: SessionUser.idUser);
     } else {
@@ -34,10 +34,12 @@ class UserScreen extends StatefulWidget{
 
   static Route<void> route({
     required User? user,
+    void Function()? onBack
   }) {
     return MaterialPageRoute(
         builder: (context) =>  UserScreen(
-            user: user
+            user: user,
+            onBack: onBack,
         )
     );
   }
@@ -84,6 +86,21 @@ class UserScreenState extends State<UserScreen>{
   Future<void> refresh() async {
     userInforBloc.add(BackgroundLoadUserEvent());
     userFriendBloc.add(LoadFriendEvent());
+  }
+
+  Future<void> reload() async {
+    userInforBloc.add(ReloadUserEvent());
+    userFriendBloc.add(ReloadFriendEvent());
+  }
+
+  void back(){
+    if (widget.onBack != null) widget.onBack!.call();
+    Navigator.pop(context);
+  }
+
+  void onBackThisPage(){
+    reload();
+    Future.delayed(const Duration(milliseconds: 2000), refresh);
   }
 
   @override
@@ -140,8 +157,9 @@ abstract class UserScreenComponentState<T extends UserScreenComponent> extends S
     user = widget.user;
     main = widget.main;
   }
-  void back(){
-    Navigator.pop(main.context);
+  void back() {
+    // Navigator.pop(main.context);
+    main.back();
   }
 
   @override get wantKeepAlive => true;
