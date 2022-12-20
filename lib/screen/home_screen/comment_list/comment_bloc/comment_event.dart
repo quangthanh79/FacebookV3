@@ -17,15 +17,6 @@ class LoadCommentEvent extends CommentEvent {
   List<Object> get props => [postId];
 }
 
-class CommentContentChange extends CommentEvent {
-  final String content;
-  const CommentContentChange({
-    required this.content,
-  });
-  @override
-  List<Object> get props => [content];
-}
-
 class AddComment extends CommentEvent {
   final String postId;
   final String content;

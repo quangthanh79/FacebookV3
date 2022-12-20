@@ -28,7 +28,7 @@ class User {
   String? id;
   String? username;
   String? token;
-  Null? avatar;
+  String? avatar;
   Null? active;
 
   User({this.id, this.username, this.token, this.avatar, this.active});

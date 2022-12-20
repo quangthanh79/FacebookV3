@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:facebook_auth/utils/constant.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'package:facebook_auth/screen/home_screen/model/post.dart';
@@ -48,7 +49,24 @@ class PostModel {
 
 extension PostModelX on PostModel {
   Post toEntity() {
+    String? assetType;
+    if (image != null) {
+      assetType = TYPE_IMAGE;
+    }
+    if (video != null) {
+      assetType = TYPE_VIDEO;
+    }
+    List<String>? assetContentUrl;
+    if (image != null) {
+      assetContentUrl = (image!.map((e) => e.url!)).toList();
+    }
+    if (video != null) {
+      assetContentUrl = [video!.url!];
+    }
     return Post(
+        assetType: assetType,
+        assetContentUrl: assetContentUrl,
+        avatarUrl: author != null ? (author!.avatarUrl) : null,
         postId: id ?? '',
         content: described ?? '',
         user_id: author?.id ?? null,
@@ -77,6 +95,10 @@ class Author {
   });
   factory Author.fromJson(Map<String, dynamic> json) => _$AuthorFromJson(json);
   Map<String, dynamic> toJson() => _$AuthorToJson(this);
+
+  @override
+  String toString() =>
+      'Author(id: $id, userName: $userName, avatarUrl: $avatarUrl)';
 }
 
 @JsonSerializable()

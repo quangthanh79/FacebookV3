@@ -1,6 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'package:facebook_auth/core/helper/current_user.dart';
+import 'package:facebook_auth/domain/use_cases/get_user_info_use_case.dart';
 import 'package:facebook_auth/screen/home_screen/post_item/post_item.dart';
+import 'package:facebook_auth/utils/injection.dart';
+import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -47,6 +51,13 @@ class _HomeBodyState extends State<HomeBody> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    getIt<GetUserInfoUseCase>()
+        .call(SessionUser.token!)
+        .then((value) => value.fold((l) => null, (r) {
+              CurrentUser.id = r.id!;
+              CurrentUser.avatar = r.avatarUrl!;
+              CurrentUser.userName = r.userName!;
+            }));
     context.read<HomeBloc>().add(LoadListPost());
   }
 

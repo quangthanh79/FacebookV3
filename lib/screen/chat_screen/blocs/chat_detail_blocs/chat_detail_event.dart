@@ -21,6 +21,13 @@ class SendMessageChanged extends ChatDetailEvent{
   @override
   List<Object?> get props => [this.message,this.partner_id];
 }
+class BindingResumeChanged extends ChatDetailEvent{
+  final String partner_id;
+
+  const BindingResumeChanged(this.partner_id);
+  @override
+  List<Object?> get props => [this.partner_id];
+}
 class WidthInputChanged extends ChatDetailEvent{
   final WidthInput widthInput;
   const WidthInputChanged(this.widthInput);

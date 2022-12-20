@@ -9,6 +9,7 @@ import 'package:facebook_auth/data/repository/friend_repository.dart';
 import 'package:facebook_auth/data/repository/profile_repository.dart';
 import 'package:facebook_auth/data/repository/user_repository.dart';
 import 'package:facebook_auth/domain/use_cases/add_post_use_case.dart';
+import 'package:facebook_auth/domain/use_cases/get_user_info_use_case.dart';
 import 'package:facebook_auth/domain/use_cases/like_use_case.dart';
 import 'package:facebook_auth/domain/use_cases/load_comment_use_case.dart';
 import 'package:facebook_auth/domain/use_cases/set_comment_use_case.dart';
@@ -84,4 +85,6 @@ Future<void> configureDependencies() async {
   getIt.registerSingleton(LoadCommentUseCase(commentRepository: getIt()));
   getIt.registerSingleton(SetCommentUseCase(commentRepository: getIt()));
   getIt.registerFactory<LikeUseCase>(() => LikeUseCase(repository: getIt()));
+  getIt.registerFactory<GetUserInfoUseCase>(
+      () => GetUserInfoUseCase(repository: getIt()));
 }

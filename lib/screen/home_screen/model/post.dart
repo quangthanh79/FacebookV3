@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
+
 import 'package:facebook_auth/utils/constant.dart';
 
 class Post extends Equatable {
@@ -16,7 +17,7 @@ class Post extends Equatable {
   final List<String>? assetContentUrl;
   const Post({
     this.user_id,
-    this.avatarUrl = 'assets/images/no_image.png',
+    this.avatarUrl,
     required this.postId,
     required this.userName,
     required this.time,
@@ -24,13 +25,12 @@ class Post extends Equatable {
     required this.likesNumber,
     required this.commentsNumber,
     required this.isSelfLiking,
-    this.assetType = TYPE_IMAGE,
-    this.assetContentUrl = const ['assets/images/example_post_image.jfif'],
+    this.assetType,
+    this.assetContentUrl,
   });
 
   static Post get fakeData => const Post(
       postId: '',
-      avatarUrl: 'assets/images/no_image.png',
       userName: 'SonNN',
       time: '40 minutes ago',
       content:
@@ -83,4 +83,7 @@ class Post extends Equatable {
         commentsNumber,
         content
       ];
+
+  @override
+  bool get stringify => true;
 }

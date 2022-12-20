@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:facebook_auth/core/helper/no_thing.dart';
 import 'package:facebook_auth/data/models/comment_response.dart';
 import 'package:facebook_auth/data/models/post_response.dart';
 import 'package:facebook_auth/utils/constant.dart' as constant;
@@ -13,15 +12,16 @@ import 'api_response.dart';
 part 'api_service.g.dart';
 
 class API {
-  static const int connectTimeOut = 15000;
-  static const int sendTimeOut = 15000;
-  static const int receiveTimeOut = 15000;
+  static const int connectTimeOut = 30000;
+  static const int sendTimeOut = 30000;
+  static const int receiveTimeOut = 30000;
 
   static const String getListPosts = '/post/get_list_posts';
   static const String addPost = '/post/add_post';
   static const String getComment = '/comment/get_comment';
   static const String setComment = '/comment/set_comment';
   static const String like = '/like/like';
+  static const String getUserInfo = '/user/get_user_info';
 }
 
 @RestApi()
@@ -31,6 +31,9 @@ abstract class ApiService {
       receiveTimeout: API.receiveTimeOut,
       connectTimeout: API.connectTimeOut,
       sendTimeout: API.sendTimeOut,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     );
 
     dio.interceptors.add(PrettyDioLogger(
@@ -50,12 +53,13 @@ abstract class ApiService {
       @Query("count") required int count,
       @Query('index') required int index});
 
-  @POST(API.addPost)
   @MultiPart()
+  @POST(API.addPost)
   Future<ApiResponse<AddPostResponse>> addPost(
-      {@Query("token") required String token,
-      @Query("described") required String described,
-      @Part(name: 'image') File? image});
+      {@Part() @Query("token") required String token,
+      @Part() @Query("described") required String described,
+      @Part() List<MultipartFile>? image,
+      @Part(name: 'video') File? video});
 
   @POST(API.getComment)
   Future<ApiResponse<List<CommentModel>>> getComment(
@@ -77,4 +81,8 @@ abstract class ApiService {
     @Query("token") required String token,
     @Query("id") required String postId,
   });
+
+  @POST(API.getUserInfo)
+  @MultiPart()
+  Future<ApiResponse<Author>> getUserInfo(@Query("token") String token);
 }

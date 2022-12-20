@@ -1,8 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:facebook_auth/data/models/post_response.dart';
 
+import 'package:facebook_auth/data/models/post_response.dart';
+import 'package:facebook_auth/domain/use_cases/get_user_info_use_case.dart';
 import 'package:facebook_auth/domain/use_cases/load_list_posts_use_case.dart';
 import 'package:facebook_auth/screen/home_screen/model/post.dart';
 import 'package:facebook_auth/utils/constant.dart';
@@ -13,8 +14,10 @@ part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final LoadListPostUseCase useCase;
+  final GetUserInfoUseCase getUserInfoUseCase;
   HomeBloc(
     this.useCase,
+    this.getUserInfoUseCase,
   ) : super(const HomeState()) {
     on<LoadListPost>(_onLoadListPost);
     on<ResetListPost>(_onResetListPost);

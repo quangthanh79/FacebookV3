@@ -63,8 +63,8 @@ class ChatDetailScreen extends StatefulWidget{
   @override
   ChatDetailScreenState createState() => ChatDetailScreenState();
 }
-class ChatDetailScreenState extends State<ChatDetailScreen>{
-  final chatDetailBloc = ChatDetailBloc(getIt.get<ChatRepository>());
+class ChatDetailScreenState extends State<ChatDetailScreen> with WidgetsBindingObserver{
+  late final chatDetailBloc = ChatDetailBloc(getIt.get<ChatRepository>(),widget.partner);
   final _controller = TextEditingController();
 
   @override
@@ -94,6 +94,10 @@ class ChatDetailScreenState extends State<ChatDetailScreen>{
 
                 break;
               case StatusHasMessgage.ReceiveMessage:
+                if(WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed){
+                  // call API set read message
+                  this.chatDetailBloc.add(BindingResumeChanged(widget.partner.id ?? ""));
+                }
                 print("Bạn vừa nhận được tin nắn mới");
                 break;
             }
@@ -444,6 +448,29 @@ class ChatDetailScreenState extends State<ChatDetailScreen>{
           );
         }
     );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        // call API set rea message;
+        this.chatDetailBloc.add(BindingResumeChanged(widget.partner.id ?? ""));
+        print("app in resumed");
+        break;
+    }
+    print("THAY DOI Lifecycle");
+  }
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
   }
 }
 

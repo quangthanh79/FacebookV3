@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
+import 'package:facebook_auth/utils/constant.dart';
 import 'package:flutter/material.dart';
 
 import 'package:facebook_auth/screen/home_screen/model/comment.dart';
@@ -19,26 +20,27 @@ class CommentItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GestureDetector(
-          child: Image.asset(
-            comment.avatarUrl,
-            width: 32,
-            height: 32,
-          ),
-          onTap: (){
-            User user = User(
-                id: comment.user_id,
-                avatar: comment.avatarUrl,
-                username: comment.userName
-            );
-            // Navigate to UserScreen
-            Navigator.push(
-                context,
-                UserScreen.route(
-                    user: user
-                )
-            );
-          }
-        ),
+            child: comment.avatarUrl != null
+                ? CircleAvatar(
+                    radius: 16.0,
+                    backgroundImage: NetworkImage(
+                      comment.avatarUrl!,
+                    ),
+                    backgroundColor: Colors.transparent,
+                  )
+                : Image.asset(
+                    defaultAvatar,
+                    width: 32,
+                    height: 32,
+                  ),
+            onTap: () {
+              User user = User(
+                  id: comment.user_id,
+                  avatar: comment.avatarUrl,
+                  username: comment.userName);
+              // Navigate to UserScreen
+              Navigator.push(context, UserScreen.route(user: user));
+            }),
         const SizedBox(
           width: 8,
         ),
@@ -83,26 +85,18 @@ class CommentCard extends StatelessWidget {
           color: Colors.black12),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         GestureDetector(
-          child: Text(
-            comment.userName,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          onTap: (){
-            User user = User(
-              id: comment.user_id,
-              avatar: comment.avatarUrl,
-              username: comment.userName
-            );
-            // Navigate to UserScreen
-            Navigator.push(
-                context,
-                UserScreen.route(
-                    user: user
-                )
-            );
-          }
-
-        ),
+            child: Text(
+              comment.userName,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onTap: () {
+              User user = User(
+                  id: comment.user_id,
+                  avatar: comment.avatarUrl,
+                  username: comment.userName);
+              // Navigate to UserScreen
+              Navigator.push(context, UserScreen.route(user: user));
+            }),
         const SizedBox(
           height: 4,
         ),
