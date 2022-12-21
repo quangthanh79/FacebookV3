@@ -40,7 +40,7 @@ class AddPostBloc extends Bloc<AddPostEvent, AddPostState> {
     }, (r) {
       event.context.read<ListPostNotify>().addPost(Post(
           postId: r,
-          userName: CurrentUser.userName,
+          userName: CurrentUser.userName ?? 'Facebook user',
           avatarUrl: CurrentUser.avatar,
           content: state.content,
           time: 'Just ago',

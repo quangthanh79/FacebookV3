@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:facebook_auth/core/helper/current_user.dart';
 import 'package:facebook_auth/screen/home_screen/video/video_demo.dart';
+import 'package:facebook_auth/utils/constant.dart';
 import 'package:facebook_auth/utils/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,20 +53,22 @@ class AddPostView extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 20.0,
-                backgroundImage: NetworkImage(
-                  CurrentUser.avatar,
-                ),
-                backgroundColor: Colors.transparent,
-              ),
+              CurrentUser.avatar != null
+                  ? CircleAvatar(
+                      radius: 20.0,
+                      backgroundImage: NetworkImage(
+                        CurrentUser.avatar!,
+                      ),
+                      backgroundColor: Colors.transparent,
+                    )
+                  : Image.asset(defaultAvatar),
               const SizedBox(
                 width: 12,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(CurrentUser.userName,
+                  Text(CurrentUser.userName ?? 'Facebook user',
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16)),
                   Container(

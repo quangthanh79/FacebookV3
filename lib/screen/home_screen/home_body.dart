@@ -55,8 +55,8 @@ class _HomeBodyState extends State<HomeBody> {
         .call(SessionUser.token!)
         .then((value) => value.fold((l) => null, (r) {
               CurrentUser.id = r.id!;
-              CurrentUser.avatar = r.avatarUrl!;
-              CurrentUser.userName = r.userName!;
+              CurrentUser.avatar = r.avatarUrl;
+              CurrentUser.userName = r.userName;
             }));
     context.read<HomeBloc>().add(LoadListPost());
   }

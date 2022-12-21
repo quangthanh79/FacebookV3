@@ -53,13 +53,13 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
           itemList: [
             Comment(
                 avatarUrl: myAvatar,
-                userName: userName,
+                userName: userName ?? 'Facebook user',
                 time: 'Just ago',
                 content: event.content)
           ],
           newComment: Comment(
               avatarUrl: myAvatar,
-              userName: userName,
+              userName: userName ?? 'Facebook user',
               time: 'Just ago',
               content: event.content)));
     }
@@ -85,7 +85,7 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
           status: CommentStatus.loadedSuccess,
           newComment: Comment(
               avatarUrl: CurrentUser.avatar,
-              userName: CurrentUser.userName,
+              userName: CurrentUser.userName ?? 'Facebook user',
               time: 'Just ago',
               content: event.content)));
     });

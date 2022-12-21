@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:facebook_auth/core/helper/cache_helper.dart';
 import 'package:facebook_auth/data/datasource/remote/authen_api_provider.dart';
 import 'package:facebook_auth/data/datasource/remote/comment_datasource.dart';
 import 'package:facebook_auth/data/datasource/remote/like_datasource.dart';
@@ -43,11 +44,13 @@ Future<void> configureDependencies() async {
   getIt.registerFactory<LikeBloc>(
     () => LikeBloc(getIt()),
   );
+  getIt.registerSingletonAsync<SharedPreferences>(
+      () => SharedPreferences.getInstance());
+  getIt.registerSingleton(
+      CacheHelper(await getIt.getAsync<SharedPreferences>()));
 
   getIt.registerFactory(() => Dio());
   getIt.registerFactory(() => ApiService(getIt()));
-  getIt.registerSingletonAsync<SharedPreferences>(
-      () => SharedPreferences.getInstance());
   // datasource
   getIt.registerFactory<PostDataSource>(
       () => PostDataSourceImpl(apiService: getIt()));

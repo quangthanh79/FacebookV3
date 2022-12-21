@@ -1,11 +1,14 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:facebook_auth/core/common/error/failure.dart';
 import 'package:dartz/dartz.dart';
+import 'package:facebook_auth/core/helper/cache_helper.dart';
 import 'package:facebook_auth/data/datasource/remote/post_datasource.dart';
 import 'package:facebook_auth/data/models/post_response.dart';
 import 'package:facebook_auth/domain/repositories/post_repository.dart';
+import 'package:facebook_auth/utils/injection.dart';
 
 import '../../core/common/error/exceptions.dart';
 
@@ -18,9 +21,12 @@ class PostRepositoryImpl implements PostRepository {
   @override
   Future<Either<Failure, PostListResponse>> loadListPosts(
       {required String token, required int index, required int count}) async {
+    CacheHelper cacheHelper = getIt();
     try {
-      return Right(await dataSource.loadListPosts(
-          token: token, count: count, index: index));
+      var response = await dataSource.loadListPosts(
+          token: token, count: count, index: index);
+      cacheHelper.setListPost(response);
+      return Right(response);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     }
