@@ -38,7 +38,6 @@ dependencies:
   dio: ^4.0.4
   json_annotation: ^4.7.0
   pretty_dio_logger: ^1.1.1
-  connectivity_plus: ^3.0.2
   shimmer: ^2.0.0
 
   shared_preferences: ^2.0.15

@@ -2,7 +2,6 @@ g// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:equatable/equatable.dart';
 import 'package:facebook_auth/core/helper/cache_helper.dart';
 
@@ -30,21 +29,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   _onLoadListPost(LoadListPost event, Emitter emit) async {
     emit(state.copyWith(status: HomeStatus.loading));
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.none &&
-        state.isNoInternetFirstLoad) {
-      var fromCache = getIt<CacheHelper>().getListPost;
-      if (fromCache != '') {
-        emit(state.copyWith(
-            status: HomeStatus.loadedSuccess,
-            isNoInternetFirstLoad: false,
-            itemList: List.of(PostListResponse.fromJson(json.decode(fromCache))
-                .posts!
-                .map((e) => e.toEntity()))));
-      } else {
-        emit(state.copyWith(isNoInternetFirstLoad: false));
-      }
-    }
+    // if (connectivityResult == ConnectivityResult.none &&
+    //     state.isNoInternetFirstLoad) {
+    //   var fromCache = getIt<CacheHelper>().getListPost;
+    //   if (fromCache != '') {
+    //     emit(state.copyWith(
+    //         status: HomeStatus.loadedSuccess,
+    //         isNoInternetFirstLoad: false,
+    //         itemList: List.of(PostListResponse.fromJson(json.decode(fromCache))
+    //             .posts!
+    //             .map((e) => e.toEntity()))));
+    //   } else {
+    //     emit(state.copyWith(isNoInternetFirstLoad: false));
+    //   }
+    // }
     var result = await useCase.call(LoadListPostsParams(
         token: SessionUser.token!,
         count: count,
