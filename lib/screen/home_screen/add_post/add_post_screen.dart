@@ -61,7 +61,10 @@ class AddPostView extends StatelessWidget {
                       ),
                       backgroundColor: Colors.transparent,
                     )
-                  : Image.asset(defaultAvatar),
+                  : Image.asset(
+                      defaultAvatar,
+                      scale: 30,
+                    ),
               const SizedBox(
                 width: 12,
               ),

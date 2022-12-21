@@ -22,6 +22,8 @@ class API {
   static const String setComment = '/comment/set_comment';
   static const String like = '/like/like';
   static const String getUserInfo = '/user/get_user_info';
+  static const String getListVideos = '/post/get_list_videos';
+  static const String searchPost = '/search/search';
 }
 
 @RestApi()
@@ -52,6 +54,20 @@ abstract class ApiService {
       {@Query("token") required String token,
       @Query("count") required int count,
       @Query('index') required int index});
+
+  @POST(API.getListVideos)
+  Future<ApiResponse<PostListResponse>> getListVideos(
+      {@Query("token") required String token,
+      @Query("count") required int count,
+      @Query('index') required int index});
+
+  @POST(API.searchPost)
+  Future<ApiResponse<PostListResponse>> searchPost({
+    @Query("token") required String token,
+    @Query("count") required int count,
+    @Query('index') required int index,
+    @Query('keyword') required String keyword,
+  });
 
   @MultiPart()
   @POST(API.addPost)

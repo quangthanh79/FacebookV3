@@ -1,21 +1,27 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
-import 'package:facebook_auth/core/helper/current_user.dart';
-import 'package:facebook_auth/domain/use_cases/get_user_info_use_case.dart';
-import 'package:facebook_auth/screen/home_screen/post_item/post_item.dart';
-import 'package:facebook_auth/utils/injection.dart';
-import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+import 'package:facebook_auth/core/helper/current_user.dart';
+import 'package:facebook_auth/data/repository/post_repository_impl.dart';
+import 'package:facebook_auth/domain/use_cases/get_user_info_use_case.dart';
+import 'package:facebook_auth/screen/home_screen/post_item/post_item.dart';
+import 'package:facebook_auth/utils/injection.dart';
+import 'package:facebook_auth/utils/session_user.dart';
+
 import 'home_bloc/home_bloc.dart';
 import 'model/post.dart';
 
 class HomeBody extends StatefulWidget {
+  final PostType type;
+  final String? keyword;
   const HomeBody({
     Key? key,
+    required this.type,
+    this.keyword,
   }) : super(key: key);
 
   @override
@@ -35,7 +41,7 @@ class _HomeBodyState extends State<HomeBody> {
 
   void _onScroll() {
     if (_isBottom && !PreventLoadOverlapFlag.isLoading) {
-      context.read<HomeBloc>().add(LoadListPost());
+      context.read<HomeBloc>().add(LoadListPost(keyword: widget.keyword));
       PreventLoadOverlapFlag.turnOn();
     }
   }
@@ -50,6 +56,8 @@ class _HomeBodyState extends State<HomeBody> {
   @override
   void initState() {
     super.initState();
+    context.read<HomeBloc>().add(DisposePost(context: context));
+    context.read<HomeBloc>().add(MakeTypePost(type: widget.type));
     _scrollController.addListener(_onScroll);
     getIt<GetUserInfoUseCase>()
         .call(SessionUser.token!)
@@ -58,7 +66,7 @@ class _HomeBodyState extends State<HomeBody> {
               CurrentUser.avatar = r.avatarUrl;
               CurrentUser.userName = r.userName;
             }));
-    context.read<HomeBloc>().add(LoadListPost());
+    context.read<HomeBloc>().add(LoadListPost(keyword: widget.keyword));
   }
 
   @override
@@ -72,7 +80,7 @@ class _HomeBodyState extends State<HomeBody> {
           context.read<ListPostNotify>().addOnList(state.itemList!),
       child: Container(
         color: Colors.grey,
-        margin: const EdgeInsets.only(top: 100),
+        margin: EdgeInsets.only(top: widget.type == PostType.home ? 100 : 0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -110,7 +118,9 @@ class _HomeBodyState extends State<HomeBody> {
                       onRefresh: () {
                         context.read<HomeBloc>().add(ResetListPost());
                         context.read<ListPostNotify>().assignList([]);
-                        context.read<HomeBloc>().add(LoadListPost());
+                        context
+                            .read<HomeBloc>()
+                            .add(LoadListPost(keyword: widget.keyword));
                       },
                       child: ListView.separated(
                         controller: _scrollController,

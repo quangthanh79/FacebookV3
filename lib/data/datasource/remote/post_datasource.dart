@@ -11,6 +11,13 @@ import '../../../core/common/error/exceptions.dart';
 abstract class PostDataSource {
   Future<PostListResponse> loadListPosts(
       {required String token, required int count, required int index});
+  Future<PostListResponse> loadListVideos(
+      {required String token, required int count, required int index});
+  Future<PostListResponse> searchPost(
+      {required String token,
+      required int count,
+      required int index,
+      required String keyword});
   Future<String> addPost(
       {required String token,
       required String described,
@@ -30,6 +37,49 @@ class PostDataSourceImpl implements PostDataSource {
     try {
       var response = await apiService.getListPosts(
           token: token, count: count, index: index);
+      if (response.statusCode == '1000') {
+        if (response.data == null) {
+          throw ServerException('Post data is null');
+        }
+        return response.data!;
+      }
+      throw ServerException(response.messages ?? unexpectedError);
+    } on DioError catch (e) {
+      throw ServerException.handleError(e);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<PostListResponse> loadListVideos(
+      {required String token, required int count, required int index}) async {
+    try {
+      var response = await apiService.getListVideos(
+          token: token, count: count, index: index);
+      if (response.statusCode == '1000') {
+        if (response.data == null) {
+          throw ServerException('Post data is null');
+        }
+        return response.data!;
+      }
+      throw ServerException(response.messages ?? unexpectedError);
+    } on DioError catch (e) {
+      throw ServerException.handleError(e);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<PostListResponse> searchPost(
+      {required String token,
+      required int count,
+      required int index,
+      required String keyword}) async {
+    try {
+      var response = await apiService.searchPost(
+          keyword: keyword, token: token, count: count, index: index);
       if (response.statusCode == '1000') {
         if (response.data == null) {
           throw ServerException('Post data is null');
