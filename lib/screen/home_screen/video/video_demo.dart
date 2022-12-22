@@ -50,6 +50,7 @@ class _VideoDemoState extends State<VideoDemo> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 300,
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: FutureBuilder(
         future: _initializeVideoPlayerFuture,

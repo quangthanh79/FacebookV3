@@ -5,19 +5,19 @@ abstract class AddPostEvent extends Equatable {
   const AddPostEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class PickImage extends AddPostEvent {
-  final File image;
+  final File? image;
   final bool isImage;
   const PickImage({
-    required this.image,
+    this.image,
     required this.isImage,
   });
 
   @override
-  List<Object> get props => [image, isImage];
+  List<Object?> get props => [image, isImage];
 
   PickImage copyWith({
     File? image,
@@ -31,15 +31,15 @@ class PickImage extends AddPostEvent {
 }
 
 class PickVideo extends AddPostEvent {
-  final File video;
+  final File? video;
   final bool isImage;
   const PickVideo({
-    required this.video,
+    this.video,
     required this.isImage,
   });
 
   @override
-  List<Object> get props => [video, isImage];
+  List<Object?> get props => [video, isImage];
 
   PickVideo copyWith({
     File? video,

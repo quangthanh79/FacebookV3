@@ -33,7 +33,7 @@ class AddPostBloc extends Bloc<AddPostEvent, AddPostState> {
     var result = await useCase.call(AddPostParams(
         token: SessionUser.token!,
         described: state.content,
-        video: state.image != null ? state.image! : null,
+        video: state.video,
         image: state.image != null ? [state.image!] : null));
     result.fold((l) {
       emit(state.copyWith(status: AddPostStatus.failure, error: l.message));

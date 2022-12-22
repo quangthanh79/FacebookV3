@@ -146,9 +146,9 @@ class AddPostView extends StatelessWidget {
   }
 
   Widget buildBottom(BuildContext context) {
-    imagePicked(File image) =>
+    imagePicked(File? image) =>
         context.read<AddPostBloc>().add(PickImage(image: image, isImage: true));
-    videoPicked(File video) => context
+    videoPicked(File? video) => context
         .read<AddPostBloc>()
         .add(PickVideo(video: video, isImage: false));
     return Column(
@@ -187,10 +187,9 @@ class AddPostView extends StatelessWidget {
                                     final ImagePicker picker = ImagePicker();
                                     XFile? image = await picker.pickImage(
                                         source: ImageSource.gallery);
-                                    if (image != null) {
-                                      var file = File(image.path);
-                                      imagePicked(file);
-                                    }
+                                    File? file =
+                                        image != null ? File(image.path) : null;
+                                    imagePicked(file);
                                   },
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
