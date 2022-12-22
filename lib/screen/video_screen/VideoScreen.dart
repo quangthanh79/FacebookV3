@@ -19,8 +19,11 @@ class _VideoScreenState extends State<VideoScreen>
     super.build(context);
     return BlocProvider(
         create: (context) => HomeBloc(getIt(), getIt()),
-        child: const HomeBody(
-          type: PostType.video,
+        child: Container(
+          padding: const EdgeInsets.only(top: 50),
+          child: const HomeBody(
+            type: PostType.video,
+          ),
         ));
   }
 

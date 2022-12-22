@@ -1,15 +1,16 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:facebook_auth/screen/home_screen/video/video_demo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 import 'package:facebook_auth/data/models/user_info.dart';
+import 'package:facebook_auth/data/repository/post_repository_impl.dart';
 import 'package:facebook_auth/screen/home_screen/comment_list/comment_list_view.dart';
 import 'package:facebook_auth/screen/home_screen/home_body.dart';
 import 'package:facebook_auth/screen/home_screen/post_in_image_screen/post_in_image_screen.dart';
 import 'package:facebook_auth/screen/home_screen/post_item/bloc/post_item_bloc.dart';
+import 'package:facebook_auth/screen/home_screen/video/video_demo.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
 import 'package:facebook_auth/utils/constant.dart';
 import 'package:facebook_auth/utils/injection.dart';
@@ -21,10 +22,12 @@ import '../model/post.dart';
 class PostItem extends StatelessWidget {
   final Post post;
   final int index;
+  final PostType type;
   const PostItem({
     Key? key,
     required this.post,
     required this.index,
+    required this.type,
   }) : super(key: key);
 
   @override
@@ -41,6 +44,7 @@ class PostItem extends StatelessWidget {
             height: 4,
           ),
           Content(
+            type: type,
             post: post,
             postIndex: index,
           ),
@@ -48,6 +52,7 @@ class PostItem extends StatelessWidget {
             height: 8,
           ),
           Bottom(
+            type: type,
             isFromDark: false,
             postIndex: index,
             textColor: Colors.black,
@@ -169,10 +174,12 @@ class Header extends StatelessWidget {
 class Content extends StatelessWidget {
   final Post post;
   final int postIndex;
+  final PostType type;
   const Content({
     Key? key,
     required this.post,
     required this.postIndex,
+    required this.type,
   }) : super(key: key);
 
   @override
@@ -190,6 +197,7 @@ class Content extends StatelessWidget {
           height: 8,
         ),
         AssetsContent(
+          type: type,
           post: post,
           postIndex: postIndex,
         )
@@ -201,10 +209,12 @@ class Content extends StatelessWidget {
 class AssetsContent extends StatelessWidget {
   final Post post;
   final int postIndex;
+  final PostType type;
   const AssetsContent({
     Key? key,
     required this.post,
     required this.postIndex,
+    required this.type,
   }) : super(key: key);
 
   @override
@@ -219,6 +229,7 @@ class AssetsContent extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => PostInImageScreen(
+                      type: type,
                       index: postIndex,
                     ),
                   ));
@@ -241,12 +252,14 @@ class Bottom extends StatelessWidget {
   final bool? isDarkTheme;
   final int postIndex;
   final bool isFromDark;
+  final PostType type;
   const Bottom({
     Key? key,
     required this.textColor,
     this.isDarkTheme,
     required this.postIndex,
     required this.isFromDark,
+    required this.type,
   }) : super(key: key);
 
   @override
@@ -259,9 +272,26 @@ class Bottom extends StatelessWidget {
     if (isDarkTheme != null && isDarkTheme == true) {
       commentIconPath = 'assets/images/comment_icon_white.png';
     }
-    var post = context.read<ListPostNotify>().items[postIndex];
-    return Consumer<ListPostNotify>(
-      builder: (context, value, child) => Column(
+    return Consumer<ListPostNotify>(builder: (context, value, child) {
+      List<Post> items;
+      switch (type) {
+        case PostType.home:
+          items = value.itemsHome;
+          break;
+        case PostType.profile:
+          items = value.itemsProfile;
+          break;
+        case PostType.search:
+          items = value.itemsSearch;
+          break;
+        case PostType.video:
+          items = value.itemsVideo;
+          break;
+        default:
+          items = value.itemsHome;
+      }
+      var post = items[postIndex];
+      return Column(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -275,7 +305,7 @@ class Bottom extends StatelessWidget {
                     height: 20,
                   ),
                   const SizedBox(width: 4),
-                  Text(context.read<ListPostNotify>().likeText(postIndex),
+                  Text(context.read<ListPostNotify>().likeText(postIndex, type),
                       style: TextStyle(color: textColor))
                 ]),
                 BlocBuilder<PostItemBloc, PostItemState>(
@@ -289,10 +319,9 @@ class Bottom extends StatelessWidget {
                                       topRight: Radius.circular(10)),
                                 ),
                                 builder: (context) => CommentListView(
+                                      type: type,
                                       isFromDark: isFromDark,
-                                      post: context
-                                          .read<ListPostNotify>()
-                                          .items[postIndex],
+                                      post: items[postIndex],
                                       focus: false,
                                       comments: Comment.fakeList,
                                       index: postIndex,
@@ -322,13 +351,13 @@ class Bottom extends StatelessWidget {
                           onTap: () {
                             context
                                 .read<ListPostNotify>()
-                                .likeOnPost(postIndex);
+                                .likeOnPost(postIndex, type);
                             getIt<LikeBloc>()
                                 .add(AddLikeEvent(postId: post.postId));
                           },
                           child: Consumer<ListPostNotify>(
                             builder: (context, value, child) {
-                              var post = value.items[postIndex];
+                              var post = items[postIndex];
                               return Row(
                                 children: [
                                   Image.asset(
@@ -358,6 +387,7 @@ class Bottom extends StatelessWidget {
                               topRight: Radius.circular(10)),
                         ),
                         builder: (context2) => CommentListView(
+                              type: type,
                               isFromDark: isFromDark,
                               post: post,
                               focus: true,
@@ -380,8 +410,8 @@ class Bottom extends StatelessWidget {
             ),
           )
         ],
-      ),
-    );
+      );
+    });
   }
 }
 

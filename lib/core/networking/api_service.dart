@@ -46,7 +46,7 @@ abstract class ApiService {
       request: false,
       requestBody: true,
     ));
-    return _ApiService(dio, baseUrl: constant.testUrl);
+    return _ApiService(dio, baseUrl: constant.baseUrl);
   }
 
   @POST(API.getListPosts)

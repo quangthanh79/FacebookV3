@@ -1,8 +1,10 @@
-import 'package:facebook_auth/screen/home_screen/home_body.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
+import 'package:facebook_auth/data/repository/post_repository_impl.dart';
+import 'package:facebook_auth/screen/home_screen/home_body.dart';
 import 'package:facebook_auth/screen/home_screen/model/post.dart';
 import 'package:facebook_auth/screen/home_screen/post_item/post_item.dart';
 
@@ -10,63 +12,84 @@ import '../post_item/bloc/post_item_bloc.dart';
 
 class PostInImageScreen extends StatelessWidget {
   final int index;
+  final PostType type;
   const PostInImageScreen({
     Key? key,
     required this.index,
+    required this.type,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => VisibleModel(),
-      child: Consumer<VisibleModel>(
-        builder: (context, value, child) => Scaffold(
-          body: SafeArea(
-            child: Container(
-              color: Colors.black,
-              child: Stack(
-                children: [
-                  GestureDetector(
-                    onPanUpdate: (details) {
-                      // Swiping in right direction.
-                      if (details.delta.dx > 100) {
-                        Navigator.maybePop(context);
-                      }
-                      if (details.delta.dy > 100) {
-                        Navigator.maybePop(context);
-                      }
-                      if (details.delta.dy < 100) {
-                        Navigator.maybePop(context);
-                      }
-                      // Swiping in left direction.
-                      if (details.delta.dx < 100) {
-                        Navigator.maybePop(context);
-                      }
-                    },
-                    onTap: () {
-                      value.changeState();
-                    },
-                    child: SizedBox.expand(
-                      child: Image.network(
-                        context
-                            .read<ListPostNotify>()
-                            .items[index]
-                            .assetContentUrl![0],
-                        fit: BoxFit.fitWidth,
+    return Consumer<ListPostNotify>(
+      builder: (context, value, child) {
+        List<Post> items;
+        switch (type) {
+          case PostType.home:
+            items = value.itemsHome;
+            break;
+          case PostType.profile:
+            items = value.itemsProfile;
+            break;
+          case PostType.search:
+            items = value.itemsSearch;
+            break;
+          case PostType.video:
+            items = value.itemsVideo;
+            break;
+          default:
+            items = value.itemsHome;
+        }
+        return ChangeNotifierProvider(
+          create: (context) => VisibleModel(),
+          child: Consumer<VisibleModel>(
+            builder: (context, value, child) => Scaffold(
+              body: SafeArea(
+                child: Container(
+                  color: Colors.black,
+                  child: Stack(
+                    children: [
+                      GestureDetector(
+                        onPanUpdate: (details) {
+                          // Swiping in right direction.
+                          if (details.delta.dx > 100) {
+                            Navigator.maybePop(context);
+                          }
+                          if (details.delta.dy > 100) {
+                            Navigator.maybePop(context);
+                          }
+                          if (details.delta.dy < 100) {
+                            Navigator.maybePop(context);
+                          }
+                          // Swiping in left direction.
+                          if (details.delta.dx < 100) {
+                            Navigator.maybePop(context);
+                          }
+                        },
+                        onTap: () {
+                          value.changeState();
+                        },
+                        child: SizedBox.expand(
+                          child: Image.network(
+                            items[index].assetContentUrl![0],
+                            fit: BoxFit.fitWidth,
+                          ),
+                        ),
                       ),
-                    ),
+                      Controller(
+                        type: type,
+                        postIndex: index,
+                        post: items[index],
+                        visibleModel: value,
+                      )
+                    ],
                   ),
-                  Controller(
-                    postIndex: index,
-                    post: context.read<ListPostNotify>().items[index],
-                    visibleModel: value,
-                  )
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -75,11 +98,13 @@ class Controller extends StatefulWidget {
   final Post post;
   final VisibleModel visibleModel;
   final int postIndex;
+  final PostType type;
   const Controller({
     Key? key,
     required this.post,
     required this.visibleModel,
     required this.postIndex,
+    required this.type,
   }) : super(key: key);
 
   @override
@@ -196,6 +221,7 @@ class _ControllerState extends State<Controller> {
                       ..add(PostInitEvent(
                           isSelfLiking: widget.post.isSelfLiking)),
                     child: Bottom(
+                      type: widget.type,
                       isFromDark: true,
                       postIndex: widget.postIndex,
                       textColor: Colors.white,

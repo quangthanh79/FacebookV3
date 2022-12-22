@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:facebook_auth/core/helper/current_user.dart';
+import 'package:facebook_auth/data/repository/post_repository_impl.dart';
 
 import 'package:facebook_auth/domain/use_cases/add_post_use_case.dart';
 import 'package:facebook_auth/screen/home_screen/home_body.dart';
@@ -38,15 +39,17 @@ class AddPostBloc extends Bloc<AddPostEvent, AddPostState> {
     result.fold((l) {
       emit(state.copyWith(status: AddPostStatus.failure, error: l.message));
     }, (r) {
-      event.context.read<ListPostNotify>().addPost(Post(
-          postId: r,
-          userName: CurrentUser.userName ?? 'Facebook user',
-          avatarUrl: CurrentUser.avatar,
-          content: state.content,
-          time: 'Just ago',
-          likesNumber: 0,
-          commentsNumber: 0,
-          isSelfLiking: false));
+      event.context.read<ListPostNotify>().addPost(
+          Post(
+              postId: r,
+              userName: CurrentUser.userName ?? 'Facebook user',
+              avatarUrl: CurrentUser.avatar,
+              content: state.content,
+              time: 'Just ago',
+              likesNumber: 0,
+              commentsNumber: 0,
+              isSelfLiking: false),
+          PostType.home);
       emit(state.copyWith(status: AddPostStatus.success));
     });
   }
