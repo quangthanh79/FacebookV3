@@ -26,6 +26,7 @@ class PostRepositoryImpl implements PostRepository {
   Future<Either<Failure, PostListResponse>> loadListPosts(
       {required String token,
       String? keyword,
+      String? targetId,
       required int index,
       required int count,
       required PostType type}) async {
@@ -38,6 +39,12 @@ class PostRepositoryImpl implements PostRepository {
           cacheHelper.setListPost(response);
           return Right(response);
         case PostType.profile:
+          var response = await dataSource.loadListPostsInProfile(
+              token: token,
+              count: count,
+              index: index,
+              targetId: targetId ?? '');
+          return Right(response);
         case PostType.video:
           var response = await dataSource.loadListVideos(
               token: token, count: count, index: index);

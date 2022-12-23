@@ -53,6 +53,42 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<ApiResponse<PostListResponse>> getListPostsInProfile({
+    required token,
+    required count,
+    required index,
+    required targetId,
+  }) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'token': token,
+      r'count': count,
+      r'index': index,
+      r'targetId': targetId,
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ApiResponse<PostListResponse>>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/post/get_list_posts',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = ApiResponse<PostListResponse>.fromJson(
+      _result.data!,
+      (json) => PostListResponse.fromJson(json as Map<String, dynamic>),
+    );
+    return value;
+  }
+
+  @override
   Future<ApiResponse<PostListResponse>> getListVideos({
     required token,
     required count,

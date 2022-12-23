@@ -17,6 +17,7 @@ class API {
   static const int receiveTimeOut = 30000;
 
   static const String getListPosts = '/post/get_list_posts';
+  static const String getListPostsInProfile = '/post/get_list_posts_in_profile';
   static const String addPost = '/post/add_post';
   static const String getComment = '/comment/get_comment';
   static const String setComment = '/comment/set_comment';
@@ -54,6 +55,14 @@ abstract class ApiService {
       {@Query("token") required String token,
       @Query("count") required int count,
       @Query('index') required int index});
+
+  @POST(API.getListPosts)
+  Future<ApiResponse<PostListResponse>> getListPostsInProfile({
+    @Query("token") required String token,
+    @Query("count") required int count,
+    @Query('index') required int index,
+    @Query("targetId") required String targetId,
+  });
 
   @POST(API.getListVideos)
   Future<ApiResponse<PostListResponse>> getListVideos(

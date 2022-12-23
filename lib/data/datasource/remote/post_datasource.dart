@@ -11,6 +11,11 @@ import '../../../core/common/error/exceptions.dart';
 abstract class PostDataSource {
   Future<PostListResponse> loadListPosts(
       {required String token, required int count, required int index});
+  Future<PostListResponse> loadListPostsInProfile(
+      {required String token,
+      required int count,
+      required int index,
+      required String targetId});
   Future<PostListResponse> loadListVideos(
       {required String token, required int count, required int index});
   Future<PostListResponse> searchPost(
@@ -37,6 +42,29 @@ class PostDataSourceImpl implements PostDataSource {
     try {
       var response = await apiService.getListPosts(
           token: token, count: count, index: index);
+      if (response.statusCode == '1000') {
+        if (response.data == null) {
+          throw ServerException('Post data is null');
+        }
+        return response.data!;
+      }
+      throw ServerException(response.messages ?? unexpectedError);
+    } on DioError catch (e) {
+      throw ServerException.handleError(e);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<PostListResponse> loadListPostsInProfile(
+      {required String token,
+      required int count,
+      required int index,
+      required String targetId}) async {
+    try {
+      var response = await apiService.getListPostsInProfile(
+          token: token, count: count, index: index, targetId: targetId);
       if (response.statusCode == '1000') {
         if (response.data == null) {
           throw ServerException('Post data is null');

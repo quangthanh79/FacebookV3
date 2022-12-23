@@ -50,6 +50,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     var result = await useCase.call(LoadListPostsParams(
         type: state.type,
         keyword: event.keyword,
+        targetId: event.targetId,
         token: SessionUser.token!,
         count: count,
         index: state.pageIndex * count));

@@ -22,7 +22,8 @@ class LoadListPostUseCase
         token: params.token,
         index: params.index,
         count: params.count,
-        type: params.type);
+        type: params.type,
+        targetId: params.targetId);
   }
 }
 
@@ -32,14 +33,16 @@ class LoadListPostsParams extends Equatable {
   final int index;
   final PostType type;
   final String? keyword;
+  final String? targetId;
   const LoadListPostsParams({
     required this.token,
     required this.count,
     required this.index,
     required this.type,
     this.keyword,
+    this.targetId,
   });
 
   @override
-  List<Object?> get props => [token, count, index, type, keyword];
+  List<Object?> get props => [token, count, index, type, keyword, targetId];
 }

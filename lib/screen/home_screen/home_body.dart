@@ -18,10 +18,12 @@ import 'model/post.dart';
 class HomeBody extends StatefulWidget {
   final PostType type;
   final String? keyword;
+  final String? targetId;
   const HomeBody({
     Key? key,
     required this.type,
     this.keyword,
+    this.targetId,
   }) : super(key: key);
 
   @override
@@ -41,7 +43,8 @@ class _HomeBodyState extends State<HomeBody> {
 
   void _onScroll() {
     if (_isBottom && !PreventLoadOverlapFlag.isLoading) {
-      context.read<HomeBloc>().add(LoadListPost(keyword: widget.keyword));
+      context.read<HomeBloc>().add(
+          LoadListPost(keyword: widget.keyword, targetId: widget.targetId));
       PreventLoadOverlapFlag.turnOn();
     }
   }
@@ -66,7 +69,9 @@ class _HomeBodyState extends State<HomeBody> {
               CurrentUser.avatar = r.avatarUrl;
               CurrentUser.userName = r.userName;
             }));
-    context.read<HomeBloc>().add(LoadListPost(keyword: widget.keyword));
+    context
+        .read<HomeBloc>()
+        .add(LoadListPost(keyword: widget.keyword, targetId: widget.targetId));
   }
 
   @override
@@ -139,9 +144,9 @@ class _HomeBodyState extends State<HomeBody> {
                         context
                             .read<ListPostNotify>()
                             .assignList([], widget.type);
-                        context
-                            .read<HomeBloc>()
-                            .add(LoadListPost(keyword: widget.keyword));
+                        context.read<HomeBloc>().add(LoadListPost(
+                            keyword: widget.keyword,
+                            targetId: widget.targetId));
                       },
                       child: ListView.separated(
                         controller: _scrollController,

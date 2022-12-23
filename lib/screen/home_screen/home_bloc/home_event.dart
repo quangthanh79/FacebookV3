@@ -10,8 +10,10 @@ abstract class HomeEvent extends Equatable {
 
 class LoadListPost extends HomeEvent {
   final String? keyword;
+  final String? targetId;
   const LoadListPost({
     this.keyword,
+    this.targetId,
   });
 }
 

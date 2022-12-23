@@ -9,6 +9,7 @@ import '../../core/common/error/failure.dart';
 abstract class PostRepository {
   Future<Either<Failure, PostListResponse>> loadListPosts(
       {String? keyword,
+      String? targetId,
       required String token,
       required int index,
       required int count,
