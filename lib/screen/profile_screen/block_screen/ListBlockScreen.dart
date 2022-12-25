@@ -52,14 +52,14 @@ class ListBlockScreen extends StatelessWidget{
                     shrinkWrap: true,
                     itemCount: resultBlocModel?.data?.length,
                       itemBuilder: (BuildContext context, int position) {
-                        return ItemBlockScreen(key, resultBlocModel?.data?[position].username ?? "");
+                        return ItemBlockScreen(key, resultBlocModel?.data?[position]);
                       }
                   );
                 } else if(state.statusGetListBlock == FormzStatus.submissionInProgress){
 
                 }
               } else{
-                return Padding(padding: EdgeInsets.only(left: 20.0), child: Text("Danh sách"));
+                return Padding(padding: EdgeInsets.only(left: 20.0), child: Text("Danh sách chặn trống"));
               }
               return Padding(padding: EdgeInsets.only(left: 20.0), child: Text("Danh sách chặn trống"));
             }

@@ -16,7 +16,6 @@ class BlockBloc extends Bloc<BlockEvent, BlockState>{
   }
   
   Future<void> _onGetListBlock(GetListBlockEvent event, Emitter<BlockState> emitter) async{
-    // emitter(state.copywith(status: FormzStatus.submissionInProgress));
     BlockModel? response = await  _blockApiProvider.getListBlock(SessionUser.token, "0", "100");
     print(response);
     if (response != null && response.message == "OK") {
