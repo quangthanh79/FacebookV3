@@ -9,7 +9,6 @@ import 'package:facebook_auth/core/helper/cache_helper.dart';
 import 'package:facebook_auth/data/datasource/remote/post_datasource.dart';
 import 'package:facebook_auth/data/models/post_response.dart';
 import 'package:facebook_auth/domain/repositories/post_repository.dart';
-import 'package:facebook_auth/utils/constant.dart';
 import 'package:facebook_auth/utils/injection.dart';
 
 import '../../core/common/error/exceptions.dart';
@@ -78,6 +77,16 @@ class PostRepositoryImpl implements PostRepository {
   Future<Either<Failure, Author>> getUserInfo(String token) async {
     try {
       return Right(await dataSource.getUserInfo(token));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, dynamic>> deletePost(
+      {required String token, required String postId}) async {
+    try {
+      return Right(await dataSource.deletePost(token: token, postId: postId));
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     }

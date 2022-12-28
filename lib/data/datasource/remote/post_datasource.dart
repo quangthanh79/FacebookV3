@@ -29,6 +29,10 @@ abstract class PostDataSource {
       List<File>? image,
       File? video});
   Future<Author> getUserInfo(String token);
+  Future<dynamic> deletePost({
+    required String token,
+    required String postId,
+  });
 }
 
 class PostDataSourceImpl implements PostDataSource {
@@ -168,6 +172,24 @@ class PostDataSourceImpl implements PostDataSource {
             avatarUrl: response.data!.avatarUrl,
             userName: response.data!.userName,
             id: response.data!.id);
+      }
+      throw ServerException(response.messages ?? unexpectedError);
+    } on DioError catch (e) {
+      throw ServerException.handleError(e);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<dynamic> deletePost({
+    required String token,
+    required String postId,
+  }) async {
+    try {
+      var response = await apiService.deletePost(token: token, postId: postId);
+      if (response.statusCode == '1000') {
+        return response.messages;
       }
       throw ServerException(response.messages ?? unexpectedError);
     } on DioError catch (e) {

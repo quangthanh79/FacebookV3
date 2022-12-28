@@ -19,6 +19,7 @@ class API {
   static const String getListPosts = '/post/get_list_posts';
   static const String getListPostsInProfile = '/post/get_list_posts_in_profile';
   static const String addPost = '/post/add_post';
+  static const String deletePost = '/post/delete_post';
   static const String getComment = '/comment/get_comment';
   static const String setComment = '/comment/set_comment';
   static const String like = '/like/like';
@@ -103,6 +104,12 @@ abstract class ApiService {
 
   @POST(API.like)
   Future<ApiResponse<bool>> like({
+    @Query("token") required String token,
+    @Query("id") required String postId,
+  });
+
+  @POST(API.deletePost)
+  Future<ApiResponse<dynamic>> deletePost({
     @Query("token") required String token,
     @Query("id") required String postId,
   });

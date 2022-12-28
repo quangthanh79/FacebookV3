@@ -20,4 +20,6 @@ abstract class PostRepository {
       List<File>? image,
       File? video});
   Future<Either<Failure, Author>> getUserInfo(String token);
+  Future<Either<Failure, dynamic>> deletePost(
+      {required String token, required String postId});
 }

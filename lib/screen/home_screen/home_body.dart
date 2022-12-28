@@ -149,6 +149,7 @@ class _HomeBodyState extends State<HomeBody> {
                             targetId: widget.targetId));
                       },
                       child: ListView.separated(
+                        physics: const BouncingScrollPhysics(),
                         controller: _scrollController,
                         separatorBuilder: (context, index) => const SizedBox(
                           height: 12,
@@ -294,6 +295,26 @@ class ListPostNotify with ChangeNotifier {
         break;
       default:
         itemsHome.insert(0, post);
+    }
+    notifyListeners();
+  }
+
+  void deletePost(int index, PostType type) {
+    switch (type) {
+      case PostType.home:
+        itemsHome.removeAt(index);
+        break;
+      case PostType.profile:
+        itemsProfile.removeAt(index);
+        break;
+      case PostType.search:
+        itemsSearch.removeAt(index);
+        break;
+      case PostType.video:
+        itemsVideo.removeAt(index);
+        break;
+      default:
+        itemsHome.removeAt(index);
     }
     notifyListeners();
   }

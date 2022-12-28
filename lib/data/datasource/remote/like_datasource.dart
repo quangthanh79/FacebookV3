@@ -1,6 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:dio/dio.dart';
-import 'package:facebook_auth/core/helper/no_thing.dart';
 import 'package:facebook_auth/core/networking/api_service.dart';
 import 'package:facebook_auth/utils/constant.dart';
 

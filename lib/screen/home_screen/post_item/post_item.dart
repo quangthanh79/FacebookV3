@@ -1,4 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:facebook_auth/core/helper/app_helper.dart';
+import 'package:facebook_auth/domain/use_cases/like_use_case%20copy.dart';
+import 'package:facebook_auth/screen/home_screen/add_post/add_post_screen.dart';
+import 'package:facebook_auth/screen/home_screen/add_post/bloc/add_post_bloc.dart';
+import 'package:facebook_auth/screen/home_screen/video_view/network_video.dart';
+import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,9 +14,10 @@ import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/post_repository_impl.dart';
 import 'package:facebook_auth/screen/home_screen/comment_list/comment_list_view.dart';
 import 'package:facebook_auth/screen/home_screen/home_body.dart';
+import 'package:facebook_auth/screen/home_screen/image_view/image_list_view.dart';
 import 'package:facebook_auth/screen/home_screen/post_in_image_screen/post_in_image_screen.dart';
 import 'package:facebook_auth/screen/home_screen/post_item/bloc/post_item_bloc.dart';
-import 'package:facebook_auth/screen/home_screen/video/video_demo.dart';
+import 'package:facebook_auth/screen/home_screen/video_view/video_demo.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
 import 'package:facebook_auth/utils/constant.dart';
 import 'package:facebook_auth/utils/injection.dart';
@@ -20,15 +27,16 @@ import '../model/comment.dart';
 import '../model/post.dart';
 
 class PostItem extends StatelessWidget {
-  final Post post;
-  final int index;
-  final PostType type;
   const PostItem({
     Key? key,
     required this.post,
     required this.index,
     required this.type,
   }) : super(key: key);
+
+  final int index;
+  final Post post;
+  final PostType type;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +47,11 @@ class PostItem extends StatelessWidget {
         children: [
           Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-              child: Header(post: post)),
+              child: Header(
+                post: post,
+                index: index,
+                type: type,
+              )),
           const SizedBox(
             height: 4,
           ),
@@ -64,11 +76,16 @@ class PostItem extends StatelessWidget {
 }
 
 class Header extends StatelessWidget {
-  final Post post;
   const Header({
     Key? key,
+    required this.index,
     required this.post,
+    required this.type,
   }) : super(key: key);
+
+  final int index;
+  final Post post;
+  final PostType type;
 
   @override
   Widget build(BuildContext context) {
@@ -133,27 +150,115 @@ class Header extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 16),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context2);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text("Report post success!")));
-                      },
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: const [
-                          SizedBox(
-                            width: 8,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            var images, video, _type = AddPostType.none;
+                            if (post.assetType == TYPE_IMAGE) {
+                              _type = AddPostType.image;
+                              images = await Future.wait(post.assetContentUrl!
+                                  .map((e) => getFileFromNetwork(url: e)));
+                            }
+                            if (post.assetType == TYPE_VIDEO) {
+                              _type = AddPostType.video;
+                              video = await getFileFromNetwork(
+                                  url: post.assetContentUrl![0]);
+                            }
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddPostView(
+                                    isEditing: true,
+                                    addPostType: _type,
+                                    content: post.content,
+                                    images: images,
+                                    video: video,
+                                  ),
+                                ));
+                            Navigator.pop(context2);
+                            // getIt<DeletePostUseCase>().call(DeletePostParams(
+                            //     token: SessionUser.token!,
+                            //     postId: post.postId));
+                            // context
+                            //     .read<ListPostNotify>()
+                            //     .deletePost(index, type);
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: const [
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Icon(Icons.edit),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Text('Edit this post'),
+                              Spacer()
+                            ],
                           ),
-                          Icon(Icons.report),
-                          SizedBox(
-                            width: 8,
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            getIt<DeletePostUseCase>().call(DeletePostParams(
+                                token: SessionUser.token!,
+                                postId: post.postId));
+                            context
+                                .read<ListPostNotify>()
+                                .deletePost(index, type);
+                            Navigator.pop(context2);
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("Delete post success!")));
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: const [
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Icon(Icons.delete),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Text('Delete this post'),
+                              Spacer()
+                            ],
                           ),
-                          Text('Report this post'),
-                          Spacer()
-                        ],
-                      ),
+                        ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context2);
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("Report post success!")));
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: const [
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Icon(Icons.report),
+                              SizedBox(
+                                width: 8,
+                              ),
+                              Text('Report this post'),
+                              Spacer()
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -172,15 +277,16 @@ class Header extends StatelessWidget {
 }
 
 class Content extends StatelessWidget {
-  final Post post;
-  final int postIndex;
-  final PostType type;
   const Content({
     Key? key,
     required this.post,
     required this.postIndex,
     required this.type,
   }) : super(key: key);
+
+  final Post post;
+  final int postIndex;
+  final PostType type;
 
   @override
   Widget build(BuildContext context) {
@@ -207,9 +313,6 @@ class Content extends StatelessWidget {
 }
 
 class AssetsContent extends StatelessWidget {
-  final Post post;
-  final int postIndex;
-  final PostType type;
   const AssetsContent({
     Key? key,
     required this.post,
@@ -217,42 +320,38 @@ class AssetsContent extends StatelessWidget {
     required this.type,
   }) : super(key: key);
 
+  final Post post;
+  final int postIndex;
+  final PostType type;
+
   @override
   Widget build(BuildContext context) {
     if (post.assetType != null && post.assetType == TYPE_IMAGE) {
-      return Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          height: 300,
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PostInImageScreen(
-                      type: type,
-                      index: postIndex,
-                    ),
-                  ));
-            },
-            child: Image.network(
-              post.assetContentUrl![0],
-              fit: BoxFit.cover,
-            ),
-          ));
+      return GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PostInImageScreen(
+                  type: type,
+                  index: postIndex,
+                ),
+              ));
+        },
+        child: ImageListView(
+          imageListType: ImageListType.network,
+          itemsNetwork: post.assetContentUrl,
+        ),
+      );
     }
     if (post.assetType != null && post.assetType == TYPE_VIDEO) {
-      return VideoDemo(url: post.assetContentUrl![0]);
+      return NetworkVideo(url: post.assetContentUrl![0]);
     }
     return Container();
   }
 }
 
 class Bottom extends StatelessWidget {
-  final Color textColor;
-  final bool? isDarkTheme;
-  final int postIndex;
-  final bool isFromDark;
-  final PostType type;
   const Bottom({
     Key? key,
     required this.textColor,
@@ -261,6 +360,12 @@ class Bottom extends StatelessWidget {
     required this.isFromDark,
     required this.type,
   }) : super(key: key);
+
+  final bool? isDarkTheme;
+  final bool isFromDark;
+  final int postIndex;
+  final Color textColor;
+  final PostType type;
 
   @override
   Widget build(BuildContext context) {
@@ -416,10 +521,6 @@ class Bottom extends StatelessWidget {
 }
 
 class ContentText extends StatefulWidget {
-  final String content;
-  final Color textColor;
-  final Color? showMoreColor;
-  final VoidCallback? voidCallback;
   const ContentText({
     Key? key,
     required this.content,
@@ -428,12 +529,18 @@ class ContentText extends StatefulWidget {
     this.voidCallback,
   }) : super(key: key);
 
+  final String content;
+  final Color? showMoreColor;
+  final Color textColor;
+  final VoidCallback? voidCallback;
+
   @override
   State<ContentText> createState() => _ContentTextState();
 }
 
 class _ContentTextState extends State<ContentText> {
   bool isShowMore = false;
+
   @override
   Widget build(BuildContext context) {
     if (widget.content.length > MAX_LENGTH_TEXT && isShowMore == false) {
