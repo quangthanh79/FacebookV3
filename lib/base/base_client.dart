@@ -23,7 +23,7 @@ class BaseClient {
 
   Future<dynamic> post(String url, dynamic body) async{
       url = baseUrl + url;
-      print("API post: $url");
+      print("API post: $url "+ body.toString());
 
       final response = await http
           .post(

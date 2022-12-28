@@ -28,10 +28,22 @@ class PostRepositoryImpl implements PostRepository {
 
   @override
   Future<Either<Failure, String>> addPost(
-      {required String token, required String described, File? image}) async {
+      {required String token,
+      required String described,
+      List<File>? image,
+      File? video}) async {
     try {
       return Right(await dataSource.addPost(
-          token: token, described: described, image: image));
+          token: token, described: described, image: image, video: video));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Author>> getUserInfo(String token) async {
+    try {
+      return Right(await dataSource.getUserInfo(token));
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     }

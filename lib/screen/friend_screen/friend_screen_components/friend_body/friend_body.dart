@@ -33,7 +33,7 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
       // print("maxExtent: ${scrollController.position.maxScrollExtent}");
       // print("ratio: ${scrollController.offset / scrollController.position.maxScrollExtent}");
       if (scrollController.position.extentAfter < 200){
-        main.loadMore();
+        // main.loadMore();
         print("call more............................");
       }
     });

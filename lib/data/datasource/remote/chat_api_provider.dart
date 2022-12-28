@@ -41,6 +41,17 @@ class ChatApiProvider extends BaseClient{
     );
     if (response != null) return ResponseChatDetail.fromJson(response);
   }
+  Future<bool?> setReadMessage(String partner_id) async {
+    String? token = SessionUser.token;
+    print("Token: "+ token.toString());
+    var url = "chat/set_read_message";
+    final response = await post(
+        url,
+        {"token": token,"partner_id": partner_id}
+            .map((key, value) => MapEntry(key, value.toString()))
+    );
+    if (response != null) return true;
+  }
   Future<ResponseUserFriendsChat?> getUserFriends(String user_id, int page) async{
     var url = "friend/get_user_friends";
     String? token = SessionUser.token;

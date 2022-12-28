@@ -126,7 +126,7 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
     ResponseListFriend? responseListFriend1;
     await Future.wait([
       Future( () async {
-        responseListFriend1 = await friendRepository.getRequestedFriends(0, 20);
+        responseListFriend1 = await friendRepository.getRequestedFriends(0, 100);
       }),
     ]);
     listFriend.clear();
@@ -178,7 +178,7 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
     ResponseListFriend? responseListFriend1;
     await Future.wait([
       Future( () async {
-        responseListFriend1 = await friendRepository.getListSuggestedFriends(0, 5);
+        responseListFriend1 = await friendRepository.getListSuggestedFriends(0, 100);
       }),
     ]);
     listFriend.clear();

@@ -65,12 +65,7 @@ class ConversationItem extends StatelessWidget{
                           SizedBox(width: 10),
                           Text("."),
                           SizedBox(width: 10),
-                          Text(
-                            _getTime(),
-                            style: conversation.lastMessage!.unread! != 0?
-                            TextStyle(fontWeight: FontWeight.bold,fontSize: 15):
-                            TextStyle(fontWeight: FontWeight.normal,fontSize: 15),
-                          ),
+                          _getTimeWidget(),
                         ],
                       )
                     ],
@@ -89,7 +84,7 @@ class ConversationItem extends StatelessWidget{
             child: Text(
               conversation.lastMessage!.message!,
               overflow: TextOverflow.ellipsis,
-              style: conversation.lastMessage!.unread! != 0?
+              style: conversation.lastMessage!.unread! != "0"?
               TextStyle(fontWeight: FontWeight.bold,fontSize: 15):
               TextStyle(fontWeight: FontWeight.normal,fontSize: 15),
             )
@@ -97,12 +92,34 @@ class ConversationItem extends StatelessWidget{
       }else{
         return Flexible(
             child: Text(
-              conversation.lastMessage!.message!,
+              "Bạn: "+conversation.lastMessage!.message!,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(fontWeight: FontWeight.normal,fontSize: 15),
             )
         );
       }
+
+  }
+  Widget _getTimeWidget(){
+    if(conversation.lastMessage!.senderId! == conversation.partner!.id!){
+      return Flexible(
+          child: Text(
+            _getTime(),
+            overflow: TextOverflow.ellipsis,
+            style: conversation.lastMessage!.unread! != "0"?
+            TextStyle(fontWeight: FontWeight.bold,fontSize: 15):
+            TextStyle(fontWeight: FontWeight.normal,fontSize: 15),
+          )
+      );
+    }else{
+      return Flexible(
+          child: Text(
+            _getTime(),
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontWeight: FontWeight.normal,fontSize: 15),
+          )
+      );
+    }
 
   }
   String _getTime(){
@@ -114,9 +131,11 @@ class ConversationItem extends StatelessWidget{
     if(diff.inDays == 0){
       var format = DateFormat('HH:mm');
       time = format.format(date);
-    }else{
-      var format = DateFormat('dd/MM/yyyy');
-      time = format.format(date);
+    }else if(diff.inDays <= 5){
+      return "Th "+ date.weekday.toString();
+    }
+    else{
+      return date.day.toString() + " thg "+ date.month.toString();
     }
     return time;
   }
