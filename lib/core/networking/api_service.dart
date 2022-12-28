@@ -57,7 +57,7 @@ abstract class ApiService {
       @Query("count") required int count,
       @Query('index') required int index});
 
-  @POST(API.getListPosts)
+  @POST(API.getListPostsInProfile)
   Future<ApiResponse<PostListResponse>> getListPostsInProfile({
     @Query("token") required String token,
     @Query("count") required int count,

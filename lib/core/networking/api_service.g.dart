@@ -76,7 +76,7 @@ class _ApiService implements ApiService {
     )
             .compose(
               _dio.options,
-              '/post/get_list_posts',
+              '/post/get_list_posts_in_profile',
               queryParameters: queryParameters,
               data: _data,
             )

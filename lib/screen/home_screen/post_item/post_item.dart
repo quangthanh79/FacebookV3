@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:facebook_auth/core/helper/app_helper.dart';
+import 'package:facebook_auth/core/helper/current_user.dart';
 import 'package:facebook_auth/domain/use_cases/like_use_case%20copy.dart';
 import 'package:facebook_auth/screen/home_screen/add_post/add_post_screen.dart';
 import 'package:facebook_auth/screen/home_screen/add_post/bloc/add_post_bloc.dart';
@@ -153,88 +154,96 @@ class Header extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        GestureDetector(
-                          onTap: () async {
-                            var images, video, _type = AddPostType.none;
-                            if (post.assetType == TYPE_IMAGE) {
-                              _type = AddPostType.image;
-                              images = await Future.wait(post.assetContentUrl!
-                                  .map((e) => getFileFromNetwork(url: e)));
-                            }
-                            if (post.assetType == TYPE_VIDEO) {
-                              _type = AddPostType.video;
-                              video = await getFileFromNetwork(
-                                  url: post.assetContentUrl![0]);
-                            }
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddPostView(
-                                    isEditing: true,
-                                    addPostType: _type,
-                                    content: post.content,
-                                    images: images,
-                                    video: video,
+                        post.user_id == CurrentUser.id
+                            ? Column(mainAxisSize: MainAxisSize.min, children: [
+                                GestureDetector(
+                                  onTap: () async {
+                                    var images, video, _type = AddPostType.none;
+                                    if (post.assetType == TYPE_IMAGE) {
+                                      _type = AddPostType.image;
+                                      images = await Future.wait(
+                                          post.assetContentUrl!.map((e) =>
+                                              getFileFromNetwork(url: e)));
+                                    }
+                                    if (post.assetType == TYPE_VIDEO) {
+                                      _type = AddPostType.video;
+                                      video = await getFileFromNetwork(
+                                          url: post.assetContentUrl![0]);
+                                    }
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => AddPostView(
+                                            isEditing: true,
+                                            addPostType: _type,
+                                            content: post.content,
+                                            images: images,
+                                            video: video,
+                                          ),
+                                        ));
+                                    Navigator.pop(context2);
+                                    // getIt<DeletePostUseCase>().call(DeletePostParams(
+                                    //     token: SessionUser.token!,
+                                    //     postId: post.postId));
+                                    // context
+                                    //     .read<ListPostNotify>()
+                                    //     .deletePost(index, type);
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: const [
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Icon(Icons.edit),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text('Edit this post'),
+                                      Spacer()
+                                    ],
                                   ),
-                                ));
-                            Navigator.pop(context2);
-                            // getIt<DeletePostUseCase>().call(DeletePostParams(
-                            //     token: SessionUser.token!,
-                            //     postId: post.postId));
-                            // context
-                            //     .read<ListPostNotify>()
-                            //     .deletePost(index, type);
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: const [
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Icon(Icons.edit),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Text('Edit this post'),
-                              Spacer()
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            getIt<DeletePostUseCase>().call(DeletePostParams(
-                                token: SessionUser.token!,
-                                postId: post.postId));
-                            context
-                                .read<ListPostNotify>()
-                                .deletePost(index, type);
-                            Navigator.pop(context2);
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text("Delete post success!")));
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: const [
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Icon(Icons.delete),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              Text('Delete this post'),
-                              Spacer()
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
+                                ),
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    getIt<DeletePostUseCase>().call(
+                                        DeletePostParams(
+                                            token: SessionUser.token!,
+                                            postId: post.postId));
+                                    context
+                                        .read<ListPostNotify>()
+                                        .deletePost(index, type);
+                                    Navigator.pop(context2);
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content:
+                                                Text("Delete post success!")));
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: const [
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Icon(Icons.delete),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text('Delete this post'),
+                                      Spacer()
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                              ])
+                            : Container(),
                         GestureDetector(
                           onTap: () {
                             Navigator.pop(context2);

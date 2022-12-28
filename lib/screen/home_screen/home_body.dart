@@ -30,8 +30,12 @@ class HomeBody extends StatefulWidget {
   State<HomeBody> createState() => _HomeBodyState();
 }
 
-class _HomeBodyState extends State<HomeBody> {
+class _HomeBodyState extends State<HomeBody>
+    with AutomaticKeepAliveClientMixin {
   final _scrollController = ScrollController();
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void dispose() {
@@ -58,6 +62,9 @@ class _HomeBodyState extends State<HomeBody> {
 
   @override
   void initState() {
+    if (widget.type == PostType.profile) {
+      context.read<ListPostNotify>().assignList([], PostType.profile);
+    }
     super.initState();
     context.read<HomeBloc>().add(DisposePost(context: context));
     context.read<HomeBloc>().add(MakeTypePost(type: widget.type));
@@ -76,6 +83,7 @@ class _HomeBodyState extends State<HomeBody> {
 
   @override
   Widget build(BuildContext context) {
+    bool isProfile = widget.type == PostType.profile;
     RefreshController refreshController =
         RefreshController(initialRefresh: false);
     return BlocListener<HomeBloc, HomeState>(
@@ -85,52 +93,61 @@ class _HomeBodyState extends State<HomeBody> {
           .read<ListPostNotify>()
           .addOnList(state.itemList!, widget.type),
       child: Container(
-        color: Colors.grey,
+        color: Colors.black26,
         margin: EdgeInsets.only(top: widget.type == PostType.home ? 100 : 0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            BlocBuilder<HomeBloc, HomeState>(
-              buildWhen: (previous, current) =>
-                  previous.status != current.status,
-              builder: (context, state) {
-                if (state.status == HomeStatus.loading &&
-                    state.pageIndex == 0) {
-                  return Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      color: Colors.white,
-                      alignment: Alignment.center,
-                      child: Wrap(
-                        children: const [
-                          CircularProgressIndicator(),
-                        ],
+        child: BlocBuilder<HomeBloc, HomeState>(
+          buildWhen: (previous, current) => previous.status != current.status,
+          builder: (context, state) {
+            if (state.status == HomeStatus.loading && state.pageIndex == 0) {
+              return Expanded(
+                child: Container(
+                  color: Colors.white,
+                  alignment: Alignment.center,
+                  child: Wrap(
+                    children: const [
+                      CircularProgressIndicator(),
+                    ],
+                  ),
+                ),
+              );
+            }
+            return Consumer<ListPostNotify>(builder: (context, value, child) {
+              List<Post> items;
+              switch (widget.type) {
+                case PostType.home:
+                  items = value.itemsHome;
+                  break;
+                case PostType.profile:
+                  items = value.itemsProfile;
+                  break;
+                case PostType.search:
+                  items = value.itemsSearch;
+                  break;
+                case PostType.video:
+                  items = value.itemsVideo;
+                  break;
+                default:
+                  items = value.itemsHome;
+              }
+              return isProfile
+                  ? ListView.separated(
+                      addAutomaticKeepAlives: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      controller: _scrollController,
+                      separatorBuilder: (context, index) => const SizedBox(
+                        height: 12,
                       ),
-                    ),
-                  );
-                }
-                return Consumer<ListPostNotify>(
-                    builder: (context, value, child) {
-                  List<Post> items;
-                  switch (widget.type) {
-                    case PostType.home:
-                      items = value.itemsHome;
-                      break;
-                    case PostType.profile:
-                      items = value.itemsProfile;
-                      break;
-                    case PostType.search:
-                      items = value.itemsSearch;
-                      break;
-                    case PostType.video:
-                      items = value.itemsVideo;
-                      break;
-                    default:
-                      items = value.itemsHome;
-                  }
-                  return Expanded(
-                    child: SmartRefresher(
+                      shrinkWrap: true,
+                      itemCount: items.length,
+                      itemBuilder: (context, index) => Container(
+                          color: Colors.white,
+                          child: PostItem(
+                            type: widget.type,
+                            post: items[index],
+                            index: index,
+                          )),
+                    )
+                  : SmartRefresher(
                       controller: refreshController,
                       enablePullDown: true,
                       footer: CustomFooter(
@@ -164,33 +181,9 @@ class _HomeBodyState extends State<HomeBody> {
                               index: index,
                             )),
                       ),
-                    ),
-                  );
-                });
-              },
-            ),
-            BlocBuilder<HomeBloc, HomeState>(
-              buildWhen: (previous, current) =>
-                  previous.status != current.status,
-              builder: (context, state) {
-                if (state.status == HomeStatus.loading) {
-                  return Container(
-                    width: double.infinity,
-                    height: double.minPositive,
-                    color: Colors.white,
-                    alignment: Alignment.center,
-                    child: Wrap(
-                      children: const [
-                        CircularProgressIndicator(),
-                      ],
-                    ),
-                  );
-                } else {
-                  return Container();
-                }
-              },
-            ),
-          ],
+                    );
+            });
+          },
         ),
       ),
     );
