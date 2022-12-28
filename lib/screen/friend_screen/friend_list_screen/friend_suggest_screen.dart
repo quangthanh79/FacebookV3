@@ -39,8 +39,8 @@ class FriendSuggestScreenState extends FriendScreenState<FriendSuggestScreen>{
   }
 
   @override
-  void loadListFriendInNumber(int numFriends) {
-    friendListBloc.add(LoadListSuggestInNumberEvent(number: numFriends));
+  void loadMore() {
+    friendListBloc.add(LoadMoreListSuggestEvent());
   }
 }
 

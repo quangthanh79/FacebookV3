@@ -42,8 +42,8 @@ class FriendListScreenState extends FriendScreenState<FriendListScreen>{
   }
 
   @override
-  void loadListFriendInNumber(int numFriends) {
-    friendListBloc.add(LoadListFriendInNumberEvent(number: numFriends));
+  void loadMore() {
+    friendListBloc.add(LoadMoreListFriendEvent());
   }
 
 }

@@ -21,6 +21,7 @@ import 'package:formz/formz.dart';
 import '../../blocs/sign_out/sign_out_state.dart';
 import '../../icon/loupe_icons.dart';
 import '../../utils/app_theme.dart';
+import '../signup/set_info_after_signup.dart';
 import '../user_screen/user_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -101,6 +102,10 @@ class ProfileScreen extends StatelessWidget {
                         user: user
                     )
                 );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => const SetInfoAfterSignup())
+                // );
               },
             )),
         Padding(

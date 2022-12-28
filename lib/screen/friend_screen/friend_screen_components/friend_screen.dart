@@ -20,14 +20,15 @@ abstract class FriendScreen extends StatefulWidget{
 
 abstract class FriendScreenState<T extends FriendScreen> extends State<T> with AutomaticKeepAliveClientMixin{
   late User user;
-  late ListFriend listFriend;
+  // late ListFriend listFriend;
+  List<User> listFriend = [];
   late FriendListBloc friendListBloc;
   late String label, responseForNoFriends;
 
   @override void initState(){
     super.initState();
     user = widget.user;
-    listFriend = ListFriend(list: [], total: 0);
+    // listFriend = ListFriend(list: [], total: 0);
     friendListBloc = FriendListBloc(
         user: user,
         listFriend: listFriend,
@@ -75,7 +76,7 @@ abstract class FriendScreenState<T extends FriendScreen> extends State<T> with A
   }
   @override get wantKeepAlive => true;
   void reloadListFriend();
-  void loadListFriendInNumber(int numFriends);
+  void loadMore();
 }
 
 // ignore: must_be_immutable

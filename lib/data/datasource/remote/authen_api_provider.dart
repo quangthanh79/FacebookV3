@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:facebook_auth/base/base_client.dart';
+import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/utils/constant.dart';
 import 'package:facebook_auth/utils/session_user.dart';
 
@@ -59,5 +61,13 @@ class AuthenApiProvider extends BaseClient{
         {"phonenumber": phone,"code_verify": verifyCode}
     );
     if (response != null) return ResponseSignIn.fromJson(response);
+  }
+  Future<ResponseUser?> changeInfoAfterSignup(String username, File? avatar) async {
+    String url = "auth/change_info_after_signup";
+    var files = <String, File>{};
+    if (avatar != null) files['avatar'] = avatar;
+    var response = await post_with_file(url, {"token": SessionUser.token, "username" : username}, files);
+    if (response != null) return ResponseUser.fromJson(response);
+    return null;
   }
 }

@@ -1,5 +1,6 @@
 
 import 'package:facebook_auth/data/models/friend.dart';
+import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_list_screen.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_request_screen.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_suggest_screen.dart';
@@ -25,15 +26,15 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
   @override
   void initState() {
     super.initState();
-    numFriends = main.listFriend.total!;
+    numFriends = main.listFriend.length;
     scrollController.addListener(() {
       // print("scroll controller: ");
       // print("offset: ${scrollController.offset}");
       // print("maxExtent: ${scrollController.position.maxScrollExtent}");
-      if (numFriends + 2 < main.user.listing!){
-        if (scrollController.offset / scrollController.position.maxScrollExtent > 0.75){
-          main.loadListFriendInNumber((numFriends * 1.25).ceil());
-        }
+      // print("ratio: ${scrollController.offset / scrollController.position.maxScrollExtent}");
+      if (scrollController.position.extentAfter < 200){
+        main.loadMore();
+        print("call more............................");
       }
     });
   }
@@ -88,7 +89,7 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
   }
 
   List<Widget> getListWidgetFriends(){
-    print("rebuild all  children");
+    // print("rebuild all  children");
     List<Widget> list = [
       main is FriendListScreenState && user.isMe ?
         getButtonsBar(context) : Container(),
@@ -103,8 +104,8 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
         ),
       ),
     ];
-    for (Friend friend in main.listFriend.list!) {
-      print("Soos banj la: ${friend.username}");
+    for (User friend in main.listFriend) {
+      // print("Soos banj la: ${friend.username}");
       list.add(FriendItem(friend: friend,));
     }
     return list;
