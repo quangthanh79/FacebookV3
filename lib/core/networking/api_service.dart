@@ -17,11 +17,15 @@ class API {
   static const int receiveTimeOut = 30000;
 
   static const String getListPosts = '/post/get_list_posts';
+  static const String getListPostsInProfile = '/post/get_list_posts_in_profile';
   static const String addPost = '/post/add_post';
+  static const String deletePost = '/post/delete_post';
   static const String getComment = '/comment/get_comment';
   static const String setComment = '/comment/set_comment';
   static const String like = '/like/like';
   static const String getUserInfo = '/user/get_user_info';
+  static const String getListVideos = '/post/get_list_videos';
+  static const String searchPost = '/search/search';
 }
 
 @RestApi()
@@ -53,6 +57,28 @@ abstract class ApiService {
       @Query("count") required int count,
       @Query('index') required int index});
 
+  @POST(API.getListPostsInProfile)
+  Future<ApiResponse<PostListResponse>> getListPostsInProfile({
+    @Query("token") required String token,
+    @Query("count") required int count,
+    @Query('index') required int index,
+    @Query("targetId") required String targetId,
+  });
+
+  @POST(API.getListVideos)
+  Future<ApiResponse<PostListResponse>> getListVideos(
+      {@Query("token") required String token,
+      @Query("count") required int count,
+      @Query('index') required int index});
+
+  @POST(API.searchPost)
+  Future<ApiResponse<PostListResponse>> searchPost({
+    @Query("token") required String token,
+    @Query("count") required int count,
+    @Query('index') required int index,
+    @Query('keyword') required String keyword,
+  });
+
   @MultiPart()
   @POST(API.addPost)
   Future<ApiResponse<AddPostResponse>> addPost(
@@ -78,6 +104,12 @@ abstract class ApiService {
 
   @POST(API.like)
   Future<ApiResponse<bool>> like({
+    @Query("token") required String token,
+    @Query("id") required String postId,
+  });
+
+  @POST(API.deletePost)
+  Future<ApiResponse<dynamic>> deletePost({
     @Query("token") required String token,
     @Query("id") required String postId,
   });

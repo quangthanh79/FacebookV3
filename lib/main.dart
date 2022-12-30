@@ -82,12 +82,7 @@ class MyApp extends StatelessWidget {
       home: ChangeNotifierProvider(
         create: (context) => ListPostNotify(),
         child: MultiBlocProvider(
-          providers: [
-            BlocProvider(
-              create: (context) => HomeBloc(getIt(), getIt()),
-            ),
-            BlocProvider(create: (context) => AuthenticationBloc())
-          ],
+          providers: [BlocProvider(create: (context) => AuthenticationBloc())],
           child: AppView(),
         ),
       ),
