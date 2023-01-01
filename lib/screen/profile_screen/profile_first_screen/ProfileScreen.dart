@@ -22,6 +22,7 @@ import '../../../blocs/sign_out/sign_out_state.dart';
 import '../../../data/datasource/local/flutter_secure_storage.dart';
 import '../../../icon/loupe_icons.dart';
 import '../../../utils/app_theme.dart';
+import '../../search_screen/search_screen.dart';
 import '../../user_screen/user_screen.dart';
 import '../change_password_screen/change_password_screen.dart';
 import 'TagProfile.dart';
@@ -53,18 +54,29 @@ class ProfileScreen extends StatelessWidget {
                     decoration: const BoxDecoration(
                         shape: BoxShape.circle, color: AppTheme.grey200),
                   )),
-              Padding(
-                  padding: EdgeInsets.only(right: 10.0),
-                  child: Container(
-                    height: 36,
-                    width: 36,
-                    child: Icon(
-                      Loupe.loupe,
-                      size: 17,
-                    ),
-                    decoration: const BoxDecoration(
-                        shape: BoxShape.circle, color: AppTheme.grey200),
-                  )),
+
+              GestureDetector(
+                onTap: (){
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen(key)));
+                  showSearch(
+                      context: context,
+                      delegate: MyCustomDelegate()
+                  );
+                },
+                child: Padding(
+                    padding: EdgeInsets.only(right: 10.0),
+                    child: Container(
+                      height: 36,
+                      width: 36,
+                      child: Icon(
+                        Loupe.loupe,
+                        size: 17,
+                      ),
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: AppTheme.grey200),
+                    )
+                ),
+              ),
             ],
           ),
         ),

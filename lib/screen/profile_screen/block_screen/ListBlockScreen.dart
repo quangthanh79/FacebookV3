@@ -51,9 +51,9 @@ class ListBlockScreen extends StatelessWidget{
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
                     itemCount: resultBlocModel?.data?.length,
-                      itemBuilder: (BuildContext context, int position) {
-                        return ItemBlockScreen(key, resultBlocModel?.data?[position]);
-                      }
+                    itemBuilder: (BuildContext context, int position) {
+                      return ItemBlockScreen(key, resultBlocModel?.data?[position]);
+                    }
                   );
                 } else if(state.statusGetListBlock == FormzStatus.submissionInProgress){
 
