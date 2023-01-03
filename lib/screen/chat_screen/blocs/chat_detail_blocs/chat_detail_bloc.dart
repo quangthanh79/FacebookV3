@@ -37,8 +37,12 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent,ChatDetailState>{
       return ResponseChatDetail(data: []);
     }
   }
-
-
+  @override
+  Future<void> close() {
+    // dispose
+    socketDetailConversation.dispose();
+    return super.close();
+  }
   Future<void> _sendMessage(
       SendMessageChanged event,
       Emitter<ChatDetailState> emit
@@ -122,4 +126,5 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent,ChatDetailState>{
       return false;
     }
   }
+
 }

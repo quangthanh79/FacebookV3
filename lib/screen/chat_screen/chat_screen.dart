@@ -107,64 +107,6 @@ class ChatScreenState extends State<ChatScreen>
                     getContentListConversation()
                   ],
                 )
-              // Column(
-              //   children: [
-              //     const SizedBox(
-              //       height: 49,
-              //     ),
-              //     Row(
-              //       children: [
-              //         const Expanded(
-              //             child: Padding(
-              //               padding: EdgeInsets.symmetric(vertical: 15),
-              //               child: Text(
-              //                 "Đoạn chat",
-              //                 style: TextStyle(
-              //                     fontSize: 24,
-              //                     fontWeight: FontWeight.bold
-              //                 ),
-              //               ),
-              //             )
-              //         ),
-              //         InkWell(
-              //           onTap: (){
-              //             print("Open Camera");
-              //             Navigator.push(
-              //                 context,
-              //                 MaterialPageRoute(
-              //                   builder: (context) => CameraScreen(),
-              //                 ));
-              //           },
-              //           splashColor: Colors.transparent,
-              //           highlightColor: Colors.transparent,
-              //           child: Container(
-              //             height: 40,
-              //             width: 40,
-              //             child: Container(
-              //                 child: Icon(Camera.photo_camera,size: 23)
-              //             ),
-              //             decoration: const BoxDecoration(
-              //                 shape: BoxShape.circle, color: AppTheme.grey200),
-              //           ),
-              //         ),
-              //         SizedBox(
-              //           width: 20,
-              //         ),
-              //         Container(
-              //           height: 40,
-              //           width: 40,
-              //           child: Container(
-              //               child: Icon(Pencil.pencil,size: 16)
-              //           ),
-              //           decoration: const BoxDecoration(
-              //               shape: BoxShape.circle, color: AppTheme.grey200),
-              //         )
-              //       ],
-              //     ),
-              //     getContentListFriend(),
-              //     getContentListConversation()
-              //   ],
-              // ),
             ),
           );
         }
@@ -173,7 +115,6 @@ class ChatScreenState extends State<ChatScreen>
   Widget getContentListConversation(){
     return BlocBuilder<ChatBloc,ChatState>(
         builder: (context,state){
-          print(" BUILD LIST CONVERSATION");
           return Expanded(
               child: LoadMoreWidget2<Conversation>(
                   onLoadData: (page) async {
