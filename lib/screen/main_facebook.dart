@@ -76,7 +76,7 @@ class MainFacebookScreenState extends State<MainFacebookScreen>
       curve: Curves.linear,
     ),
   ));
-  late final TabController con = TabController(vsync: this, length: 5);
+  late final TabController con = TabController(vsync: this, length: 6);
 
   @override
   void initState() {
@@ -137,6 +137,9 @@ class MainFacebookScreenState extends State<MainFacebookScreen>
       controller: con,
       children: <Widget>[
         HomeScreen(),
+        Center(
+          child: Text("FRIEND- Phúc"),
+        ),
         ChatScreen(),
         VideoScreen(),
         NotifyScreen(),
@@ -257,6 +260,9 @@ class MainFacebookScreenState extends State<MainFacebookScreen>
             ),
             TabIcons(
               tabIconData: tabIconsList[4],
+            ),
+            TabIcons(
+              tabIconData: tabIconsList[5],
             ),
           ],
         ),

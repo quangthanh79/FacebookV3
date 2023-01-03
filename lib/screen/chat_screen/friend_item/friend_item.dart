@@ -61,7 +61,7 @@ class FriendItem extends StatelessWidget{
                         child: Text(
                           friend.username ?? "Người dùng facebook",
                           style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 13,
                               color: Colors.black,
                               fontWeight: FontWeight.w400
                           ),
