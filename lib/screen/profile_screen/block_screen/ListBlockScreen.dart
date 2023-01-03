@@ -51,15 +51,15 @@ class ListBlockScreen extends StatelessWidget{
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
                     itemCount: resultBlocModel?.data?.length,
-                      itemBuilder: (BuildContext context, int position) {
-                        return ItemBlockScreen(key, resultBlocModel?.data?[position].username ?? "");
-                      }
+                    itemBuilder: (BuildContext context, int position) {
+                      return ItemBlockScreen(key, resultBlocModel?.data?[position]);
+                    }
                   );
                 } else if(state.statusGetListBlock == FormzStatus.submissionInProgress){
 
                 }
               } else{
-                return Padding(padding: EdgeInsets.only(left: 20.0), child: Text("Danh sách"));
+                return Padding(padding: EdgeInsets.only(left: 20.0), child: Text("Danh sách chặn trống"));
               }
               return Padding(padding: EdgeInsets.only(left: 20.0), child: Text("Danh sách chặn trống"));
             }

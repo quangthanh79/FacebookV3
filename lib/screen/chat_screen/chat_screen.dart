@@ -13,8 +13,11 @@ import 'package:facebook_auth/screen/chat_screen/camera_screen.dart';
 import 'package:facebook_auth/screen/chat_screen/conversation_item/conversation_item.dart';
 import 'package:facebook_auth/screen/chat_screen/friend_item/friend_item.dart';
 import 'package:facebook_auth/utils/app_theme.dart';
+import 'package:facebook_auth/utils/image.dart';
 import 'package:facebook_auth/utils/injection.dart';
+import 'package:facebook_auth/utils/session_user.dart';
 import 'package:facebook_auth/utils/widget/load_more_widget_2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -103,68 +106,82 @@ class ChatScreenState extends State<ChatScreen>
                         )
                       ],
                     ),
-                    getContentListFriend(),
+                    Row(
+                      children: [
+                        Container(
+                            padding: EdgeInsets.symmetric(vertical: 0,horizontal: 0),
+                            width: 70,
+                            height: 100,
+                            color: Colors.white,
+                            child: CupertinoButton(
+                                onPressed: (){
+                                },
+                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                child: Column(
+
+                                  children: [
+                                    Stack(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(100),
+                                          child: getImage(
+                                            uri: SessionUser.user?.avatar ?? 'assets/images/default_avatar_image.jpg',
+                                            defaultUri: 'assets/images/default_avatar_image.jpg',
+                                            width: 60,
+                                            height: 60,
+                                          ),
+                                        ),
+                                        Positioned(
+                                            right: -10,
+                                            top: -10,
+                                            child: GestureDetector(
+                                              child: Container(
+                                                padding: const EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(100),
+                                                    color: Colors.white
+                                                ),
+                                                child: const Icon(
+                                                  Icons.add,
+                                                  color: AppTheme.grey500,
+                                                  size: 20,
+                                                ),
+                                              ),
+                                              onTap: (){},
+                                            )
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(height: 5),
+                                    Row(
+                                      children: [
+                                        Expanded(child: Container(
+                                            color: Colors.white,
+                                            child: const Text(
+                                              "Tạo trạng thái",
+                                              style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w400
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            )
+                                        ))
+                                      ],
+                                    )
+
+
+                                  ],
+                                )
+                            )
+
+                        ),
+                        Expanded(child: getContentListFriend())
+                      ],
+                    ),
                     getContentListConversation()
                   ],
                 )
-              // Column(
-              //   children: [
-              //     const SizedBox(
-              //       height: 49,
-              //     ),
-              //     Row(
-              //       children: [
-              //         const Expanded(
-              //             child: Padding(
-              //               padding: EdgeInsets.symmetric(vertical: 15),
-              //               child: Text(
-              //                 "Đoạn chat",
-              //                 style: TextStyle(
-              //                     fontSize: 24,
-              //                     fontWeight: FontWeight.bold
-              //                 ),
-              //               ),
-              //             )
-              //         ),
-              //         InkWell(
-              //           onTap: (){
-              //             print("Open Camera");
-              //             Navigator.push(
-              //                 context,
-              //                 MaterialPageRoute(
-              //                   builder: (context) => CameraScreen(),
-              //                 ));
-              //           },
-              //           splashColor: Colors.transparent,
-              //           highlightColor: Colors.transparent,
-              //           child: Container(
-              //             height: 40,
-              //             width: 40,
-              //             child: Container(
-              //                 child: Icon(Camera.photo_camera,size: 23)
-              //             ),
-              //             decoration: const BoxDecoration(
-              //                 shape: BoxShape.circle, color: AppTheme.grey200),
-              //           ),
-              //         ),
-              //         SizedBox(
-              //           width: 20,
-              //         ),
-              //         Container(
-              //           height: 40,
-              //           width: 40,
-              //           child: Container(
-              //               child: Icon(Pencil.pencil,size: 16)
-              //           ),
-              //           decoration: const BoxDecoration(
-              //               shape: BoxShape.circle, color: AppTheme.grey200),
-              //         )
-              //       ],
-              //     ),
-              //     getContentListFriend(),
-              //     getContentListConversation()
-              //   ],
-              // ),
             ),
           );
         }
@@ -173,7 +190,6 @@ class ChatScreenState extends State<ChatScreen>
   Widget getContentListConversation(){
     return BlocBuilder<ChatBloc,ChatState>(
         builder: (context,state){
-          print(" BUILD LIST CONVERSATION");
           return Expanded(
               child: LoadMoreWidget2<Conversation>(
                   onLoadData: (page) async {

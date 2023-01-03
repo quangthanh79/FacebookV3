@@ -23,7 +23,7 @@ abstract class PostDataSource {
       required int count,
       required int index,
       required String keyword});
-  Future<String> addPost(
+  Future<AddPostResponse> addPost(
       {required String token,
       required String described,
       List<File>? image,
@@ -127,7 +127,7 @@ class PostDataSourceImpl implements PostDataSource {
   }
 
   @override
-  Future<String> addPost(
+  Future<AddPostResponse> addPost(
       {required String token,
       required String described,
       List<File>? image,
@@ -153,7 +153,7 @@ class PostDataSourceImpl implements PostDataSource {
           image: multipartFiles,
           video: video);
       if (response.statusCode == '1000') {
-        return response.data!.id!;
+        return response.data!;
       }
       throw ServerException(response.messages ?? unexpectedError);
     } on DioError catch (e) {

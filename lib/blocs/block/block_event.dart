@@ -17,3 +17,13 @@ class GetListBlockEvent extends BlockEvent{
   List<Object> get props => [];
 
 }
+
+class SetUnBlockEvent extends BlockEvent{
+  String userId;
+
+  SetUnBlockEvent({required this.userId});
+
+  @override
+  List<Object> get props => [userId];
+
+}
