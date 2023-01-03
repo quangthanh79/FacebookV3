@@ -10,7 +10,7 @@ class PrivacyScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
             key: key,
-            elevation: 2.0,
+            elevation: 1.0,
             centerTitle: false,
             backgroundColor: Colors.white,
             title: Text("Chính sách quyền riêng tư của facebook", style: TextStyle(color: Colors.black,),),
