@@ -187,6 +187,9 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
       for (var element in responseListFriend1!.data!.list!) {
         listFriend.add(User(id: element.user_id, same_friends: element.same_friends ?? 0));
       }
+      // listFriend.removeWhere((element) {
+      //   return element.is_friend == "BLOCKING" || element.is_friend == "BLOCKED";
+      // });
     }
     print("total request friends: ${responseListFriend1!.data!.total}");
     add(ReloadListSuggestEvent());

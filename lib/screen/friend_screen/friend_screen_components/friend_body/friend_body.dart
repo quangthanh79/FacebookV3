@@ -46,18 +46,18 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
       children: [
         const SizedBox(height: 28),
         FriendHeader(main: main,),
-        Container(
-          padding: const EdgeInsets.all(16),
-          // decoration: const BoxDecoration(
-          //   border: Border(bottom: BorderSide(width: 1, color: Colors.black12))
-          // ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              getSearchBar(context)
-            ],
-          ),
-        ),
+        // Container(
+        //   padding: const EdgeInsets.all(16),
+        //   // decoration: const BoxDecoration(
+        //   //   border: Border(bottom: BorderSide(width: 1, color: Colors.black12))
+        //   // ),  //
+        //   child: Column(
+        //     mainAxisAlignment: MainAxisAlignment.start,
+        //     children: [
+        //       getSearchBar(context)
+        //     ],
+        //   ),
+        // ),
         Expanded(
           flex: 1,
           child: Container(
@@ -91,6 +91,7 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
   List<Widget> getListWidgetFriends(){
     // print("rebuild all  children");
     List<Widget> list = [
+      const SizedBox(height: 8,),
       main is FriendListScreenState && user.isMe ?
         getButtonsBar(context) : Container(),
       const SizedBox(height: 8,),
@@ -103,6 +104,7 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
           fontWeight: FontWeight.w600
         ),
       ),
+      const SizedBox(height: 8,)
     ];
     for (User friend in main.listFriend) {
       // print("Soos banj la: ${friend.username}");
@@ -120,7 +122,7 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
           callback: (){
             Navigator.push(
               context,
-              FriendRequestScreen.route(user: user)
+              FriendRequestScreen.route(user: user, onBack: (){})
             );
           }
         ),
@@ -129,7 +131,7 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
             callback: (){
               Navigator.push(
                   context,
-                  FriendSuggestScreen.route(user: user)
+                  FriendSuggestScreen.route(user: user, onBack: (){})
               );
             }
         )

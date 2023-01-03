@@ -55,13 +55,11 @@ class UserInforBloc extends Bloc<UserInforEvent, UserInforState> {
     //   listFriend.copyFrom(responseListFriend!.data!);
     // }
     user.copyFrom(responseUser.data);
-    emit(const UserInforState(status: UserInforStatus.LOADED));
-
+    emit(getState());
   }
 
   Future<void> reloadUser(UserInforEvent event, Emitter<UserInforState> emit) async{
-
-    emit(const UserInforState(status: UserInforStatus.LOADED));
+    emit(getState());
   }
 
   Future<void> loadUserBackground(UserInforEvent event, Emitter<UserInforState> emit) async{
@@ -74,7 +72,18 @@ class UserInforBloc extends Bloc<UserInforEvent, UserInforState> {
       responseUser.data.is_friend = responseUser.details;
     }
     user.copyFrom(responseUser.data);
-    emit(const UserInforState(status: UserInforStatus.LOADED));
+    emit(getState());
+  }
+
+  UserInforState getState(){
+    switch (user.is_friend){
+      case "BLOCKING":
+        return const UserInforState(status: UserInforStatus.BLOCKING);
+      case "BLOCKED":
+        return const UserInforState(status: UserInforStatus.BLOCKED);
+      default:
+        return const UserInforState(status: UserInforStatus.LOADED);
+    }
   }
 
 }

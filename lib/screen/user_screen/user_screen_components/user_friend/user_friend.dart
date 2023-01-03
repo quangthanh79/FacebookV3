@@ -32,6 +32,7 @@ class UserFriendState_ extends UserScreenComponentState<UserFriend>{
 
   @override
   Widget build(BuildContext context){
+    super.build(context);
     return BlocProvider<UserFriendBloc>(
       create: (context) => userFriendBloc,
       child: BlocBuilder<UserFriendBloc, UserFriendState>(
@@ -118,7 +119,7 @@ class UserFriendState_ extends UserScreenComponentState<UserFriend>{
           onTap: (){
             Navigator.push(
               context,
-              FriendListScreen.route(user: user)
+              FriendListScreen.route(user: user, onBack: (){})
             );
           },
           child: Container(

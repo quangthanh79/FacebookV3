@@ -50,6 +50,23 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
       child: BlocBuilder<FriendItemBloc, FriendItemState>(
         bloc: friendItemBloc,
         builder: (context, state){
+          if (state.status == FriendItemStatus.BLOCK){
+            return Container(
+              height: 60,
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  // border: Border.all(color: Colors.black, width: 1)
+                  color: Colors.black12.withAlpha(15)
+              ),
+              alignment: Alignment.center,
+              child: const Text("This user blocked you or you blocked this user",
+                style: TextStyle(
+                  fontWeight: FontWeight.w600
+                ),
+              ),
+            );
+          }
           if (state.status == FriendItemStatus.LOADING){
             return getShimmer();
           }

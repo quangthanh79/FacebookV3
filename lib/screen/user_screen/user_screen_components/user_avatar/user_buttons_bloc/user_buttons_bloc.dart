@@ -101,8 +101,10 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
     ResponseActionFriend? responseActionFriend = await friendRepository.setBlock(user.id!, 0);
     if (responseActionFriend != null && responseActionFriend.code == "1000") {
       user.is_friend = "BLOCKING";
+      if (e.onSuccess != null) e.onSuccess!.call();
     } else {
       emit(getState());
+      if (e.onError != null) e.onError!.call();
     }
   }
 
@@ -114,8 +116,10 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
     ResponseActionFriend? responseActionFriend = await friendRepository.setBlock(user.id!, 1);
     if (responseActionFriend != null && responseActionFriend.code == "1000") {
       user.is_friend = "NOT_FRIEND";
+      if (e.onSuccess != null) e.onSuccess!.call();
     } else {
       emit(getState());
+      if (e.onError != null) e.onError!.call();
     }
   }
 

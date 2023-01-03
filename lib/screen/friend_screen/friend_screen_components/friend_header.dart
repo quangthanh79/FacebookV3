@@ -23,14 +23,15 @@ class FriendHeaderState extends FriendScreenComponentState<FriendHeader>{
   Widget build(BuildContext context) {
     super.build(context);
     return Container(
-      decoration: const BoxDecoration(
+      decoration: main.widget.onBack != null ?
+      const BoxDecoration(
         border: Border(
             bottom: BorderSide(
                 width: 1.0,
                 color: Colors.grey
             )
         ),
-      ),
+      ) : const BoxDecoration(),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -38,6 +39,7 @@ class FriendHeaderState extends FriendScreenComponentState<FriendHeader>{
               flex: 6,
               child: Row(
                 children: [
+                  main.widget.onBack != null ?
                   GestureDetector(
                     onTap: back,
                     child: const Padding(
@@ -45,7 +47,7 @@ class FriendHeaderState extends FriendScreenComponentState<FriendHeader>{
                           horizontal: 20, vertical: 12),
                       child: Icon(Icons.arrow_back),
                     ),
-                  ),
+                  ) : const SizedBox(width: 16,),
                   Flexible(
                     fit: FlexFit.loose,
                     child: Text(

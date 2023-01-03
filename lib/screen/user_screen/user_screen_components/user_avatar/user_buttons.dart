@@ -252,7 +252,11 @@ class UserButtonsState_ extends UserScreenComponentState<UserButtons>{
               label: "Bỏ chặn người dùng",
               icon: Icons.person_off,
               flex: 3,
-              function: (){ userButtonsBloc.add(UnblockUserEvent()); }
+              function: (){
+                userButtonsBloc.add(UnblockUserEvent(onSuccess: (){
+                  main.userInforBloc.add(ReloadUserEvent());
+                }));
+              }
           )
         ],
       ),
