@@ -116,14 +116,20 @@ class UserScreenState extends State<UserScreen>{
                 bloc: userInforBloc,
                 builder: (context, state){
                   Widget content;
-                  switch(state.statusLoadInfo){
-                    case FormzStatus.submissionInProgress:
+                  switch(state.status){
+                    case UserInforStatus.LOADING:
                       content = UserLoading(main: this);
                       break;
-                    case FormzStatus.submissionSuccess:
+                    case UserInforStatus.LOADED:
                       content = UserBody(main: this);
                       break;
-                    case FormzStatus.submissionFailure:
+                    case UserInforStatus.FAIL:
+                      content = UserBody(main: this);
+                      break;
+                    case UserInforStatus.BLOCKING:
+                      content = UserBody(main: this);
+                      break;
+                    case UserInforStatus.BLOCKED:
                       content = UserBody(main: this);
                       break;
                     default:

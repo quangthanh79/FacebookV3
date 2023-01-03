@@ -20,15 +20,15 @@ class UserInforBloc extends Bloc<UserInforEvent, UserInforState> {
     required this.userRepository,
     // required this.friendRepository,
     required this.user,
-    // required this.listFriend
-  }) : super(UserInforState()) {
+    // required this.list stFriend
+  }) : super(const UserInforState(status: UserInforStatus.LOADING)) {
     on<LoadUserEvent>(loadUser);
     on<ReloadUserEvent>(reloadUser);
     on<BackgroundLoadUserEvent>(loadUserBackground);
   }
 
   Future<void> loadUser(UserInforEvent event, Emitter<UserInforState> emit) async{
-    emit(state.copyWith(statusLoadInfo: FormzStatus.submissionInProgress));
+    emit(const UserInforState(status: UserInforStatus.LOADING));
     
     ResponseUser? responseUser;
     // ResponseListFriend? responseListFriend;
@@ -44,28 +44,37 @@ class UserInforBloc extends Bloc<UserInforEvent, UserInforState> {
 
     if (responseUser == null){
       // print("FAILURE: "+ response_list_friend.toString());
-      emit(state.copyWith(statusLoadInfo: FormzStatus.submissionFailure));
+      emit(const UserInforState(status: UserInforStatus.FAIL));
       return;
+    }
+    if (responseUser.code == "9995"){
+      responseUser.data.copyFrom(user);
+      responseUser.data.is_friend = responseUser.details;
     }
     // if (responseListFriend != null) {
     //   listFriend.copyFrom(responseListFriend!.data!);
     // }
-    user.copyFrom(responseUser.data!);
-    emit(state.copyWith(statusLoadInfo: FormzStatus.submissionSuccess));
+    user.copyFrom(responseUser.data);
+    emit(const UserInforState(status: UserInforStatus.LOADED));
 
   }
 
   Future<void> reloadUser(UserInforEvent event, Emitter<UserInforState> emit) async{
-    emit(state.copyWith(statusLoadInfo: FormzStatus.submissionSuccess));
+
+    emit(const UserInforState(status: UserInforStatus.LOADED));
   }
 
   Future<void> loadUserBackground(UserInforEvent event, Emitter<UserInforState> emit) async{
     ResponseUser? responseUser = await userRepository.getUserInfor(user.id ?? "");
-    if (responseUser == null || responseUser.code != "1000"){
+    if (responseUser == null){
       return;
     }
-    user.copyFrom(responseUser.data!);
-    emit(state.copyWith(statusLoadInfo: FormzStatus.submissionSuccess));
+    if (responseUser.code == "9995"){
+      responseUser.data.copyFrom(user);
+      responseUser.data.is_friend = responseUser.details;
+    }
+    user.copyFrom(responseUser.data);
+    emit(const UserInforState(status: UserInforStatus.LOADED));
   }
 
 }

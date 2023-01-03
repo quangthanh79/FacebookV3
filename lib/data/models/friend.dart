@@ -21,6 +21,21 @@ class ResponseListFriend extends Response{
   }
 }
 
+class ResponseActionFriend extends Response{
+
+  ResponseActionFriend({super.code, super.message, super.details});
+
+  ResponseActionFriend.fromJson(Map<String, dynamic> json) {
+    copyFrom(Response.fromJson(json));
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = super.toJson();
+    return data;
+  }
+}
+
 class Friend {
   String? user_id;
   String? username;

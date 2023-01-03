@@ -36,6 +36,7 @@ class UserButtonsState_ extends UserScreenComponentState<UserButtons>{
 
   @override
   Widget build(BuildContext context){
+    super.build(context);
     return BlocProvider<UserButtonsBloc>(
       create: (context) => userButtonsBloc,
       child: BlocBuilder<UserButtonsBloc, UserButtonsState>(
@@ -54,6 +55,10 @@ class UserButtonsState_ extends UserScreenComponentState<UserButtons>{
                 return getReceiveButtons(context);
               case UserButtonStatus.NOT_FRIEND:
                 return getNotRelativeButtons(context);
+              case UserButtonStatus.BLOCKED:
+                return getBlockedButtons(context);
+              case UserButtonStatus.BLOCKING:
+                return getBlockingButtons(context);
               case UserButtonStatus.INITIAL:
                 return Container();
             }
@@ -156,7 +161,7 @@ class UserButtonsState_ extends UserScreenComponentState<UserButtons>{
           const SizedBox(width: 8,),
           getButtonMessage(theme: Theme.blue),
           const SizedBox(width: 8,),
-          getButtonMore(),
+          getButtonMore(function: ()=>showBlockMenu(context)),
         ],
       ),
     );
@@ -183,7 +188,7 @@ class UserButtonsState_ extends UserScreenComponentState<UserButtons>{
           const SizedBox(width: 8,),
           getButtonMessage(theme: Theme.blue),
           const SizedBox(width: 8,),
-          getButtonMore(),
+          getButtonMore(function: ()=>showBlockMenu(context)),
         ],
       ),
     );
@@ -210,7 +215,7 @@ class UserButtonsState_ extends UserScreenComponentState<UserButtons>{
           const SizedBox(width: 8,),
           getButtonMessage(theme: Theme.dark),
           const SizedBox(width: 8,),
-          getButtonMore(),
+          getButtonMore(function: ()=>showBlockMenu(context)),
         ],
       ),
     );
@@ -231,7 +236,41 @@ class UserButtonsState_ extends UserScreenComponentState<UserButtons>{
           const SizedBox(width: 8,),
           getButtonMessage(theme: Theme.dark),
           const SizedBox(width: 8,),
-          getButtonMore()
+          getButtonMore(function: ()=>showBlockMenu(context))
+        ],
+      ),
+    );
+  }
+
+  Widget getBlockingButtons(BuildContext context){
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          getButton(
+              theme: Theme.dark,
+              label: "Bỏ chặn người dùng",
+              icon: Icons.person_off,
+              flex: 3,
+              function: (){ userButtonsBloc.add(UnblockUserEvent()); }
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget getBlockedButtons(BuildContext context){
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          Text("Bạn đã bị chặn bởi người dùng này",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w600
+            ),
+          )
         ],
       ),
     );
@@ -271,6 +310,15 @@ class UserButtonsState_ extends UserScreenComponentState<UserButtons>{
             ),
           ),
         )
+    );
+  }
+
+  void showBlockMenu(BuildContext context){
+    // print("show block menu");
+    UserMenuBottom.showBottomMenu(
+        context: context,
+        status: UserButtonStatus.BLOCKING,
+        main: this
     );
   }
 

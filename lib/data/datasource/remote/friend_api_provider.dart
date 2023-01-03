@@ -75,7 +75,7 @@ class FriendApiProvider extends BaseClient{
     return null;
   }
 
-  Future<ResponseListFriend?> setBlock(String user_id, int type) async{
+  Future<ResponseActionFriend?> setBlock(String user_id, int type) async{
     var url = "friend/set_block";
     var params = {
       "token" : SessionUser.token, "user_id": user_id, "type": type
@@ -83,7 +83,7 @@ class FriendApiProvider extends BaseClient{
     final response = await post(
         url, params.map((key, value) => MapEntry(key, value.toString()))
     );
-    if (response != null) return ResponseListFriend.fromJson(response);
+    if (response != null) return ResponseActionFriend.fromJson(response);
     return null;
   }
 

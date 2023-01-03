@@ -10,6 +10,8 @@ class UserButtonsEvent extends Equatable{
   List<Object?> get props => [];
 }
 
+class BlockUserEvent extends UserButtonsEvent{}
+class UnblockUserEvent extends UserButtonsEvent{}
 class SendRequestFriendEvent extends UserButtonsEvent{}
 class CancelRequestFriendEvent extends UserButtonsEvent{}
 class CancelFriendEvent extends UserButtonsEvent{}
@@ -20,4 +22,3 @@ class AcceptRequestFriendEvent extends UserButtonsEvent{
 }
 class InitButtonsEvent extends UserButtonsEvent{}
 class UpdateButtonsEvent extends UserButtonsEvent{}
-

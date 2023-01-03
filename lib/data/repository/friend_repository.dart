@@ -23,7 +23,7 @@ class FriendRepository{
   Future<ResponseListFriend?> getListBlocks(int index, int count)
     => friendApiProvider.getListBlocks(index, count);
 
-  Future<ResponseListFriend?> setBlock(String user_id, int type)
+  Future<ResponseActionFriend?> setBlock(String user_id, int type)
     => friendApiProvider.setBlock(user_id, type);
 
 }

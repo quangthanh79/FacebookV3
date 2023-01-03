@@ -1,21 +1,18 @@
 
 part of 'user_infor_bloc.dart';
 
+enum UserInforStatus{
+  LOADING, LOADED, FAIL, BLOCKING, BLOCKED
+}
+
 class UserInforState extends Equatable{
-  final FormzStatus statusLoadInfo;
-  UserInforState({
-    this.statusLoadInfo = FormzStatus.pure
+  final UserInforStatus status;
+  const UserInforState({
+    required this.status
   });
-  UserInforState copyWith(
-      { FormzStatus? statusLoadInfo,
-      })
-  {
-    return UserInforState(
-      statusLoadInfo: statusLoadInfo ?? this.statusLoadInfo,
-    );
-  }
+
   @override
-  List<Object?> get props => [this.statusLoadInfo, Random().nextInt(10000)];
+  List<Object?> get props => [status, Random().nextInt(10000)];
 }
 //
 // class LoadingUserState extends UserInforState{}
