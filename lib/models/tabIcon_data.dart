@@ -38,27 +38,34 @@ class TabIconData {
       isSelected: true,
     ),
     TabIconData(
+      iconUnselected: Image.asset("assets/images/friend_non.png",height: 27,width: 27,),
+      iconSelected: Image.asset("assets/images/friend.png",height: 27,width: 27,),
+      index: 1,
+      //hard code
+      isSelected: false,
+    ),
+    TabIconData(
       iconUnselected: Image.asset("assets/images/messenger_non.png",height: 24,width: 24,),
       iconSelected: Image.asset("assets/images/messenger.png",height: 24,width: 24,),
-      index: 1,
+      index: 2,
       isSelected: false,
     ),
     TabIconData(
       iconUnselected: Image.asset("assets/images/video_non.png",height: 29,width: 29,),
       iconSelected: Image.asset("assets/images/video.png",height: 29,width: 29,),
-      index: 2,
+      index: 3,
       isSelected: false,
     ),
     TabIconData(
       iconUnselected: Image.asset("assets/images/bell_non.png",height: 27,width: 27,),
       iconSelected: Image.asset("assets/images/bell.png",height: 27,width: 27,),
-      index: 3,
+      index: 4,
       isSelected: false,
     ),
     TabIconData(
       iconUnselected: Image.asset("assets/images/menu_non.png",height: 27,width: 27,),
       iconSelected: Image.asset("assets/images/menu.png",height: 27,width: 27,),
-      index: 4,
+      index: 5,
       isSelected: false,
     ),
   ];

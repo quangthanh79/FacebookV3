@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:facebook_auth/utils/constant.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'package:facebook_auth/screen/home_screen/model/post.dart';
+import 'package:facebook_auth/utils/constant.dart';
 
 import '../../core/helper/make_time.dart';
 
@@ -17,6 +17,24 @@ class PostListResponse {
   factory PostListResponse.fromJson(Map<String, dynamic> json) =>
       _$PostListResponseFromJson(json);
   Map<String, dynamic> toJson() => _$PostListResponseToJson(this);
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'posts': posts?.map((x) => x.toMap()).toList(),
+    };
+  }
+
+  factory PostListResponse.fromMap(Map<String, dynamic> map) {
+    return PostListResponse(
+      posts: map['posts'] != null
+          ? List<PostModel>.from(
+              (map['posts'] as List<int>).map<PostModel?>(
+                (x) => PostModel.fromMap(x as Map<String, dynamic>),
+              ),
+            )
+          : null,
+    );
+  }
 }
 
 @JsonSerializable()
@@ -45,6 +63,44 @@ class PostModel {
   factory PostModel.fromJson(Map<String, dynamic> json) =>
       _$PostModelFromJson(json);
   Map<String, dynamic> toJson() => _$PostModelToJson(this);
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'image': image?.map((x) => x.toMap()).toList(),
+      'video': video?.toMap(),
+      'described': described,
+      'like': like,
+      'comment': comment,
+      'isLiked': isLiked,
+      'author': author?.toMap(),
+      'created': created,
+    };
+  }
+
+  factory PostModel.fromMap(Map<String, dynamic> map) {
+    return PostModel(
+      id: map['id'] != null ? map['id'] as String : null,
+      image: map['image'] != null
+          ? List<Asset>.from(
+              (map['image'] as List<int>).map<Asset?>(
+                (x) => Asset.fromMap(x as Map<String, dynamic>),
+              ),
+            )
+          : null,
+      video: map['video'] != null
+          ? Asset.fromMap(map['video'] as Map<String, dynamic>)
+          : null,
+      described: map['described'] != null ? map['described'] as String : null,
+      like: map['like'] != null ? map['like'] as String : null,
+      comment: map['comment'] != null ? map['comment'] as String : null,
+      isLiked: map['isLiked'] != null ? map['isLiked'] as String : null,
+      author: map['author'] != null
+          ? Author.fromMap(map['author'] as Map<String, dynamic>)
+          : null,
+      created: map['created'] != null ? map['created'] as String : null,
+    );
+  }
 }
 
 extension PostModelX on PostModel {
@@ -99,6 +155,22 @@ class Author {
   @override
   String toString() =>
       'Author(id: $id, userName: $userName, avatarUrl: $avatarUrl)';
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'userName': userName,
+      'avatarUrl': avatarUrl,
+    };
+  }
+
+  factory Author.fromMap(Map<String, dynamic> map) {
+    return Author(
+      id: map['id'] != null ? map['id'] as String : null,
+      userName: map['userName'] != null ? map['userName'] as String : null,
+      avatarUrl: map['avatarUrl'] != null ? map['avatarUrl'] as String : null,
+    );
+  }
 }
 
 @JsonSerializable()
@@ -111,13 +183,31 @@ class Asset {
   });
   factory Asset.fromJson(Map<String, dynamic> json) => _$AssetFromJson(json);
   Map<String, dynamic> toJson() => _$AssetToJson(this);
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'url': url,
+    };
+  }
+
+  factory Asset.fromMap(Map<String, dynamic> map) {
+    return Asset(
+      id: map['id'] != null ? map['id'] as String : null,
+      url: map['url'] != null ? map['url'] as String : null,
+    );
+  }
 }
 
 @JsonSerializable()
 class AddPostResponse {
   final String? id;
+  final String? video;
+  final List<Asset>? images;
   AddPostResponse({
     this.id,
+    this.video,
+    this.images,
   });
   factory AddPostResponse.fromJson(Map<String, dynamic> json) =>
       _$AddPostResponseFromJson(json);

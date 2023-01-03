@@ -1,7 +1,9 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
+import 'package:facebook_auth/data/repository/post_repository_impl.dart';
 import 'package:facebook_auth/screen/home_screen/comment_item/comment_item.dart';
 import 'package:facebook_auth/screen/home_screen/home_body.dart';
 import 'package:facebook_auth/screen/home_screen/model/post.dart';
@@ -20,6 +22,7 @@ class CommentListView extends StatefulWidget {
     required this.post,
     required this.index,
     required this.isFromDark,
+    required this.type,
   }) : super(key: key);
 
   final List<Comment> comments;
@@ -27,6 +30,7 @@ class CommentListView extends StatefulWidget {
   final Post post;
   final int index;
   final bool isFromDark;
+  final PostType type;
 
   @override
   State<CommentListView> createState() => _CommentListViewState();
@@ -100,6 +104,7 @@ class _CommentListViewState extends State<CommentListView> {
                       alignment: WrapAlignment.start,
                       children: [
                         Header(
+                          type: widget.type,
                           isFromDark: widget.isFromDark,
                           post: widget.post,
                           postIndex: widget.index,
@@ -220,7 +225,8 @@ class _CommentListViewState extends State<CommentListView> {
                                     onTap: () {
                                       context
                                           .read<ListPostNotify>()
-                                          .commentOnPost(widget.index);
+                                          .commentOnPost(
+                                              widget.index, widget.type);
                                       BlocProvider.of<CommentBloc>(context2)
                                           .add(AddComment(
                                               content: _controller.text,
@@ -261,11 +267,13 @@ class Header extends StatelessWidget {
     required this.post,
     required this.postIndex,
     required this.isFromDark,
+    required this.type,
   }) : super(key: key);
 
   final Post post;
   final int postIndex;
   final bool isFromDark;
+  final PostType type;
 
   @override
   Widget build(BuildContext context) {
@@ -274,7 +282,24 @@ class Header extends StatelessWidget {
       create: (context) => LikeState()..initial(post.isSelfLiking),
       child: Consumer<ListPostNotify>(
         builder: (context, value, child) {
-          var model = value.items[postIndex];
+          List<Post> items;
+          switch (type) {
+            case PostType.home:
+              items = value.itemsHome;
+              break;
+            case PostType.profile:
+              items = value.itemsProfile;
+              break;
+            case PostType.search:
+              items = value.itemsSearch;
+              break;
+            case PostType.video:
+              items = value.itemsVideo;
+              break;
+            default:
+              items = value.itemsHome;
+          }
+          var model = items[postIndex];
           return Container(
             padding: EdgeInsets.only(bottom: 16, top: isFromDark ? 16 : 0),
             child: Row(
@@ -285,12 +310,12 @@ class Header extends StatelessWidget {
                       Image.asset('assets/images/icon_like_fix.png',
                           width: 24, height: 24),
                       const SizedBox(width: 4),
-                      Text(value.likeText(postIndex), style: likeStyle)
+                      Text(value.likeText(postIndex, type), style: likeStyle)
                     ],
                   ),
                   GestureDetector(
                       onTap: () {
-                        value.likeOnPost(postIndex);
+                        value.likeOnPost(postIndex, type);
                         getIt<LikeBloc>()
                             .add(AddLikeEvent(postId: post.postId));
                       },
@@ -315,8 +340,8 @@ class LikeState with ChangeNotifier {
     notifyListeners();
   }
 
-  void changeState(BuildContext context, int index) {
-    context.read<ListPostNotify>().likeOnPost(index);
+  void changeState(BuildContext context, int index, PostType type) {
+    context.read<ListPostNotify>().likeOnPost(index, type);
     isLiked = !isLiked;
     notifyListeners();
   }

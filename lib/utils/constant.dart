@@ -19,7 +19,7 @@ const String unexpectedError = 'Something went wrong!';
 
 const String postToken =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNjg3M2NjNmIwYmE1NzAyNDc1MWQzOCIsImRhdGVMb2dpbiI6IjIwMjItMTEtMzBUMDM6MzY6MDguODU5WiIsImlhdCI6MTY2OTc3OTM2OSwiZXhwIjoxNjc5Nzc5MzY4fQ.9yVyMd4Uvu_Wpcvg6q53F5ohgXytZHVcb1mgH-c2Vuo';
-const int count = 5;
+const int count = 7;
 const String defaultAvatar = 'assets/images/no_image.png';
 const userName = 'SonNN';
 const avatarUrl = 'assets/images/no_image.png';

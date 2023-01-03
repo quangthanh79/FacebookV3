@@ -34,6 +34,7 @@ class BaseClient {
       if(response.statusCode == 200){
         return jsonDecodeUtf8(response.bodyBytes);
       } else {
+        print("trong base client - 1111");
         if (response.statusCode <= 500) {
           dynamic resultJson = jsonDecodeUtf8(response.bodyBytes);
           ErrorResponse errorResponse = ErrorResponse.fromJson(resultJson);

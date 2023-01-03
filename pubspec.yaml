@@ -38,7 +38,6 @@ dependencies:
   dio: ^4.0.4
   json_annotation: ^4.7.0
   pretty_dio_logger: ^1.1.1
-
   shimmer: ^2.0.0
 
   shared_preferences: ^2.0.15
@@ -53,6 +52,8 @@ dependencies:
   # To play video
   video_player: ^2.4.7
   flick_video_player: ^0.5.0
+  visibility_detector: ^0.3.3
+
 dependency_overrides:
   freezed: 2.1.0
 dev_dependencies:

@@ -8,21 +8,24 @@ import 'package:facebook_auth/screen/login/login_screen.dart';
 import 'package:facebook_auth/screen/main_facebook.dart';
 import 'package:facebook_auth/screen/profile_screen/block_screen/ListBlockScreen.dart';
 import 'package:facebook_auth/screen/profile_screen/PrivacyScreen.dart';
-import 'package:facebook_auth/screen/profile_screen/TagProfile.dart';
-import 'package:facebook_auth/screen/profile_screen/ExpandedTagProfile.dart';
+import 'package:facebook_auth/screen/profile_screen/profile_first_screen/ExpandedTagProfile.dart';
 import 'package:facebook_auth/screen/profile_screen/TermsOfServiceScreen.dart';
 import 'package:facebook_auth/utils/Progress_Dialog.dart';
 import 'package:facebook_auth/utils/injection.dart';
 import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:formz/formz.dart';
 
-import '../../blocs/sign_out/sign_out_state.dart';
-import '../../icon/loupe_icons.dart';
-import '../../utils/app_theme.dart';
-import '../signup/set_info_after_signup.dart';
-import '../user_screen/user_screen.dart';
+import '../../../blocs/sign_out/sign_out_state.dart';
+import '../../../data/datasource/local/flutter_secure_storage.dart';
+import '../../../icon/loupe_icons.dart';
+import '../../../utils/app_theme.dart';
+import '../../search_screen/search_screen.dart';
+import '../../user_screen/user_screen.dart';
+import '../change_password_screen/change_password_screen.dart';
+import 'TagProfile.dart';
 
 class ProfileScreen extends StatelessWidget {
   @override
@@ -51,18 +54,29 @@ class ProfileScreen extends StatelessWidget {
                     decoration: const BoxDecoration(
                         shape: BoxShape.circle, color: AppTheme.grey200),
                   )),
-              Padding(
-                  padding: EdgeInsets.only(right: 10.0),
-                  child: Container(
-                    height: 36,
-                    width: 36,
-                    child: Icon(
-                      Loupe.loupe,
-                      size: 17,
-                    ),
-                    decoration: const BoxDecoration(
-                        shape: BoxShape.circle, color: AppTheme.grey200),
-                  )),
+
+              GestureDetector(
+                onTap: (){
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen(key)));
+                  showSearch(
+                      context: context,
+                      delegate: MyCustomDelegate()
+                  );
+                },
+                child: Padding(
+                    padding: EdgeInsets.only(right: 10.0),
+                    child: Container(
+                      height: 36,
+                      width: 36,
+                      child: Icon(
+                        Loupe.loupe,
+                        size: 17,
+                      ),
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: AppTheme.grey200),
+                    )
+                ),
+              ),
             ],
           ),
         ),
@@ -102,10 +116,6 @@ class ProfileScreen extends StatelessWidget {
                         user: user
                     )
                 );
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => const SetInfoAfterSignup())
-                // );
               },
             )),
         Padding(
@@ -188,7 +198,7 @@ class ProfileScreen extends StatelessWidget {
                   key, "Đổi mật khẩu", Icon(Setting.settings)
                 ),
                 onTap: (){
-
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePasswordScreen(key)));
                 },
               )
             ],

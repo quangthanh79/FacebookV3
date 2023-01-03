@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:facebook_auth/core/helper/cache_helper.dart';
 import 'package:facebook_auth/data/datasource/remote/authen_api_provider.dart';
 import 'package:facebook_auth/data/datasource/remote/comment_datasource.dart';
 import 'package:facebook_auth/data/datasource/remote/like_datasource.dart';
@@ -10,6 +11,7 @@ import 'package:facebook_auth/data/repository/profile_repository.dart';
 import 'package:facebook_auth/data/repository/user_repository.dart';
 import 'package:facebook_auth/domain/use_cases/add_post_use_case.dart';
 import 'package:facebook_auth/domain/use_cases/get_user_info_use_case.dart';
+import 'package:facebook_auth/domain/use_cases/like_use_case%20copy.dart';
 import 'package:facebook_auth/domain/use_cases/like_use_case.dart';
 import 'package:facebook_auth/domain/use_cases/load_comment_use_case.dart';
 import 'package:facebook_auth/domain/use_cases/set_comment_use_case.dart';
@@ -43,11 +45,13 @@ Future<void> configureDependencies() async {
   getIt.registerFactory<LikeBloc>(
     () => LikeBloc(getIt()),
   );
+  getIt.registerSingletonAsync<SharedPreferences>(
+      () => SharedPreferences.getInstance());
+  getIt.registerSingleton(
+      CacheHelper(await getIt.getAsync<SharedPreferences>()));
 
   getIt.registerFactory(() => Dio());
   getIt.registerFactory(() => ApiService(getIt()));
-  getIt.registerSingletonAsync<SharedPreferences>(
-      () => SharedPreferences.getInstance());
   // datasource
   getIt.registerFactory<PostDataSource>(
       () => PostDataSourceImpl(apiService: getIt()));
@@ -85,6 +89,8 @@ Future<void> configureDependencies() async {
   getIt.registerSingleton(LoadCommentUseCase(commentRepository: getIt()));
   getIt.registerSingleton(SetCommentUseCase(commentRepository: getIt()));
   getIt.registerFactory<LikeUseCase>(() => LikeUseCase(repository: getIt()));
+  getIt.registerFactory<DeletePostUseCase>(
+      () => DeletePostUseCase(repository: getIt()));
   getIt.registerFactory<GetUserInfoUseCase>(
       () => GetUserInfoUseCase(repository: getIt()));
 }

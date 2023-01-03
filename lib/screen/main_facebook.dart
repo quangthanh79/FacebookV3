@@ -3,7 +3,7 @@ import 'package:facebook_auth/icon/loupe_icons.dart';
 import 'package:facebook_auth/screen/chat_screen/chat_screen.dart';
 import 'package:facebook_auth/screen/home_screen/add_post/add_post_screen.dart';
 import 'package:facebook_auth/screen/notify_screen/NotifyScreen.dart';
-import 'package:facebook_auth/screen/profile_screen/ProfileScreen.dart';
+import 'package:facebook_auth/screen/profile_screen/profile_first_screen/ProfileScreen.dart';
 import 'package:facebook_auth/screen/video_screen/VideoScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -76,7 +76,7 @@ class MainFacebookScreenState extends State<MainFacebookScreen>
       curve: Curves.linear,
     ),
   ));
-  late final TabController con = TabController(vsync: this, length: 5);
+  late final TabController con = TabController(vsync: this, length: 6);
 
   @override
   void initState() {
@@ -137,6 +137,9 @@ class MainFacebookScreenState extends State<MainFacebookScreen>
       controller: con,
       children: <Widget>[
         HomeScreen(),
+        Center(
+          child: Text("FRIEND- Phúc"),
+        ),
         ChatScreen(),
         VideoScreen(),
         NotifyScreen(),
@@ -167,7 +170,9 @@ class MainFacebookScreenState extends State<MainFacebookScreen>
                       onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const AddPostView(),
+                            builder: (context) => const AddPostView(
+                              isEditing: false,
+                            ),
                           )),
                       child: Container(
                         height: 36,
@@ -255,6 +260,9 @@ class MainFacebookScreenState extends State<MainFacebookScreen>
             ),
             TabIcons(
               tabIconData: tabIconsList[4],
+            ),
+            TabIcons(
+              tabIconData: tabIconsList[5],
             ),
           ],
         ),
