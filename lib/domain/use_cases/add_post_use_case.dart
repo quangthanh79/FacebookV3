@@ -2,20 +2,21 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:facebook_auth/data/models/post_response.dart';
 
 import 'package:facebook_auth/domain/repositories/post_repository.dart';
 
 import '../../core/common/error/failure.dart';
 import '../../core/common/usecase.dart';
 
-class AddPostUseCase implements UseCase<String, AddPostParams> {
+class AddPostUseCase implements UseCase<AddPostResponse, AddPostParams> {
   final PostRepository repository;
   AddPostUseCase({
     required this.repository,
   });
 
   @override
-  Future<Either<Failure, String>> call(AddPostParams params) {
+  Future<Either<Failure, AddPostResponse>> call(AddPostParams params) {
     return repository.addPost(
         token: params.token,
         described: params.described,

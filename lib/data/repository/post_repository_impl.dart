@@ -59,7 +59,7 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
-  Future<Either<Failure, String>> addPost(
+  Future<Either<Failure, AddPostResponse>> addPost(
       {required String token,
       required String described,
       List<File>? image,

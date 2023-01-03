@@ -14,7 +14,7 @@ abstract class PostRepository {
       required int index,
       required int count,
       required PostType type});
-  Future<Either<Failure, String>> addPost(
+  Future<Either<Failure, AddPostResponse>> addPost(
       {required String token,
       required String described,
       List<File>? image,

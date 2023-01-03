@@ -9,6 +9,7 @@ import 'package:facebook_auth/data/repository/post_repository_impl.dart';
 import 'package:facebook_auth/domain/use_cases/add_post_use_case.dart';
 import 'package:facebook_auth/screen/home_screen/home_body.dart';
 import 'package:facebook_auth/screen/home_screen/model/post.dart';
+import 'package:facebook_auth/utils/constant.dart';
 import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -40,9 +41,22 @@ class AddPostBloc extends Bloc<AddPostEvent, AddPostState> {
     result.fold((l) {
       emit(state.copyWith(status: AddPostStatus.failure, error: l.message));
     }, (r) {
+      String? postType;
+      List<String>? assetContentUrl;
+
+      if (r.images != null && r.images!.isNotEmpty) {
+        postType = TYPE_IMAGE;
+        assetContentUrl = r.images!.map((e) => e.url!).toList();
+      }
+      if (r.video != null && r.video != '') {
+        postType = TYPE_VIDEO;
+        assetContentUrl = [r.video!];
+      }
       event.context.read<ListPostNotify>().addPost(
           Post(
-              postId: r,
+              postId: r.id!,
+              assetType: postType,
+              assetContentUrl: assetContentUrl,
               userName: CurrentUser.userName ?? 'Facebook user',
               avatarUrl: CurrentUser.avatar,
               content: state.content,

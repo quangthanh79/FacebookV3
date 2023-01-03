@@ -73,9 +73,15 @@ Map<String, dynamic> _$AssetToJson(Asset instance) => <String, dynamic>{
 AddPostResponse _$AddPostResponseFromJson(Map<String, dynamic> json) =>
     AddPostResponse(
       id: json['id'] as String?,
+      video: json['video'] as String?,
+      images: (json['images'] as List<dynamic>?)
+          ?.map((e) => Asset.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$AddPostResponseToJson(AddPostResponse instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'video': instance.video,
+      'images': instance.images,
     };
