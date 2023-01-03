@@ -167,7 +167,9 @@ class MainFacebookScreenState extends State<MainFacebookScreen>
                       onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const AddPostView(),
+                            builder: (context) => const AddPostView(
+                              isEditing: false,
+                            ),
                           )),
                       child: Container(
                         height: 36,

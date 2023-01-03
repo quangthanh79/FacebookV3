@@ -1,14 +1,45 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
-import 'package:facebook_auth/core/helper/current_user.dart';
-import 'package:facebook_auth/utils/injection.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:facebook_auth/core/helper/current_user.dart';
+import 'package:facebook_auth/screen/home_screen/image_view/image_list_view.dart';
+import 'package:facebook_auth/screen/home_screen/video_view/video_demo.dart';
+import 'package:facebook_auth/utils/constant.dart';
+import 'package:facebook_auth/utils/injection.dart';
+
 import 'bloc/add_post_bloc.dart';
 
-class AddPostView extends StatelessWidget {
-  const AddPostView({super.key});
+class AddPostView extends StatefulWidget {
+  final bool isEditing;
+  final List<File>? images;
+  final File? video;
+  final AddPostType? addPostType;
+  final String? content;
+  const AddPostView({
+    Key? key,
+    required this.isEditing,
+    this.images,
+    this.video,
+    this.addPostType,
+    this.content,
+  }) : super(key: key);
+
+  @override
+  State<AddPostView> createState() => _AddPostViewState();
+}
+
+class _AddPostViewState extends State<AddPostView> {
+  late TextEditingController textEditingController;
+  @override
+  void initState() {
+    textEditingController =
+        TextEditingController(text: widget.isEditing ? widget.content : '');
+    super.initState();
+  }
 
   Widget buildHeader(BuildContext context) {
     return Container(
@@ -25,9 +56,10 @@ class AddPostView extends StatelessWidget {
               const SizedBox(
                 width: 4,
               ),
-              const Text(
-                'Create post',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              Text(
+                widget.isEditing ? 'Edit post' : 'Create post',
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               )
             ],
           ),
@@ -51,20 +83,25 @@ class AddPostView extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 20.0,
-                backgroundImage: NetworkImage(
-                  CurrentUser.avatar,
-                ),
-                backgroundColor: Colors.transparent,
-              ),
+              CurrentUser.avatar != null
+                  ? CircleAvatar(
+                      radius: 20.0,
+                      backgroundImage: NetworkImage(
+                        CurrentUser.avatar!,
+                      ),
+                      backgroundColor: Colors.transparent,
+                    )
+                  : Image.asset(
+                      defaultAvatar,
+                      scale: 30,
+                    ),
               const SizedBox(
                 width: 12,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(CurrentUser.userName,
+                  Text(CurrentUser.userName ?? 'Facebook user',
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16)),
                   Container(
@@ -93,11 +130,15 @@ class AddPostView extends StatelessWidget {
           const SizedBox(
             height: 12,
           ),
-          Expanded(child: BlocBuilder<AddPostBloc, AddPostState>(
+          Expanded(
+              child: BlocBuilder<AddPostBloc, AddPostState>(
+            buildWhen: (previous, current) =>
+                previous.addPostType != current.addPostType,
             builder: (contextBloc, state) {
               return Column(
                 children: [
                   TextField(
+                    controller: textEditingController,
                     onChanged: (value) {
                       contextBloc
                           .read<AddPostBloc>()
@@ -117,10 +158,20 @@ class AddPostView extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                      child: state.image != null
-                          ? Container(
-                              padding: const EdgeInsets.all(8),
-                              child: Image.file(state.image!))
+                      child: state.addPostType != AddPostType.none
+                          ? (state.addPostType != AddPostType.video
+                              ? Container(
+                                  padding: const EdgeInsets.all(8),
+                                  child: ImageListView(
+                                    imageListType: ImageListType.file,
+                                    itemsFile: state.images,
+                                  ))
+                              : Container(
+                                  height: 300,
+                                  padding: const EdgeInsets.all(8),
+                                  child: VideoDemo(
+                                    isFile: state.video,
+                                  )))
                           : Container())
                 ],
               );
@@ -132,8 +183,10 @@ class AddPostView extends StatelessWidget {
   }
 
   Widget buildBottom(BuildContext context) {
-    imagePicked(File image) =>
-        context.read<AddPostBloc>().add(PickImage(image: image));
+    imagePicked(List<File>? images) =>
+        context.read<AddPostBloc>().add(PickImage(images: images));
+    videoPicked(File? video) =>
+        context.read<AddPostBloc>().add(PickVideo(video: video));
     return Column(
       children: [
         Container(
@@ -152,14 +205,79 @@ class AddPostView extends StatelessWidget {
                 builder: (context, state) {
                   return GestureDetector(
                     onTap: () async {
-                      final ImagePicker picker = ImagePicker();
-                      XFile? image =
-                          await picker.pickImage(source: ImageSource.gallery);
-                      if (image != null) {
-                        var file = File(image.path);
-                        file.absolute;
-                        imagePicked(file);
-                      }
+                      showDialog(
+                        context: context,
+                        builder: (context2) => Dialog(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 16),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                GestureDetector(
+                                  onTap: () async {
+                                    Navigator.pop(context2);
+                                    final ImagePicker picker = ImagePicker();
+                                    List<XFile> images =
+                                        await picker.pickMultiImage();
+                                    if (images.isNotEmpty) {
+                                      List<File> listFile = [];
+                                      for (var e in images) {
+                                        File file = File(e.path);
+                                        listFile.add(file);
+                                      }
+                                      imagePicked(listFile);
+                                    }
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: const [
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Icon(Icons.image),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text('Add image'),
+                                      Spacer()
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    Navigator.pop(context2);
+                                    final ImagePicker picker = ImagePicker();
+                                    XFile? video = await picker.pickVideo(
+                                        source: ImageSource.gallery);
+                                    if (video != null) {
+                                      var file = File(video.path);
+                                      videoPicked(file);
+                                    }
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: const [
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Icon(Icons.video_camera_front),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Text('Add video'),
+                                      Spacer()
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
                     },
                     child: const Icon(
                       Icons.image,
@@ -178,8 +296,15 @@ class AddPostView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AddPostBloc(getIt()),
+    return BlocProvider<AddPostBloc>(
+      create: (context) => widget.isEditing
+          ? (AddPostBloc(getIt())
+            ..add(EditPostEvent(
+                addPostType: widget.addPostType,
+                content: widget.content,
+                images: widget.images,
+                video: widget.video)))
+          : AddPostBloc(getIt()),
       child: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(FocusNode());

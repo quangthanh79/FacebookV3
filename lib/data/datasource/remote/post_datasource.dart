@@ -11,9 +11,28 @@ import '../../../core/common/error/exceptions.dart';
 abstract class PostDataSource {
   Future<PostListResponse> loadListPosts(
       {required String token, required int count, required int index});
+  Future<PostListResponse> loadListPostsInProfile(
+      {required String token,
+      required int count,
+      required int index,
+      required String targetId});
+  Future<PostListResponse> loadListVideos(
+      {required String token, required int count, required int index});
+  Future<PostListResponse> searchPost(
+      {required String token,
+      required int count,
+      required int index,
+      required String keyword});
   Future<String> addPost(
-      {required String token, required String described, List<File>? image});
+      {required String token,
+      required String described,
+      List<File>? image,
+      File? video});
   Future<Author> getUserInfo(String token);
+  Future<dynamic> deletePost({
+    required String token,
+    required String postId,
+  });
 }
 
 class PostDataSourceImpl implements PostDataSource {
@@ -42,10 +61,77 @@ class PostDataSourceImpl implements PostDataSource {
   }
 
   @override
+  Future<PostListResponse> loadListPostsInProfile(
+      {required String token,
+      required int count,
+      required int index,
+      required String targetId}) async {
+    try {
+      var response = await apiService.getListPostsInProfile(
+          token: token, count: count, index: index, targetId: targetId);
+      if (response.statusCode == '1000') {
+        if (response.data == null) {
+          throw ServerException('Post data is null');
+        }
+        return response.data!;
+      }
+      throw ServerException(response.messages ?? unexpectedError);
+    } on DioError catch (e) {
+      throw ServerException.handleError(e);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<PostListResponse> loadListVideos(
+      {required String token, required int count, required int index}) async {
+    try {
+      var response = await apiService.getListVideos(
+          token: token, count: count, index: index);
+      if (response.statusCode == '1000') {
+        if (response.data == null) {
+          throw ServerException('Post data is null');
+        }
+        return response.data!;
+      }
+      throw ServerException(response.messages ?? unexpectedError);
+    } on DioError catch (e) {
+      throw ServerException.handleError(e);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<PostListResponse> searchPost(
+      {required String token,
+      required int count,
+      required int index,
+      required String keyword}) async {
+    try {
+      var response = await apiService.searchPost(
+          keyword: keyword, token: token, count: count, index: index);
+      if (response.statusCode == '1000') {
+        if (response.data == null) {
+          throw ServerException('Post data is null');
+        }
+        return response.data!;
+      }
+      throw ServerException(response.messages ?? unexpectedError);
+    } on DioError catch (e) {
+      throw ServerException.handleError(e);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
   Future<String> addPost(
       {required String token,
       required String described,
-      List<File>? image}) async {
+      List<File>? image,
+      File? video}) async {
     try {
       List<MultipartFile>? multipartFiles;
       if (image != null) {
@@ -62,7 +148,10 @@ class PostDataSourceImpl implements PostDataSource {
         }
       }
       var response = await apiService.addPost(
-          token: token, described: described, image: multipartFiles);
+          token: token,
+          described: described,
+          image: multipartFiles,
+          video: video);
       if (response.statusCode == '1000') {
         return response.data!.id!;
       }
@@ -83,6 +172,24 @@ class PostDataSourceImpl implements PostDataSource {
             avatarUrl: response.data!.avatarUrl,
             userName: response.data!.userName,
             id: response.data!.id);
+      }
+      throw ServerException(response.messages ?? unexpectedError);
+    } on DioError catch (e) {
+      throw ServerException.handleError(e);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<dynamic> deletePost({
+    required String token,
+    required String postId,
+  }) async {
+    try {
+      var response = await apiService.deletePost(token: token, postId: postId);
+      if (response.statusCode == '1000') {
+        return response.messages;
       }
       throw ServerException(response.messages ?? unexpectedError);
     } on DioError catch (e) {

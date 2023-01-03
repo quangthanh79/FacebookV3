@@ -3,36 +3,47 @@ part of 'add_post_bloc.dart';
 
 enum AddPostStatus { initial, posting, success, failure }
 
+enum AddPostType { none, image, video }
+
 class AddPostState extends Equatable {
   final AddPostStatus status;
   final String content;
   final String? error;
-  final File? image;
+  final List<File>? images;
+  final File? video;
   final Post? post;
+  final AddPostType addPostType;
   const AddPostState({
     this.status = AddPostStatus.initial,
     this.content = '',
     this.error,
-    this.image,
+    this.images,
+    this.video,
     this.post,
+    this.addPostType = AddPostType.none,
   });
 
   @override
-  List<Object?> get props => [content, status, error, image];
+  List<Object?> get props =>
+      [content, status, error, images, addPostType, video];
 
   AddPostState copyWith({
     AddPostStatus? status,
     String? content,
     String? error,
-    File? image,
+    List<File>? images,
+    File? video,
     Post? post,
+    AddPostType? addPostType,
   }) {
     return AddPostState(
       status: status ?? this.status,
       content: content ?? this.content,
       error: error ?? this.error,
-      image: image ?? this.image,
+      images: images ?? this.images,
+      video: video ?? this.video,
       post: post ?? this.post,
+      addPostType: addPostType ?? this.addPostType,
     );
   }
 }

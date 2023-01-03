@@ -1,8 +1,5 @@
 
-
-import 'dart:math';
-
-import 'package:equatable/equatable.dart';
+part of 'edit_bloc.dart';
 
 // ignore: must_be_immutable
 class EditState extends Equatable{

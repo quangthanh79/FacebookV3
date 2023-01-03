@@ -1,6 +1,6 @@
 
 
-import 'package:equatable/equatable.dart';
+part of 'edit_bloc.dart';
 
 class EditEvent extends Equatable{
   @override

@@ -5,25 +5,71 @@ abstract class AddPostEvent extends Equatable {
   const AddPostEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
+}
+
+class EditPostEvent extends AddPostEvent {
+  final List<File>? images;
+  final File? video;
+  final AddPostType? addPostType;
+  final String? content;
+  const EditPostEvent({
+    this.images,
+    this.video,
+    this.addPostType,
+    this.content,
+  });
+
+  EditPostEvent copyWith({
+    List<File>? images,
+    File? video,
+    AddPostType? addPostType,
+    String? content,
+  }) {
+    return EditPostEvent(
+      images: images ?? this.images,
+      video: video ?? this.video,
+      addPostType: addPostType ?? this.addPostType,
+      content: content ?? this.content,
+    );
+  }
 }
 
 class PickImage extends AddPostEvent {
-  final File image;
+  final List<File>? images;
   const PickImage({
-    required this.image,
+    this.images,
   });
 
+  @override
+  List<Object?> get props => [images];
+
   PickImage copyWith({
-    File? image,
+    List<File>? images,
   }) {
     return PickImage(
-      image: image ?? this.image,
+      images: images ?? this.images,
     );
   }
+}
+
+class PickVideo extends AddPostEvent {
+  final File? video;
+  const PickVideo({
+    this.video,
+  });
 
   @override
-  List<Object> get props => [image];
+  List<Object?> get props => [video];
+
+  PickVideo copyWith({
+    File? video,
+    bool? isImage,
+  }) {
+    return PickVideo(
+      video: video ?? this.video,
+    );
+  }
 }
 
 class AddPost extends AddPostEvent {

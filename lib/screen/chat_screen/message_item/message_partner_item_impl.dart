@@ -35,6 +35,7 @@ class MessagePartnerItemTypeImpl extends MessagePartnerItem{
                     height: 30,
                   ),
                 ),
+                SizedBox(width: 5,),
                 Flexible(
                   child: Container(
                     child: Container(
@@ -72,7 +73,7 @@ class MessagePartnerItemTypeImpl extends MessagePartnerItem{
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(width: 30),
+                SizedBox(width: 35),
                 Flexible(
                   child: Container(
                       decoration: BoxDecoration(
@@ -118,6 +119,7 @@ class MessagePartnerItemTypeImpl extends MessagePartnerItem{
                     height: 30,
                   ),
                 ),
+                SizedBox(width: 5,),
                 Flexible(
                   child: Container(
                     child: Container(
@@ -155,7 +157,7 @@ class MessagePartnerItemTypeImpl extends MessagePartnerItem{
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                SizedBox(width: 30),
+                SizedBox(width: 35),
                 Flexible(
                   child: Container(
                     child: Container(

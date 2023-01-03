@@ -1,4 +1,5 @@
 
+import 'package:facebook_auth/data/models/chat.dart';
 import 'package:facebook_auth/data/models/chat_detail.dart';
 import 'package:facebook_auth/data/repository/chat_repository.dart';
 import 'package:facebook_auth/exception/not_data_exception.dart';
@@ -13,9 +14,11 @@ import 'package:formz/formz.dart';
 
 class ChatDetailBloc extends Bloc<ChatDetailEvent,ChatDetailState>{
   final ChatRepository chatRepository;
-  ChatDetailBloc(this.chatRepository): super(ChatDetailState()){
+  final Partner partner;
+  ChatDetailBloc(this.chatRepository,this.partner): super(ChatDetailState()){
     connectSocket();
     on<SendMessageChanged>(_sendMessage);
+    on<BindingResumeChanged>(_setReadMessage);
     on<WidthInputChanged>(_changeWidthInput);
   }
 
@@ -23,7 +26,9 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent,ChatDetailState>{
   Future<ResponseChatDetail?> getDetailConversation(String partner_id) async {
     try{
       final resultDetailConversation = await chatRepository.getDetailConversation(-1, partner_id);
-      if (resultDetailConversation != null) {
+      final resultSetReadMessage = await chatRepository.setReadMessage(partner_id);
+
+      if (resultDetailConversation != null && resultSetReadMessage != null) {
         return resultDetailConversation;
       } else {
         return null;
@@ -32,8 +37,12 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent,ChatDetailState>{
       return ResponseChatDetail(data: []);
     }
   }
-
-
+  @override
+  Future<void> close() {
+    // dispose
+    socketDetailConversation.dispose();
+    return super.close();
+  }
   Future<void> _sendMessage(
       SendMessageChanged event,
       Emitter<ChatDetailState> emit
@@ -60,6 +69,18 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent,ChatDetailState>{
 
     }
   }
+
+  Future<void> _setReadMessage(
+      BindingResumeChanged event,
+      Emitter<ChatDetailState> emit
+      ) async{
+    print("-------------------CHAT DETAIL BLOC: SET READ MESSAGE-------------------");
+
+    final result = await chatRepository.setReadMessage(event.partner_id);
+    if(result != null){
+      print("CHAT DETAIL BLOC: Set read message success: ");
+    }
+  }
   void _changeWidthInput(
       WidthInputChanged event,
       Emitter<ChatDetailState> emit
@@ -84,13 +105,15 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent,ChatDetailState>{
             message: dataList[1] as String,
             unread: "1",
             sender: Sender(
-                id: dataList[0] as String
+                id: dataList[0] as String,
+                avatar: partner.avatar
             )
         );
         var newCountMessage = state.countMessage+1;
         print("OLD COUNT MESSAGE: "+ newCountMessage.toString());
         emit(state.copyWith(
             message: newMessageDetail,
+            statusHasMessgage: StatusHasMessgage.ReceiveMessage,
             countMessage: newCountMessage
         ));
       }
@@ -103,4 +126,5 @@ class ChatDetailBloc extends Bloc<ChatDetailEvent,ChatDetailState>{
       return false;
     }
   }
+
 }

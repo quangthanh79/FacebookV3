@@ -88,7 +88,7 @@ class ProfileScreen extends StatelessWidget {
                   CircleAvatar(
                     radius: 20.0,
                     backgroundColor: Colors.white,
-                    backgroundImage: AssetImage("images/avatarDefault.png"),
+                    backgroundImage: AssetImage("assets/images/avatarDefault.png"),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

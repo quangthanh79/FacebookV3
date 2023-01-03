@@ -14,25 +14,58 @@ import 'package:formz/formz.dart';
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final ChatRepository chatRepository;
   final FriendRepository friendRepository;
+  int flagLoaddata  = 0;
+
 
   ChatBloc(this.chatRepository,this.friendRepository) : super(ChatState()) {
-    // connectSocket();
-    // on<LoadListConversationChanged>(_getListConversation);
+    connectSocket();
+    on<LoadListConversationChanged>(_loadData);
   }
 
-  // Future<void> _getListConversation(
-  //     LoadListConversationChanged event, Emitter<ChatState> emit) async {
-  //   emit(state.copyWith(loadListConversationStatus: FormzStatus.submissionInProgress));
-  //   final resultListConversation = await chatRepository.getListConversation(0, 20);
-  //   if(resultListConversation != null){
-  //     emit(state.copyWith(loadListConversationStatus: FormzStatus.submissionSuccess,listConversation: resultListConversation.data));
-  //     print(" Get List Conversation Success!!");
-  //     print(resultListConversation);
-  //   } else{
-  //     emit(state.copyWith(loadListConversationStatus: FormzStatus.submissionFailure));
-  //     print(" Get List Conversation Error!!");
-  //   }
-  // }
+  Future<void> _loadData(
+      LoadListConversationChanged event,
+      Emitter<ChatState> emit) async
+  {
+    emit(state.copyWith(flagLoadData: ++flagLoaddata));
+  }
+
+  Future<bool> connectSocket() async{
+    if(SessionUser.idUser != null){
+      print(SessionUser.idUser);
+      socketListConversation.on('connection',(client){
+        print('connection /some');
+      });
+      socketListConversation.on('fromServer', (_) => print(_));
+      socketListConversation.on(SessionUser.idUser!, (data) async {
+        final dataList = data as List;
+        print("SOCKET:"+dataList.toString());
+
+        // var newMessageDetail = MessageDetail(
+        //     message: dataList[1] as String,
+        //     unread: "1",
+        //     sender: Sender(
+        //         id: dataList[0] as String,
+        //         avatar: partner.avatar
+        //     )
+        // );
+        var newCountMessage = state.countMessage+1;
+        print("OLD COUNT MESSAGE: "+ newCountMessage.toString());
+        // emit(state.copyWith(
+        //     message: newMessageDetail,
+        //     statusHasMessgage: StatusHasMessgage.ReceiveMessage,
+        //     countMessage: newCountMessage
+        // ));
+      }
+      );
+      socketDetailConversation.connect();
+      socketDetailConversation.emit("disconect","Pham Quang Thanh");
+      print("sokectttt");
+      return true;
+    }else{
+      return false;
+    }
+  }
+
   Future<ResponseListConversation?> tryFetchListConversation(int page) async {
     try {
       ResponseListConversation? responseFetchListConversation = await chatRepository.getListConversation(page);
@@ -57,29 +90,4 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       return null;
     }
   }
-  // Future<bool> connectSocket() async{
-  //   if(SessionUser.idUser != null){
-  //     print(SessionUser.idUser);
-  //     socketDetailConversation.on('connection',(client){
-  //       print('connection /some');
-  //     });
-  //     socketDetailConversation.on('fromServer', (_) => print(_));
-  //     socketDetailConversation.on(SessionUser.idUser!, (data) {
-  //       final dataList = data as List;
-  //       print(dataList.toString());
-  //       emit(state.copyWith(
-  //         message: (dataList[0] as String) + ":" + (dataList[1] as String),
-  //         statusHasMessgage: StatusHasMessgage.hasNewMessage,
-  //         countMessage: state.countMessage++
-  //       ));
-  //     }
-  //     );
-  //     socketDetailConversation.connect();
-  //     socketDetailConversation.emit("disconect","Pham Quang Thanh");
-  //     print("sokectttt");
-  //     return true;
-  //   }else{
-  //     return false;
-  //   }
-  // }
 }

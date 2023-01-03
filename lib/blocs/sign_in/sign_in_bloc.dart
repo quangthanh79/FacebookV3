@@ -69,6 +69,9 @@ class SignInBloc extends Bloc<SignInEvent,SignInState>{
         await storage.write(key: "token", value: token);
         await storage.write(key: "idUser", value: isUser);
 
+        SessionUser.token = token;
+        SessionUser.idUser = isUser;
+
         UserRepository userRepository = UserRepository();
         UserInfor.ResponseUser? responseUser = await userRepository.getUserInfor(isUser);
         if (responseUser != null && responseUser.code == "1000"){
@@ -76,8 +79,6 @@ class SignInBloc extends Bloc<SignInEvent,SignInState>{
           SessionUser.user!.copyFrom(responseUser.data!);
         }
 
-        SessionUser.token = token;
-        SessionUser.idUser = isUser;
         emit( state.copyWith(statusSignIn: FormzStatus.submissionSuccess));
       }else{
         emit( state.copyWith(statusSignIn: FormzStatus.submissionFailure));
