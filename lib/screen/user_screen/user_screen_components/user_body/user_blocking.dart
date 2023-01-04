@@ -12,14 +12,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // ignore: must_be_immutable
-class UserBody extends UserScreenComponent {
-  UserBody({super.key, required super.main});
+class UserBlocking extends UserScreenComponent {
+  UserBlocking({super.key, required super.main});
 
   @override
-  State<StatefulWidget> createState() => UserBodyState();
+  State<StatefulWidget> createState() => UserBlockingState();
 }
 
-class UserBodyState extends UserScreenComponentState<UserBody> {
+class UserBlockingState extends UserScreenComponentState<UserBlocking> {
   late ScrollController scrollController;
   late double scrollPosition;
 
@@ -59,35 +59,12 @@ class UserBodyState extends UserScreenComponentState<UserBody> {
                     children: [
                       UserAvatar(main: main),
                       SizedBox(
-                        height: 16,
+                        height: 1024,
                         child: Container(
                           decoration:
-                              const BoxDecoration(color: Colors.black26),
+                          const BoxDecoration(color: Colors.black26),
                         ),
                       ),
-                      UserInfor(
-                        main: main,
-                      ),
-                      SizedBox(
-                        height: 16,
-                        child: Container(
-                          decoration:
-                              const BoxDecoration(color: Colors.black26),
-                        ),
-                      ),
-                      UserFriend(main: main),
-                      SizedBox(
-                        height: 16,
-                        child: Container(
-                            decoration:
-                                const BoxDecoration(color: Colors.black26)),
-                      ),
-                      BlocProvider(
-                          create: (context) => HomeBloc(getIt(), getIt()),
-                          child: HomeBody(
-                            type: PostType.profile,
-                            targetId: user.id,
-                          ))
                     ]),
                 onRefresh: () {
                   return Future.delayed(

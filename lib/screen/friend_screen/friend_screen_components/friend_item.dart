@@ -1,13 +1,10 @@
 
 
-
 import 'package:facebook_auth/blocs/block/BlockApiProvider.dart';
 import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/friend_repository.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_item_bloc/friend_item_bloc.dart';
-// import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_item_bloc/friend_item_event.dart';
-// import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_item_bloc/friend_item_state.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_screen_components/my_button_style.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
 import 'package:facebook_auth/utils/image.dart';
@@ -21,23 +18,21 @@ import 'package:shimmer/shimmer.dart';
 
 // ignore: must_be_immutable
 class FriendItem extends StatefulWidget{
-  Friend friend;
+  User friend;
   FriendItem({super.key, required this.friend});
   @override FriendItemState_ createState() => FriendItemState_();
 }
 
 // ignore: must_be_immutable, camel_case_types
 class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMixin{
-  late Friend friend;
-  late User user;
+  late User friend;
   late FriendItemBloc friendItemBloc;
 
   @override void initState(){
     super.initState();
     friend = widget.friend;
-    user = User(id: friend.user_id);
     friendItemBloc = FriendItemBloc(
-        user: user,
+        user: friend,
         friendRepository: getIt<FriendRepository>()
     );
   }
@@ -45,12 +40,33 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    friendItemBloc.add(UpdateButtonsEvent());
+    if (friend.created != null) {
+      friendItemBloc.add(UpdateButtonsEvent());
+    } else {
+      friendItemBloc.add(InitButtonsEvent());
+    }
     return BlocProvider<FriendItemBloc>(
       create: (ctx) => friendItemBloc,
       child: BlocBuilder<FriendItemBloc, FriendItemState>(
         bloc: friendItemBloc,
         builder: (context, state){
+          if (state.status == FriendItemStatus.BLOCK){
+            return Container(
+              height: 60,
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(8)),
+                  // border: Border.all(color: Colors.black, width: 1)
+                  color: Colors.black12.withAlpha(15)
+              ),
+              alignment: Alignment.center,
+              child: const Text("This user blocked you or you blocked this user",
+                style: TextStyle(
+                  fontWeight: FontWeight.w600
+                ),
+              ),
+            );
+          }
           if (state.status == FriendItemStatus.LOADING){
             return getShimmer();
           }
@@ -74,7 +90,7 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(100),
                         child: getImage(
-                          uri: user.avatar ?? 'assets/images/default_avatar_image.jpg',
+                          uri: friend.avatar ?? 'assets/images/default_avatar_image.jpg',
                           defaultUri: 'assets/images/default_avatar_image.jpg',
                           width: 60,
                           height: 60,
@@ -94,7 +110,7 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
                               children: [
                                 Flexible(
                                   fit: FlexFit.loose,
-                                  child: Text(user.username ?? "Người dùng Facebook",
+                                  child: Text(friend.username ?? "Người dùng Facebook",
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                         fontSize: 18,
@@ -150,7 +166,7 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
     Navigator.push(
       context,
       UserScreen.route(
-          user: user,
+          user: friend,
           onBack: (){
             friendItemBloc.add(UpdateButtonsEvent());
           }

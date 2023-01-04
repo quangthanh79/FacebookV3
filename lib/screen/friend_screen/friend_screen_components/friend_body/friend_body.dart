@@ -1,5 +1,6 @@
 
 import 'package:facebook_auth/data/models/friend.dart';
+import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_list_screen.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_request_screen.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_suggest_screen.dart';
@@ -25,15 +26,15 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
   @override
   void initState() {
     super.initState();
-    numFriends = main.listFriend.total!;
+    numFriends = main.listFriend.length;
     scrollController.addListener(() {
       // print("scroll controller: ");
       // print("offset: ${scrollController.offset}");
       // print("maxExtent: ${scrollController.position.maxScrollExtent}");
-      if (numFriends + 2 < main.user.listing!){
-        if (scrollController.offset / scrollController.position.maxScrollExtent > 0.75){
-          main.loadListFriendInNumber((numFriends * 1.25).ceil());
-        }
+      // print("ratio: ${scrollController.offset / scrollController.position.maxScrollExtent}");
+      if (scrollController.position.extentAfter < 200){
+        // main.loadMore();
+        print("call more............................");
       }
     });
   }
@@ -45,18 +46,18 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
       children: [
         const SizedBox(height: 28),
         FriendHeader(main: main,),
-        Container(
-          padding: const EdgeInsets.all(16),
-          // decoration: const BoxDecoration(
-          //   border: Border(bottom: BorderSide(width: 1, color: Colors.black12))
-          // ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              getSearchBar(context)
-            ],
-          ),
-        ),
+        // Container(
+        //   padding: const EdgeInsets.all(16),
+        //   // decoration: const BoxDecoration(
+        //   //   border: Border(bottom: BorderSide(width: 1, color: Colors.black12))
+        //   // ),  //
+        //   child: Column(
+        //     mainAxisAlignment: MainAxisAlignment.start,
+        //     children: [
+        //       getSearchBar(context)
+        //     ],
+        //   ),
+        // ),
         Expanded(
           flex: 1,
           child: Container(
@@ -88,8 +89,9 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
   }
 
   List<Widget> getListWidgetFriends(){
-    print("rebuild all  children");
+    // print("rebuild all  children");
     List<Widget> list = [
+      const SizedBox(height: 8,),
       main is FriendListScreenState && user.isMe ?
         getButtonsBar(context) : Container(),
       const SizedBox(height: 8,),
@@ -102,9 +104,10 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
           fontWeight: FontWeight.w600
         ),
       ),
+      const SizedBox(height: 8,)
     ];
-    for (Friend friend in main.listFriend.list!) {
-      print("Soos banj la: ${friend.username}");
+    for (User friend in main.listFriend) {
+      // print("Soos banj la: ${friend.username}");
       list.add(FriendItem(friend: friend,));
     }
     return list;
@@ -119,7 +122,7 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
           callback: (){
             Navigator.push(
               context,
-              FriendRequestScreen.route(user: user)
+              FriendRequestScreen.route(user: user, onBack: (){})
             );
           }
         ),
@@ -128,7 +131,7 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
             callback: (){
               Navigator.push(
                   context,
-                  FriendSuggestScreen.route(user: user)
+                  FriendSuggestScreen.route(user: user, onBack: (){})
               );
             }
         )

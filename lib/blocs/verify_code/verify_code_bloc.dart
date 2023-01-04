@@ -1,10 +1,12 @@
 
 import 'package:facebook_auth/blocs/verify_code/verify_code_event.dart';
 import 'package:facebook_auth/blocs/verify_code/verify_code_state.dart';
+import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:formz/formz.dart';
 
+import '../../data/models/user_info.dart';
 import '../../data/repository/authen_repository.dart';
 
 class VerifyCodeBloc extends Bloc<VerifyCodeEvent,VerifyCodeState>{
@@ -45,6 +47,9 @@ class VerifyCodeBloc extends Bloc<VerifyCodeEvent,VerifyCodeState>{
     final storage = new FlutterSecureStorage();
     if(responeVerifyCode!= null){
       await storage.write(key: "token", value: responeVerifyCode.data!.token);
+      SessionUser.idUser = responeVerifyCode.data!.id;
+      SessionUser.token = responeVerifyCode.data!.token;
+      SessionUser.user = User(id: SessionUser.idUser);
       emit(state.copyWidth(statusCheckCode: FormzStatus.submissionSuccess));
     }else{
       emit(state.copyWidth(statusCheckCode: FormzStatus.submissionFailure));

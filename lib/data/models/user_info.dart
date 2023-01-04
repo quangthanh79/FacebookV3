@@ -38,21 +38,22 @@ class Response{
 }
 
 class ResponseUser extends Response{
-  User? data;
+  late User data;
 
   ResponseUser({
-    super.code, super.message, this.data, super.details
+    super.code, super.message, super.details
   });
 
   ResponseUser.fromJson(Map<String, dynamic> json){
     copyFrom(Response.fromJson(json));
-    data = json['data'] != null ? User.fromJson(json['data']) : null;
+    data = json['data'] != null ? User.fromJson(json['data']) : User();
+    if (code == "9995") data.is_friend = details;
   }
 
   @override
   Map<String, dynamic> toJson(){
     Map<String, dynamic> json = super.toJson();
-    json['data'] = data != null ? data!.toJson() : null;
+    json['data'] = data.toJson();
     return json;
   }
 }
@@ -60,7 +61,7 @@ class ResponseUser extends Response{
 class User {
   String? id;
   String? username;
-  int created = 0;
+  int? created;
   String? description;
   String? avatar;
   String? cover_image;
@@ -71,6 +72,7 @@ class User {
   int? listing;
   String? is_friend;
   int? online;
+  int same_friends = 0;
   String join = "";
   bool isMe = false;
   File? avatar_file;
@@ -79,7 +81,8 @@ class User {
   User({
     this.id, this.username, this.created = 0, this.description,
     this.avatar, this.cover_image, this.link, this.address,
-    this.city, this.country, this.listing, this.is_friend, this.online
+    this.city, this.country, this.listing, this.is_friend, this.online,
+    this.same_friends = 0
   });
 
   User.fromJson(Map<String, dynamic> json) {
@@ -119,13 +122,17 @@ class User {
   }
 
   void updateJoinTime(){
-    int month = 0, year = 0;
-    int divide = (365.25 * 24 * 3600).floor();
-    year = (created / divide).floor();
-    month = ((created - divide * year) / 2629800).floor() + 1;
-    year += 1970;
-    join = "Tháng $month năm $year";
-    // print(join);
+    if (created != null) {
+      int month = 0, year = 0;
+      int divide = (365.25 * 24 * 3600).floor();
+      year = (created! / divide).floor();
+      month = ((created! - divide * year) / 2629800).floor() + 1;
+      year += 1970;
+      join = "Tháng $month năm $year";
+      // print(join);
+    } else {
+      join = "Tháng 1 năm 1970";
+    }
   }
 
   void copyFrom(User user){

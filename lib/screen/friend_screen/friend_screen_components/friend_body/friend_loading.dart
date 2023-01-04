@@ -15,6 +15,7 @@ class FriendLoading extends FriendScreenComponent{
 class FriendLoadingState extends FriendScreenComponentState<FriendLoading>{
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [

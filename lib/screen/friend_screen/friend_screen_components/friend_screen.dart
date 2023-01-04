@@ -15,19 +15,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // ignore: must_be_immutable
 abstract class FriendScreen extends StatefulWidget{
   User user;
-  FriendScreen({super.key, required this.user});
+  void Function()? onBack;
+  FriendScreen({super.key, required this.user, this.onBack});
 }
 
 abstract class FriendScreenState<T extends FriendScreen> extends State<T> with AutomaticKeepAliveClientMixin{
   late User user;
-  late ListFriend listFriend;
+  // late ListFriend listFriend;
+  List<User> listFriend = [];
   late FriendListBloc friendListBloc;
   late String label, responseForNoFriends;
 
   @override void initState(){
     super.initState();
     user = widget.user;
-    listFriend = ListFriend(list: [], total: 0);
+    // listFriend = ListFriend(list: [], total: 0);
     friendListBloc = FriendListBloc(
         user: user,
         listFriend: listFriend,
@@ -37,34 +39,30 @@ abstract class FriendScreenState<T extends FriendScreen> extends State<T> with A
 
   @override Widget build(BuildContext context){
     super.build(context);
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(fontFamily: 'OpenSans', platform: TargetPlatform.iOS, backgroundColor: Colors.black12),
-        home: Scaffold(
-            resizeToAvoidBottomInset: true,
-            body: BlocProvider<FriendListBloc>(
-                create: (context) => friendListBloc,
-                child: BlocBuilder<FriendListBloc, FriendListState>(
-                    bloc: friendListBloc,
-                    builder: (context, state){
-                      Widget content;
-                      switch(state.status){
-                        case FriendListStatus.LOADING:
-                          content = FriendLoading(main: this);
-                          break;
-                        case FriendListStatus.LOADED:
-                          content = FriendBody(main: this);
-                          break;
-                        case FriendListStatus.NO_FRIENDS:
-                          content = FriendNoFriends(main: this);
-                          break;
-                        default:
-                          content = FriendLoading(main: this);
-                          break;
-                      }
-                      return content;
-                    }
-                )
+    return Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: BlocProvider<FriendListBloc>(
+            create: (context) => friendListBloc,
+            child: BlocBuilder<FriendListBloc, FriendListState>(
+                bloc: friendListBloc,
+                builder: (context, state){
+                  Widget content;
+                  switch(state.status){
+                    case FriendListStatus.LOADING:
+                      content = FriendLoading(main: this);
+                      break;
+                    case FriendListStatus.LOADED:
+                      content = FriendBody(main: this);
+                      break;
+                    case FriendListStatus.NO_FRIENDS:
+                      content = FriendNoFriends(main: this);
+                      break;
+                    default:
+                      content = FriendLoading(main: this);
+                      break;
+                  }
+                  return content;
+                }
             )
         )
     );
@@ -75,7 +73,7 @@ abstract class FriendScreenState<T extends FriendScreen> extends State<T> with A
   }
   @override get wantKeepAlive => true;
   void reloadListFriend();
-  void loadListFriendInNumber(int numFriends);
+  void loadMore();
 }
 
 // ignore: must_be_immutable

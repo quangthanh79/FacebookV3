@@ -12,6 +12,7 @@ import '../icon/add_icons.dart';
 import '../models/tabIcon_data.dart';
 import '../utils/app_theme.dart';
 import '../utils/tab_icons.dart';
+import 'friend_screen/friend_screen.dart';
 import 'home_screen/home_screen.dart';
 
 /**
@@ -133,13 +134,12 @@ class MainFacebookScreenState extends State<MainFacebookScreen>
   }
 
   Widget getBody() {
+    // abs
     return TabBarView(
       controller: con,
       children: <Widget>[
         HomeScreen(),
-        Center(
-          child: Text("FRIEND- Phúc"),
-        ),
+        FriendScreen(),
         ChatScreen(),
         VideoScreen(),
         NotifyScreen(),

@@ -1,6 +1,7 @@
 
 
 import 'package:facebook_auth/data/models/user_info.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_bloc.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/user_avatar/user_buttons_bloc/user_buttons_bloc.dart';
 import 'package:flutter/material.dart';
@@ -134,8 +135,6 @@ class UserMenuBottom extends MenuBottom{
   Widget build(BuildContext context) {
     // return getReceiveMenuBottom(context);
     switch (status){
-      case UserButtonStatus.INITIAL:
-        return Container();
       case UserButtonStatus.ME:
         return getMeMenuBottom(context);
       case UserButtonStatus.IS_FRIEND:
@@ -146,6 +145,11 @@ class UserMenuBottom extends MenuBottom{
         return getReceiveMenuBottom(context);
       case UserButtonStatus.NOT_FRIEND:
         return getNotRelativeMenuBottom(context);
+      case UserButtonStatus.BLOCKING:
+      case UserButtonStatus.BLOCKED:
+        return getBlockMenuBottom(context);
+      case UserButtonStatus.INITIAL:
+        return Container();
     }
   }
 
@@ -176,6 +180,23 @@ class UserMenuBottom extends MenuBottom{
         ]
     );
   }
+
+  Widget getBlockMenuBottom(BuildContext context){
+    return getFrame(
+        children: [
+          getRow(
+              icon: Icons.person_off,
+              label: "Chặn người dùng",
+              function: () {
+                userButtonsBloc!.add(BlockUserEvent(onSuccess: (){
+                  main.main.userInforBloc.add(ReloadUserEvent());
+                }));
+              }
+          ),
+        ]
+    );
+  }
+
 
   Widget getReceiveMenuBottom(BuildContext context){
     return getFrame(

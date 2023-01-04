@@ -15,6 +15,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
+import 'user_screen_components/user_body/user_blocked.dart';
+import 'user_screen_components/user_body/user_blocking.dart';
+
 // ignore: must_be_immutable
 class UserScreen extends StatefulWidget{
   late User user;
@@ -116,15 +119,21 @@ class UserScreenState extends State<UserScreen>{
                 bloc: userInforBloc,
                 builder: (context, state){
                   Widget content;
-                  switch(state.statusLoadInfo){
-                    case FormzStatus.submissionInProgress:
+                  switch(state.status){
+                    case UserInforStatus.LOADING:
                       content = UserLoading(main: this);
                       break;
-                    case FormzStatus.submissionSuccess:
+                    case UserInforStatus.LOADED:
                       content = UserBody(main: this);
                       break;
-                    case FormzStatus.submissionFailure:
+                    case UserInforStatus.FAIL:
                       content = UserBody(main: this);
+                      break;
+                    case UserInforStatus.BLOCKING:
+                      content = UserBlocking(main: this);
+                      break;
+                    case UserInforStatus.BLOCKED:
+                      content = UserBlocked(main: this);
                       break;
                     default:
                       content = UserLoading(main: this);

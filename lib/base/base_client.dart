@@ -72,19 +72,20 @@ class BaseClient {
     var response = await http.Response.fromStream(await request.send());
 
     print("BASE CLIENT: ${response.body}");
-    if(response.statusCode == 200){
-      return jsonDecodeUtf8(response.bodyBytes);
-    } else {
-      if (response.statusCode <= 500) {
-        dynamic resultJson = jsonDecodeUtf8(response.bodyBytes);
-        ErrorResponse errorResponse = ErrorResponse.fromJson(resultJson);
-        if(errorResponse.code == "1011"){
-          throw NotDataException("Conversation not existed");
-        }
-        print(response.body);
-        return null;
-      }
-      throw FetchDataException("Post request failed");
-    }
+    return jsonDecodeUtf8(response.bodyBytes);
+    // if(response.statusCode == 200){
+    //   return jsonDecodeUtf8(response.bodyBytes);
+    // } else {
+    //   if (response.statusCode <= 500) {
+    //     dynamic resultJson = jsonDecodeUtf8(response.bodyBytes);
+    //     ErrorResponse errorResponse = ErrorResponse.fromJson(resultJson);
+    //     if(errorResponse.code == "1011"){
+    //       throw NotDataException("Conversation not existed");
+    //     }
+    //     print(response.body);
+    //     return null;
+    //   }
+    //   throw FetchDataException("Post request failed");
+    // }
   }
 }

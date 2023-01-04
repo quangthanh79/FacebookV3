@@ -12,14 +12,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // ignore: must_be_immutable
-class UserBody extends UserScreenComponent {
-  UserBody({super.key, required super.main});
+class UserBlocked extends UserScreenComponent {
+  UserBlocked({super.key, required super.main});
 
   @override
-  State<StatefulWidget> createState() => UserBodyState();
+  State<StatefulWidget> createState() => UserBlockedState();
 }
 
-class UserBodyState extends UserScreenComponentState<UserBody> {
+class UserBlockedState extends UserScreenComponentState<UserBlocked> {
   late ScrollController scrollController;
   late double scrollPosition;
 
@@ -62,32 +62,15 @@ class UserBodyState extends UserScreenComponentState<UserBody> {
                         height: 16,
                         child: Container(
                           decoration:
-                              const BoxDecoration(color: Colors.black26),
+                          const BoxDecoration(color: Colors.black26),
                         ),
                       ),
-                      UserInfor(
-                        main: main,
-                      ),
                       SizedBox(
-                        height: 16,
-                        child: Container(
-                          decoration:
-                              const BoxDecoration(color: Colors.black26),
-                        ),
-                      ),
-                      UserFriend(main: main),
-                      SizedBox(
-                        height: 16,
+                        height: 1024,
                         child: Container(
                             decoration:
-                                const BoxDecoration(color: Colors.black26)),
-                      ),
-                      BlocProvider(
-                          create: (context) => HomeBloc(getIt(), getIt()),
-                          child: HomeBody(
-                            type: PostType.profile,
-                            targetId: user.id,
-                          ))
+                            const BoxDecoration(color: Colors.black26)),
+                      )
                     ]),
                 onRefresh: () {
                   return Future.delayed(

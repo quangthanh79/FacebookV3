@@ -26,6 +26,8 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
     on<CancelFriendEvent>(cancelFriend);
     on<InitButtonsEvent>(initButtons);
     on<UpdateButtonsEvent>(updateButtons);
+    on<BlockUserEvent>(blockUser);
+    on<UnblockUserEvent>(unblockUser);
   }
 
   Future<void> sendRequestFriend(
@@ -91,6 +93,36 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
     // add(UpdateButtonsEvent());
   }
 
+  Future<void> blockUser(
+      BlockUserEvent e,
+      Emitter<UserButtonsState> emit) async{
+    if (user.is_friend == null || user.is_friend == "BLOCKING") return;
+    emit(UserButtonsState(userButtonStatus: UserButtonStatus.BLOCKING));
+    ResponseActionFriend? responseActionFriend = await friendRepository.setBlock(user.id!, 0);
+    if (responseActionFriend != null && responseActionFriend.code == "1000") {
+      user.is_friend = "BLOCKING";
+      if (e.onSuccess != null) e.onSuccess!.call();
+    } else {
+      emit(getState());
+      if (e.onError != null) e.onError!.call();
+    }
+  }
+
+  Future<void> unblockUser(
+      UnblockUserEvent e,
+      Emitter<UserButtonsState> emit) async{
+    if (user.is_friend == null || user.is_friend != "BLOCKING") return;
+    emit(UserButtonsState(userButtonStatus: UserButtonStatus.NOT_FRIEND));
+    ResponseActionFriend? responseActionFriend = await friendRepository.setBlock(user.id!, 1);
+    if (responseActionFriend != null && responseActionFriend.code == "1000") {
+      user.is_friend = "NOT_FRIEND";
+      if (e.onSuccess != null) e.onSuccess!.call();
+    } else {
+      emit(getState());
+      if (e.onError != null) e.onError!.call();
+    }
+  }
+
   Future<void> initButtons(
       InitButtonsEvent e,
       Emitter<UserButtonsState> emit) async{
@@ -102,7 +134,7 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
       Emitter<UserButtonsState> emit) async{
     ResponseUser? responseUser = await userRepository.getUserInfor(user.id!);
     if (responseUser != null && responseUser.code == "1000"){
-      user.copyFrom(responseUser.data!);
+      user.copyFrom(responseUser.data);
       emit(getState());
     }
   }
@@ -124,6 +156,12 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
           break;
         case "REQUESTING":
           status = UserButtonStatus.REQUESTED;
+          break;
+        case "BLOCKING":
+          status = UserButtonStatus.BLOCKING;
+          break;
+        case "BLOCKED":
+          status = UserButtonStatus.BLOCKED;
           break;
         case null:
           status = UserButtonStatus.INITIAL;

@@ -8,16 +8,17 @@ import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class FriendListScreen extends FriendScreen{
-  FriendListScreen({super.key, required super.user});
+  FriendListScreen({super.key, required super.user, super.onBack});
   @override
   State<StatefulWidget> createState() => FriendListScreenState();
 
   static Route<void> route({
     required User user,
+    void Function()? onBack
   }) {
     return MaterialPageRoute(
         builder: (context) => FriendListScreen(
-            user: user
+            user: user, onBack: onBack,
         )
     );
   }
@@ -42,8 +43,8 @@ class FriendListScreenState extends FriendScreenState<FriendListScreen>{
   }
 
   @override
-  void loadListFriendInNumber(int numFriends) {
-    friendListBloc.add(LoadListFriendInNumberEvent(number: numFriends));
+  void loadMore() {
+    friendListBloc.add(LoadMoreListFriendEvent());
   }
 
 }

@@ -1,4 +1,5 @@
 import 'package:facebook_auth/screen/main_facebook.dart';
+import 'package:facebook_auth/screen/signup/set_info_after_signup.dart';
 import 'package:facebook_auth/utils/context_ext.dart';
 import 'package:facebook_auth/utils/injection.dart';
 import 'package:facebook_auth/utils/widget/appbar_signup.dart';
@@ -37,7 +38,7 @@ class ConfirmAccountScreen extends StatelessWidget {
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MainFacebookScreen(),
+                    builder: (context) => const SetInfoAfterSignup(),
                   ),
                   (Route<dynamic> route) => false);
               break;

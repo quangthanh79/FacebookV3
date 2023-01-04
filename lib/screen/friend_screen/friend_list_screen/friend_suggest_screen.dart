@@ -9,16 +9,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 // ignore: must_be_immutable
 class FriendSuggestScreen extends FriendScreen{
-  FriendSuggestScreen({super.key, required super.user});
+  FriendSuggestScreen({super.key, required super.user, super.onBack});
   @override
   State<StatefulWidget> createState() => FriendSuggestScreenState();
 
   static Route<void> route({
     required User user,
+    void Function()? onBack
   }) {
     return MaterialPageRoute(
         builder: (context) => FriendSuggestScreen(
-            user: user
+            user: user, onBack: onBack
         )
     );
   }
@@ -39,8 +40,8 @@ class FriendSuggestScreenState extends FriendScreenState<FriendSuggestScreen>{
   }
 
   @override
-  void loadListFriendInNumber(int numFriends) {
-    friendListBloc.add(LoadListSuggestInNumberEvent(number: numFriends));
+  void loadMore() {
+    friendListBloc.add(LoadMoreListSuggestEvent());
   }
 }
 

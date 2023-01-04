@@ -79,10 +79,20 @@ class FriendItemBloc extends Bloc<FriendItemEvent, FriendItemState>{
   Future<void> updateButtons(UpdateButtonsEvent e, Emitter<FriendItemState> emit) async{
     emit(FriendItemState(status: FriendItemStatus.LOADING));
     ResponseUser? responseUser = await userRepository.getUserInfor(user.id!);
-    if (responseUser != null && responseUser.code == "1000"){
-      user.copyFrom(responseUser.data!);
-      emit(getState());
+
+    if (responseUser == null){
+      emit(FriendItemState(status: FriendItemStatus.LOADING));
+      return;
     }
+
+    if (responseUser.code == "9995"){
+      responseUser.data.copyFrom(user);
+      responseUser.data.is_friend = responseUser.details;
+    }
+
+    user.copyFrom(responseUser.data);
+    emit(getState());
+    
   }
 
   FriendItemState getState(){
@@ -102,6 +112,9 @@ class FriendItemBloc extends Bloc<FriendItemEvent, FriendItemState>{
           break;
         case "REQUESTING":
           status = FriendItemStatus.REQUESTED;
+          break;
+        case "BLOCKING":case "BLOCKED":
+          status = FriendItemStatus.BLOCK;
           break;
         case null:
           status = FriendItemStatus.LOADING;

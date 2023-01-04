@@ -4,8 +4,10 @@
 import 'dart:io';
 
 import 'package:facebook_auth/base/base_client.dart';
-import 'package:facebook_auth/data/models/friend.dart';
+import 'package:http/http.dart' as http;
 import 'package:facebook_auth/data/models/user_info.dart';
+import 'package:facebook_auth/utils/constant.dart';
+import 'package:facebook_auth/utils/json_utils.dart';
 import 'package:facebook_auth/utils/session_user.dart';
 
 class UserApiProvider extends BaseClient{
@@ -46,6 +48,19 @@ class UserApiProvider extends BaseClient{
     return null;
   }
 
+  @override
+  Future<dynamic> post(String url, dynamic body) async{
+    url = baseUrl + url;
+    print("API post: $url "+ body.toString());
+
+    final response = await http
+        .post(
+        Uri.parse(url).replace(queryParameters: body)
+    ).timeout(const Duration(seconds: 30));
+    print("BASE CLIENT: "+ response.body.toString());
+
+    return jsonDecodeUtf8(response.bodyBytes);
+  }
 }
 final userApiProvider = UserApiProvider();
 

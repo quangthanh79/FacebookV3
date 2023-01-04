@@ -9,16 +9,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 // ignore: must_be_immutable
 class FriendRequestScreen extends FriendScreen{
-  FriendRequestScreen({super.key, required super.user});
+  FriendRequestScreen({super.key, required super.user, super.onBack});
   @override
   State<StatefulWidget> createState() => FriendRequestScreenState();
 
   static Route<void> route({
     required User user,
+    void Function()? onBack
   }) {
     return MaterialPageRoute(
         builder: (context) => FriendRequestScreen(
-            user: user
+            user: user, onBack: onBack,
         )
     );
   }
@@ -39,8 +40,8 @@ class FriendRequestScreenState extends FriendScreenState<FriendRequestScreen>{
   }
 
   @override
-  void loadListFriendInNumber(int numFriends) {
-    friendListBloc.add(LoadListRequestInNumberEvent(number: numFriends));
+  void loadMore() {
+    friendListBloc.add(LoadMoreListRequestEvent());
   }
 }
 

@@ -34,15 +34,15 @@ class FriendNoFriendsState extends FriendScreenComponentState<FriendNoFriends>{
         const SizedBox(height: 28),
         FriendHeader(main: main,),
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           // decoration: const BoxDecoration(
           //   border: Border(bottom: BorderSide(width: 1, color: Colors.black12))
           // ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              getSearchBar(context),
-              const SizedBox(height: 8,),
+              // getSearchBar(context),
+              // const SizedBox(height: 8,),
               main is FriendListScreenState && user.isMe ?
               getButtonsBar(context) : Container()
             ],
