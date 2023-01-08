@@ -5,6 +5,7 @@ import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/friend_repository.dart';
 import 'package:facebook_auth/data/repository/user_repository.dart';
+import 'package:facebook_auth/screen/user_screen/user_edit/user_edit_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/user_body/user_body.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_bloc.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/user_body/user_loading.dart';
@@ -55,18 +56,18 @@ class UserScreen extends StatefulWidget{
 }
 
 class UserScreenState extends State<UserScreen>{
-  User user;
   ListFriend listFriend = ListFriend(list: [], total: 0);
+  late User user;
   late UserInforBloc userInforBloc;
   late UserFriendBloc userFriendBloc;
 
-  UserScreenState({required this.user}) {
-    
+  UserScreenState({required this.user}){
+
     userInforBloc = UserInforBloc(
-        userRepository: getIt<UserRepository>(),
-        // friendRepository: getIt<FriendRepository>(),
-        user: user,
-        // listFriend: listFriend
+      userRepository: getIt<UserRepository>(),
+      // friendRepository: getIt<FriendRepository>(),
+      user: user,
+      // listFriend: listFriend
     )..add(LoadUserEvent());
 
     userFriendBloc = UserFriendBloc(
@@ -106,6 +107,16 @@ class UserScreenState extends State<UserScreen>{
     Future.delayed(const Duration(milliseconds: 2000), refresh);
   }
 
+  void routeEditScreen(){
+    Navigator.push(
+        context,
+        UserEditScreen.route(
+            user: user,
+            onBack: () => userInforBloc.add(ReloadUserEvent())
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -136,7 +147,7 @@ class UserScreenState extends State<UserScreen>{
                       content = UserBlocked(main: this);
                       break;
                     default:
-                      content = UserLoading(main: this);
+                      content = Container();
                       break;
                   }
                   return content;

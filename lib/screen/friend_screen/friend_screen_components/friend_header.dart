@@ -3,6 +3,7 @@ import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_lis
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_request_screen.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_suggest_screen.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_screen_components/friend_screen.dart';
+import 'package:facebook_auth/screen/search_screen/search_screen.dart';
 import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter/material.dart';
 
@@ -68,7 +69,12 @@ class FriendHeaderState extends FriendScreenComponentState<FriendHeader>{
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     GestureDetector(
-                        onTap: (){},
+                        onTap: (){
+                          showSearch(
+                              context: context,
+                              delegate: MyCustomDelegate()
+                          );
+                        },
                         child: const Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: 12.0, vertical: 12),

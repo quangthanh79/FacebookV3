@@ -5,6 +5,7 @@ import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/friend_repository.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_item_bloc/friend_item_bloc.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_screen_components/cancel_friend_menu_bottom.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_screen_components/my_button_style.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
 import 'package:facebook_auth/utils/image.dart';
@@ -186,7 +187,15 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
         return getButton(
           theme: Theme.DARK,
           label: "Hủy kết bạn",
-          function: () => friendItemBloc.add(CancelFriendEvent())
+          function: (){
+            CancelFriendMenuBottom.showBottomMenu(
+              context: context,
+              onSuccess: (){
+                friendItemBloc.add(CancelFriendEvent());
+              }
+            );
+          }
+          // function: () => friendItemBloc.add(CancelFriendEvent())
         );
       case FriendItemStatus.REQUESTED:
         return Row(

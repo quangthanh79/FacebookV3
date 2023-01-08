@@ -45,7 +45,7 @@ class AuthenticationBloc
       case AuthenticationStatus.unauthenticated:
         return emit(const AuthenticationState.unauthenticated());
       case AuthenticationStatus.authenticated:
-        ResponseUser? response_user = await _authenticationRepository.getUserInfor("");
+        ResponseUser? response_user = await _authenticationRepository.getUserInfor(SessionUser.idUser!);
         if(response_user != null){
           SessionUser.user = response_user.data;
         }else{

@@ -84,8 +84,8 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
       Emitter<UserButtonsState> emit) async{
     if (user.is_friend == null || user.is_friend != "IS_FRIEND") return;
     emit(UserButtonsState(userButtonStatus: UserButtonStatus.NOT_FRIEND));
-    ResponseListFriend? responseListFriend = await friendRepository.setRequestFriend(user.id!);
-    if (responseListFriend != null && responseListFriend.code == "1000") {
+    ResponseActionFriend? responseActionFriend = await friendRepository.setCancelFriend(user.id!);
+    if (responseActionFriend != null && responseActionFriend.code == "1000") {
       user.is_friend = "NOT_FRIEND";
     } else {
       emit(UserButtonsState(userButtonStatus: UserButtonStatus.IS_FRIEND));
