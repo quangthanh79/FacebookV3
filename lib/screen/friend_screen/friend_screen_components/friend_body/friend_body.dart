@@ -34,7 +34,7 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
       // print("ratio: ${scrollController.offset / scrollController.position.maxScrollExtent}");
       if (scrollController.position.extentAfter < 200){
         // main.loadMore();
-        print("call more............................");
+        // print("call more............................");
       }
     });
   }
@@ -90,6 +90,7 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
 
   List<Widget> getListWidgetFriends(){
     // print("rebuild all  children");
+    print(user);
     List<Widget> list = [
       const SizedBox(height: 8,),
       main is FriendListScreenState && user.isMe ?

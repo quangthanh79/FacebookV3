@@ -4,6 +4,7 @@ import 'package:facebook_auth/blocs/sign_out/sign_out_event.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/profile_repository.dart';
 import 'package:facebook_auth/icon/setting_icons.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_list_screen.dart';
 import 'package:facebook_auth/screen/login/login_screen.dart';
 import 'package:facebook_auth/screen/main_facebook.dart';
 import 'package:facebook_auth/screen/profile_screen/block_screen/ListBlockScreen.dart';
@@ -122,7 +123,20 @@ class ProfileScreen extends StatelessWidget {
           padding: EdgeInsets.only(left: 10.0, right: 10.0),
           child: Row(
             children: <Widget>[
-              TagProfile(key, "Bạn bè", Icon(Setting.settings)),
+              Expanded(
+                child: GestureDetector(
+                  onTap: (){
+                    Navigator.push(
+                        context,
+                        FriendListScreen.route(
+                            user: SessionUser.user!,
+                            onBack: (){}
+                        )
+                    );
+                  },
+                  child: TagProfile(key, "Bạn bè", Icon(Setting.settings)),
+                )
+              ),
               TagProfile(key, "Nhóm", Icon(Setting.settings)),
             ],
           ),

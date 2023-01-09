@@ -88,6 +88,7 @@ class FriendItemBloc extends Bloc<FriendItemEvent, FriendItemState>{
     if (responseUser.code == "9995"){
       responseUser.data.copyFrom(user);
       responseUser.data.is_friend = responseUser.details;
+      print("blockkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
     }
 
     user.copyFrom(responseUser.data);
@@ -114,6 +115,7 @@ class FriendItemBloc extends Bloc<FriendItemEvent, FriendItemState>{
           status = FriendItemStatus.REQUESTED;
           break;
         case "BLOCKING":case "BLOCKED":
+          print("one block");
           status = FriendItemStatus.BLOCK;
           break;
         case null:

@@ -53,25 +53,31 @@ class FriendNoFriendsState extends FriendScreenComponentState<FriendNoFriends>{
           child: Column(
             children: [
               Expanded(
-                  child: ListView(
-                      addAutomaticKeepAlives: true,
-                      padding: const EdgeInsets.all(0),
-                      children: [
-                        Container(
-                            height: 1000,
-                            padding: const EdgeInsets.symmetric(vertical: 30),
-                            decoration: const BoxDecoration(
-                                color: Colors.black26
-                            ),
-                            alignment: Alignment.topCenter,
-                            child: Text(
-                              label,
-                              style: const TextStyle(
-                                fontSize: 16
+                  child: RefreshIndicator(
+                    onRefresh: () => Future.delayed(
+                      const Duration(seconds: 1),
+                      () => main.reloadListFriend(),
+                    ),
+                    child: ListView(
+                        addAutomaticKeepAlives: true,
+                        padding: const EdgeInsets.all(0),
+                        children: [
+                          Container(
+                              height: 1000,
+                              padding: const EdgeInsets.symmetric(vertical: 30),
+                              decoration: const BoxDecoration(
+                                  color: Colors.black26
                               ),
-                            )
-                        ),
-                      ]
+                              alignment: Alignment.topCenter,
+                              child: Text(
+                                label,
+                                style: const TextStyle(
+                                    fontSize: 16
+                                ),
+                              )
+                          ),
+                        ]
+                    )
                   )
               )
             ],
