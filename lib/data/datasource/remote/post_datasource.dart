@@ -28,6 +28,12 @@ abstract class PostDataSource {
       required String described,
       List<File>? image,
       File? video});
+  Future<AddPostResponse> editPost(
+      {required String token,
+      required String id,
+      required String described,
+      List<File>? image,
+      File? video});
   Future<Author> getUserInfo(String token);
   Future<dynamic> deletePost({
     required String token,
@@ -148,6 +154,45 @@ class PostDataSourceImpl implements PostDataSource {
         }
       }
       var response = await apiService.addPost(
+          token: token,
+          described: described,
+          image: multipartFiles,
+          video: video);
+      if (response.statusCode == '1000') {
+        return response.data!;
+      }
+      throw ServerException(response.messages ?? unexpectedError);
+    } on DioError catch (e) {
+      throw ServerException.handleError(e);
+    } catch (e) {
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<AddPostResponse> editPost(
+      {required String token,
+      required String id,
+      required String described,
+      List<File>? image,
+      File? video}) async {
+    try {
+      List<MultipartFile>? multipartFiles;
+      if (image != null) {
+        multipartFiles = <MultipartFile>[];
+
+        for (final file in image) {
+          final fileBytes = await file.readAsBytes();
+          final multipartFile = MultipartFile.fromBytes(
+            fileBytes,
+            filename: file.path.split('/').last,
+            contentType: MediaType('application', 'octet-stream'),
+          );
+          multipartFiles.add(multipartFile);
+        }
+      }
+      var response = await apiService.editPost(
+          id: id,
           token: token,
           described: described,
           image: multipartFiles,

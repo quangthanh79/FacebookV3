@@ -28,12 +28,10 @@ extension CommentModelX on CommentModel {
     return Comment(
         user_id: poster?.id,
         content: comment ?? '',
-        userName: poster?.userName ?? '',
+        userName: poster?.userName ?? 'Anonymous',
         time: toTime(
             DateTime.now().millisecondsSinceEpoch ~/ 1000 - int.parse(created)),
-        avatarUrl: poster != null
-            ? (poster!.avatarUrl ?? defaultAvatar)
-            : defaultAvatar);
+        avatarUrl: poster != null ? (poster!.avatarUrl) : null);
   }
 }
 

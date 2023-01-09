@@ -19,6 +19,7 @@ class API {
   static const String getListPosts = '/post/get_list_posts';
   static const String getListPostsInProfile = '/post/get_list_posts_in_profile';
   static const String addPost = '/post/add_post';
+  static const String editPost = '/post/edit_post';
   static const String deletePost = '/post/delete_post';
   static const String getComment = '/comment/get_comment';
   static const String setComment = '/comment/set_comment';
@@ -83,6 +84,15 @@ abstract class ApiService {
   @POST(API.addPost)
   Future<ApiResponse<AddPostResponse>> addPost(
       {@Part() @Query("token") required String token,
+      @Part() @Query("described") required String described,
+      @Part() List<MultipartFile>? image,
+      @Part(name: 'video') File? video});
+
+  @MultiPart()
+  @POST(API.editPost)
+  Future<ApiResponse<AddPostResponse>> editPost(
+      {@Part() @Query("token") required String token,
+      @Part() @Query("id") required String id,
       @Part() @Query("described") required String described,
       @Part() List<MultipartFile>? image,
       @Part(name: 'video') File? video});

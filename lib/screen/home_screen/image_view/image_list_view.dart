@@ -10,7 +10,7 @@ extension ImageListTypeX on ImageListType {
   bool get isFile => this == ImageListType.file;
 }
 
-class ImageListView extends StatelessWidget {
+class ImageListView extends StatefulWidget {
   final List<String>? itemsNetwork;
   final List<File>? itemsFile;
   final ImageListType imageListType;
@@ -23,54 +23,72 @@ class ImageListView extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<ImageListView> createState() => _ImageListViewState();
+}
+
+class _ImageListViewState extends State<ImageListView> {
+  bool isValid = true;
+  @override
   Widget build(BuildContext context) {
-    if (imageListType.isNetwork && itemsNetwork != null) {
+    if (widget.imageListType.isNetwork && widget.itemsNetwork != null) {
       return SizedBox(
-        height: 280,
-        child: itemsNetwork!.length == 1
+        height: widget.itemsNetwork!.length == 1
+            ? null
+            : isValid
+                ? 280
+                : 0,
+        child: widget.itemsNetwork!.length == 1
             ? Container(
                 alignment: Alignment.center,
                 child: Image.network(
-                  itemsNetwork![0],
+                  widget.itemsNetwork![0],
                   fit: BoxFit.fitHeight,
+                  errorBuilder: (context, error, stackTrace) {
+                    Future.delayed(
+                        const Duration(milliseconds: 500),
+                        () => setState(() {
+                              isValid = false;
+                            }));
+                    return const SizedBox.shrink();
+                  },
                 ))
             : ListView.separated(
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
-                itemCount: itemsNetwork!.length,
+                itemCount: widget.itemsNetwork!.length,
                 separatorBuilder: (context, index) => Container(
                   width: 12,
                   color: Colors.white,
                 ),
                 itemBuilder: (context, index) {
                   return Image.network(
-                    itemsNetwork![index],
+                    widget.itemsNetwork![index],
                     fit: BoxFit.fitHeight,
                   );
                 },
               ),
       );
     }
-    if (imageListType.isFile && itemsFile != null) {
+    if (widget.imageListType.isFile && widget.itemsFile != null) {
       return SizedBox(
         height: 280,
-        child: itemsFile!.length == 1
+        child: widget.itemsFile!.length == 1
             ? Container(
                 alignment: Alignment.center,
                 child: Image.file(
-                  itemsFile![0],
+                  widget.itemsFile![0],
                   fit: BoxFit.fitHeight,
                 ))
             : ListView.separated(
                 scrollDirection: Axis.horizontal,
-                itemCount: itemsFile!.length,
+                itemCount: widget.itemsFile!.length,
                 separatorBuilder: (context, index) => Container(
                   width: 12,
                   color: Colors.white,
                 ),
                 itemBuilder: (context, index) {
                   return Image.file(
-                    itemsFile![index],
+                    widget.itemsFile![index],
                     fit: BoxFit.fitHeight,
                   );
                 },

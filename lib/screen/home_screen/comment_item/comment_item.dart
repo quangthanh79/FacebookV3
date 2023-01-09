@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:developer';
+
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
 import 'package:facebook_auth/utils/constant.dart';
@@ -16,6 +18,7 @@ class CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    log(comment.toString());
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -74,8 +74,10 @@ class PickVideo extends AddPostEvent {
 
 class AddPost extends AddPostEvent {
   final BuildContext context;
+  final String? id;
   const AddPost({
     required this.context,
+    this.id,
   });
   @override
   List<Object> get props => [context];

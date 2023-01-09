@@ -15,6 +15,7 @@ import 'bloc/add_post_bloc.dart';
 
 class AddPostView extends StatefulWidget {
   final bool isEditing;
+  final String? id;
   final List<File>? images;
   final File? video;
   final AddPostType? addPostType;
@@ -22,6 +23,7 @@ class AddPostView extends StatefulWidget {
   const AddPostView({
     Key? key,
     required this.isEditing,
+    this.id,
     this.images,
     this.video,
     this.addPostType,
@@ -66,7 +68,9 @@ class _AddPostViewState extends State<AddPostView> {
           ElevatedButton(
               onPressed: () {
                 if (context.read<AddPostBloc>().state.content != '') {
-                  context.read<AddPostBloc>().add(AddPost(context: context));
+                  context.read<AddPostBloc>().add(AddPost(
+                      context: context,
+                      id: widget.isEditing ? widget.id : null));
                 }
               },
               child: const Text("POST"))
@@ -298,13 +302,13 @@ class _AddPostViewState extends State<AddPostView> {
   Widget build(BuildContext context) {
     return BlocProvider<AddPostBloc>(
       create: (context) => widget.isEditing
-          ? (AddPostBloc(getIt())
+          ? (AddPostBloc(getIt(), getIt())
             ..add(EditPostEvent(
                 addPostType: widget.addPostType,
                 content: widget.content,
                 images: widget.images,
                 video: widget.video)))
-          : AddPostBloc(getIt()),
+          : AddPostBloc(getIt(), getIt()),
       child: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(FocusNode());

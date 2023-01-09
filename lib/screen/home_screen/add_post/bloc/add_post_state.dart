@@ -13,6 +13,7 @@ class AddPostState extends Equatable {
   final File? video;
   final Post? post;
   final AddPostType addPostType;
+  final bool isEditing;
   const AddPostState({
     this.status = AddPostStatus.initial,
     this.content = '',
@@ -21,6 +22,7 @@ class AddPostState extends Equatable {
     this.video,
     this.post,
     this.addPostType = AddPostType.none,
+    this.isEditing = false,
   });
 
   @override
@@ -35,6 +37,7 @@ class AddPostState extends Equatable {
     File? video,
     Post? post,
     AddPostType? addPostType,
+    bool? isEditing,
   }) {
     return AddPostState(
       status: status ?? this.status,
@@ -44,6 +47,7 @@ class AddPostState extends Equatable {
       video: video ?? this.video,
       post: post ?? this.post,
       addPostType: addPostType ?? this.addPostType,
+      isEditing: isEditing ?? this.isEditing,
     );
   }
 }
