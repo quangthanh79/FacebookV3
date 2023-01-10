@@ -18,10 +18,11 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return BlocProvider(
-        create: (context) => HomeBloc(getIt(), getIt()),
-        child: const HomeBody(
-          type: PostType.home,
-        ));
+      create: (context) => HomeBloc(getIt(), getIt()),
+      child: const HomeBody(
+        type: PostType.home,
+      ),
+    );
   }
 
   @override

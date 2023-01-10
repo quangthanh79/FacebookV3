@@ -37,4 +37,9 @@ class Comment {
     fakeData,
     fakeData
   ];
+
+  @override
+  String toString() {
+    return 'Comment(user_id: $user_id, avatarUrl: $avatarUrl, userName: $userName, content: $content, time: $time)';
+  }
 }

@@ -14,6 +14,7 @@ import '../utils/app_theme.dart';
 import '../utils/tab_icons.dart';
 import 'friend_screen/friend_screen.dart';
 import 'home_screen/home_screen.dart';
+import 'search_screen/search_screen.dart';
 
 /**
  * Created by @Author: Tuan Pham Anh
@@ -188,15 +189,22 @@ class MainFacebookScreenState extends State<MainFacebookScreen>
                     SizedBox(
                       width: 10,
                     ),
-                    Container(
-                      height: 36,
-                      width: 36,
-                      child: Icon(
-                        Loupe.loupe,
-                        size: 17,
+                    GestureDetector(
+                      onTap: () {
+                        // Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen(key)));
+                        showSearch(
+                            context: context, delegate: MyCustomDelegate());
+                      },
+                      child: Container(
+                        height: 36,
+                        width: 36,
+                        child: Icon(
+                          Loupe.loupe,
+                          size: 17,
+                        ),
+                        decoration: const BoxDecoration(
+                            shape: BoxShape.circle, color: AppTheme.grey200),
                       ),
-                      decoration: const BoxDecoration(
-                          shape: BoxShape.circle, color: AppTheme.grey200),
                     ),
                     SizedBox(
                       width: 30,

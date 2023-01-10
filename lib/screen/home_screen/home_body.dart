@@ -1,9 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'package:facebook_auth/data/models/user_info.dart';
+import 'package:facebook_auth/screen/user_screen/user_screen.dart';
+import 'package:facebook_auth/utils/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'package:facebook_auth/core/helper/current_user.dart';
 import 'package:facebook_auth/data/repository/post_repository_impl.dart';
@@ -12,6 +14,7 @@ import 'package:facebook_auth/screen/home_screen/post_item/post_item.dart';
 import 'package:facebook_auth/utils/injection.dart';
 import 'package:facebook_auth/utils/session_user.dart';
 
+import 'add_post/add_post_screen.dart';
 import 'home_bloc/home_bloc.dart';
 import 'model/post.dart';
 
@@ -51,6 +54,13 @@ class _HomeBodyState extends State<HomeBody>
           LoadListPost(keyword: widget.keyword, targetId: widget.targetId));
       PreventLoadOverlapFlag.turnOn();
     }
+    if (_isTop && !PreventLoadOverlapFlag.isLoading) {
+      context.read<HomeBloc>().add(ResetListPost());
+      context.read<ListPostNotify>().assignList([], widget.type);
+      context.read<HomeBloc>().add(
+          LoadListPost(keyword: widget.keyword, targetId: widget.targetId));
+      PreventLoadOverlapFlag.turnOn();
+    }
   }
 
   bool get _isBottom {
@@ -58,6 +68,13 @@ class _HomeBodyState extends State<HomeBody>
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
     return currentScroll >= (maxScroll * 0.95);
+  }
+
+  bool get _isTop {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.offset;
+    return currentScroll < (maxScroll * -0.03);
   }
 
   @override
@@ -84,8 +101,6 @@ class _HomeBodyState extends State<HomeBody>
   @override
   Widget build(BuildContext context) {
     bool isProfile = widget.type == PostType.profile;
-    RefreshController refreshController =
-        RefreshController(initialRefresh: false);
     return BlocListener<HomeBloc, HomeState>(
       listenWhen: (previous, current) =>
           current.status == HomeStatus.loadedSuccess,
@@ -147,39 +162,31 @@ class _HomeBodyState extends State<HomeBody>
                             index: index,
                           )),
                     )
-                  : SmartRefresher(
-                      controller: refreshController,
-                      enablePullDown: true,
-                      footer: CustomFooter(
-                        builder: (__, _) {
-                          return Container();
-                        },
-                      ),
-                      header: const WaterDropMaterialHeader(),
-                      onRefresh: () {
-                        context.read<HomeBloc>().add(ResetListPost());
-                        context
-                            .read<ListPostNotify>()
-                            .assignList([], widget.type);
-                        context.read<HomeBloc>().add(LoadListPost(
-                            keyword: widget.keyword,
-                            targetId: widget.targetId));
-                      },
-                      child: ListView.separated(
-                        physics: const BouncingScrollPhysics(),
-                        controller: _scrollController,
-                        separatorBuilder: (context, index) => const SizedBox(
-                          height: 12,
-                        ),
-                        shrinkWrap: true,
-                        itemCount: items.length,
-                        itemBuilder: (context, index) => Container(
-                            color: Colors.white,
-                            child: PostItem(
-                              type: widget.type,
-                              post: items[index],
-                              index: index,
-                            )),
+                  : SingleChildScrollView(
+                      controller: _scrollController,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          widget.type == PostType.home
+                              ? const AddPostHeader()
+                              : Container(),
+                          ListView.separated(
+                            physics: const NeverScrollableScrollPhysics(),
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(
+                              height: 12,
+                            ),
+                            shrinkWrap: true,
+                            itemCount: items.length,
+                            itemBuilder: (context, index) => Container(
+                                color: Colors.white,
+                                child: PostItem(
+                                  type: widget.type,
+                                  post: items[index],
+                                  index: index,
+                                )),
+                          ),
+                        ],
                       ),
                     );
             });
@@ -403,5 +410,154 @@ class PreventLoadOverlapFlag {
     isLoading = true;
     await Future.delayed(const Duration(seconds: 1));
     isLoading = false;
+  }
+}
+
+class AddPostHeader extends StatefulWidget {
+  const AddPostHeader({super.key});
+
+  @override
+  State<AddPostHeader> createState() => _AddPostHeaderState();
+}
+
+class _AddPostHeaderState extends State<AddPostHeader> {
+  bool isReady = false;
+  @override
+  void initState() {
+    Future.delayed(
+      const Duration(seconds: 0),
+      () async {
+        while (CurrentUser.id == '' && !mounted) {
+          await Future.delayed(const Duration(milliseconds: 100));
+        }
+        setState(() {
+          isReady = true;
+        });
+      },
+    );
+
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return isReady
+        ? GestureDetector(
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddPostView(
+                    isEditing: false,
+                  ),
+                )),
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            User user = User(
+                                id: CurrentUser.id,
+                                avatar: CurrentUser.avatar,
+                                username: CurrentUser.userName);
+                            // Navigate to UserScreen
+                            Navigator.push(
+                                context, UserScreen.route(user: user));
+                          },
+                          child: CurrentUser.avatar != null
+                              ? CircleAvatar(
+                                  radius: 20.0,
+                                  backgroundImage: NetworkImage(
+                                    CurrentUser.avatar!,
+                                  ),
+                                  backgroundColor: Colors.transparent,
+                                )
+                              : Image.asset(
+                                  defaultAvatar,
+                                  width: 40,
+                                  height: 40,
+                                ),
+                        ),
+                        const SizedBox(
+                          width: 16,
+                        ),
+                        const Text(
+                          'What\'s on your mind?',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        )
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 1,
+                    margin: const EdgeInsets.only(top: 12),
+                    color: Colors.grey,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(
+                        width: 0,
+                      ),
+                      buildBox(
+                          'Live', Icons.video_camera_back, Colors.redAccent),
+                      Container(
+                        width: 1,
+                        height: 32,
+                        margin: EdgeInsets.only(top: 4),
+                        color: Colors.grey,
+                      ),
+                      buildBox('Photo', Icons.image, Colors.greenAccent),
+                      Container(
+                        width: 1,
+                        height: 32,
+                        margin: EdgeInsets.only(top: 4),
+                        color: Colors.grey,
+                      ),
+                      buildBox(
+                          'Check In', Icons.location_on, Colors.pinkAccent),
+                      const SizedBox(
+                        width: 0,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          )
+        : Container();
+  }
+
+  Widget buildBox(String title, IconData iconData, Color color) {
+    return Expanded(
+      child: Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.only(top: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              iconData,
+              color: color,
+              size: 36,
+            ),
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

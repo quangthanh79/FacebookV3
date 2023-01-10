@@ -23,6 +23,7 @@ import '../../../blocs/sign_out/sign_out_state.dart';
 import '../../../data/datasource/local/flutter_secure_storage.dart';
 import '../../../icon/loupe_icons.dart';
 import '../../../utils/app_theme.dart';
+import '../../../utils/image.dart';
 import '../../search_screen/search_screen.dart';
 import '../../user_screen/user_screen.dart';
 import '../change_password_screen/change_password_screen.dart';
@@ -82,14 +83,23 @@ class ProfileScreen extends StatelessWidget {
           ),
         ),
         Padding(
-            padding: EdgeInsets.only(left: 15, top: 10),
+            padding: EdgeInsets.only(left: 15, top: 10, bottom: 8.0),
             child: GestureDetector(
               child: Row(
                 children: <Widget>[
-                  CircleAvatar(
-                    radius: 20.0,
-                    backgroundColor: Colors.white,
-                    backgroundImage: AssetImage("assets/images/avatarDefault.png"),
+                  // CircleAvatar(
+                  //   radius: 20.0,
+                  //   backgroundColor: Colors.white,
+                  //   backgroundImage: AssetImage("assets/images/avatarDefault.png"),
+                  // ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: getImage(
+                      uri: SessionUser.user?.avatar ?? 'assets/images/default_avatar_image.jpg',
+                      defaultUri: 'assets/images/default_avatar_image.jpg',
+                      width: 60,
+                      height: 60,
+                    ),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,11 +108,11 @@ class ProfileScreen extends StatelessWidget {
                         padding: EdgeInsets.only(left: 15.0),
                         child: Text(
                             SessionUser.user?.username ?? "Người dùng facebook",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0)),
                       ),
                       Padding(
                         padding: EdgeInsets.only(left: 15.0, top: 5.0),
-                        child: Text("Xem trang cá nhân của bạn"),
+                        child: Text("Xem trang cá nhân của bạn", style: TextStyle(fontSize: 16.0),),
                       )
                     ],
                   )
@@ -145,8 +155,8 @@ class ProfileScreen extends StatelessWidget {
           padding: EdgeInsets.only(left: 10.0, right: 10.0, bottom: 200.0),
           child: Row(
             children: <Widget>[
-              TagProfile(key, "Bảng feed", Icon(Setting.settings)),
-              TagProfile(key, "Kỷ niệm", Icon(Setting.settings)),
+              TagProfile(key, "Video trên watch", Icon(Icons.ondemand_video, color: AppTheme.primary,)),
+              TagProfile(key, "Kỷ niệm", Icon(Icons.history_rounded, color: AppTheme.primary,)),
             ],
           ),
         ),
@@ -155,11 +165,11 @@ class ProfileScreen extends StatelessWidget {
             child: ExpansionTile(
               // textColor: Colors.black,
               title: Text("Trợ giúp & hỗ trợ"),
-              leading: Icon(Setting.settings),
+              leading: Icon(Icons.help_outlined),
               children: [
                 ListTile(
                   title: ExpandedTagProfile(
-                      key, "Điều khoản dịch vụ", Icon(Setting.settings)),
+                      key, "Điều khoản dịch vụ", Icon(Icons.book)),
                   onTap: () {
                     Navigator.push(
                         context,
@@ -169,7 +179,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 ListTile(
                   title: ExpandedTagProfile(
-                      key, "Chính sách quyền riêng tư", Icon(Setting.settings)),
+                      key, "Chính sách quyền riêng tư", Icon(Icons.lock)),
                   onTap: () {
                     Navigator.push(
                         context,
@@ -185,11 +195,11 @@ class ProfileScreen extends StatelessWidget {
                     Border(top: BorderSide(color: Colors.grey, width: 0.5))),
             child: ExpansionTile(
               title: Text("Cài đặt thông báo đẩy"),
-              leading: Icon(Setting.settings),
+              leading: Icon(Icons.notifications_active),
               children: [
                 ListTile(
                   title: ExpandedTagProfile(
-                      key, "Bật/tắt thông báo", Icon(Setting.settings)),
+                      key, "Bật/tắt thông báo", Icon(Icons.toggle_on_rounded)),
                 ),
               ],
             )),
@@ -201,7 +211,7 @@ class ProfileScreen extends StatelessWidget {
             children: [
               ListTile(
                 title: ExpandedTagProfile(
-                  key, "Danh sách chặn", Icon(Setting.settings),
+                  key, "Danh sách chặn", Icon(Icons.no_accounts),
                 ),
                 onTap: (){
                   Navigator.push(context, MaterialPageRoute(builder: (context) => ListBlockScreen(key)));
@@ -209,7 +219,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               ListTile(
                 title: ExpandedTagProfile(
-                  key, "Đổi mật khẩu", Icon(Setting.settings)
+                  key, "Đổi mật khẩu", Icon(Icons.lock_reset_outlined)
                 ),
                 onTap: (){
                   Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePasswordScreen(key)));

@@ -175,6 +175,7 @@ class Header extends StatelessWidget {
                                         MaterialPageRoute(
                                           builder: (context) => AddPostView(
                                             isEditing: true,
+                                            id: post.postId,
                                             addPostType: _type,
                                             content: post.content,
                                             images: images,

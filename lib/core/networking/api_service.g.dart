@@ -215,6 +215,68 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<ApiResponse<AddPostResponse>> editPost({
+    required token,
+    required id,
+    required described,
+    image,
+    video,
+  }) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'token': token,
+      r'id': id,
+      r'described': described,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry(
+      'token',
+      token,
+    ));
+    _data.fields.add(MapEntry(
+      'id',
+      id,
+    ));
+    _data.fields.add(MapEntry(
+      'described',
+      described,
+    ));
+    if (image != null) {
+      _data.files.addAll(image.map((i) => MapEntry('image', i)));
+    }
+    if (video != null) {
+      _data.files.add(MapEntry(
+        'video',
+        MultipartFile.fromFileSync(
+          video.path,
+          filename: video.path.split(Platform.pathSeparator).last,
+        ),
+      ));
+    }
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ApiResponse<AddPostResponse>>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+            .compose(
+              _dio.options,
+              '/post/edit_post',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = ApiResponse<AddPostResponse>.fromJson(
+      _result.data!,
+      (json) => AddPostResponse.fromJson(json as Map<String, dynamic>),
+    );
+    return value;
+  }
+
+  @override
   Future<ApiResponse<List<CommentModel>>> getComment({
     required token,
     required postId,

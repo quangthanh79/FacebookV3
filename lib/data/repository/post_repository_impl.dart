@@ -73,6 +73,25 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
+  Future<Either<Failure, AddPostResponse>> editPost(
+      {required String token,
+      required String id,
+      required String described,
+      List<File>? image,
+      File? video}) async {
+    try {
+      return Right(await dataSource.editPost(
+          id: id,
+          token: token,
+          described: described,
+          image: image,
+          video: video));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    }
+  }
+
+  @override
   Future<Either<Failure, Author>> getUserInfo(String token) async {
     try {
       return Right(await dataSource.getUserInfo(token));

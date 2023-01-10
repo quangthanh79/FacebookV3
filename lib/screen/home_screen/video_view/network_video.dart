@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'dart:developer';
+
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -19,6 +21,7 @@ class NetworkVideo extends StatefulWidget {
 
 class _NetworkVideoState extends State<NetworkVideo> {
   late FlickManager flickManager;
+  bool isFirstPlayVideo = true;
   @override
   void initState() {
     super.initState();
@@ -30,7 +33,7 @@ class _NetworkVideoState extends State<NetworkVideo> {
 
   @override
   void dispose() {
-    flickManager.dispose();
+    //flickManager.dispose();
     super.dispose();
   }
 
@@ -39,10 +42,15 @@ class _NetworkVideoState extends State<NetworkVideo> {
     return VisibilityDetector(
         key: const Key('my-widget-key'),
         onVisibilityChanged: (info) {
-          if (info.matchesVisibility(info)) {
-            flickManager.flickControlManager!.play();
-          } else {
-            flickManager.flickControlManager!.pause();
+          if (mounted) {
+            if (info.visibleFraction > 0.1) {
+              if (isFirstPlayVideo) {
+                isFirstPlayVideo = false;
+                flickManager.flickControlManager!.play();
+              }
+            } else {
+              flickManager.flickControlManager!.pause();
+            }
           }
         },
         child: FlickVideoPlayer(flickManager: flickManager));
