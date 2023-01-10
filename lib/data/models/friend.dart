@@ -42,9 +42,10 @@ class Friend {
   String? avatar;
   int? same_friends;
   int? created;
+  String? is_friend;
 
   Friend(
-      {this.user_id, this.username, this.same_friends, this.avatar, this.created});
+      {this.user_id, this.username, this.same_friends, this.avatar, this.created, this.is_friend});
 
   Friend.fromJson(Map<String, dynamic> json) {
     user_id = json.containsKey('user_id') ? json['user_id'] : json['id'];
@@ -52,7 +53,7 @@ class Friend {
     created = json['created'] != null ? int.parse(json['created']) : 0;
     avatar = json['avatar'];
     same_friends = json['same_friends'] != null ? int.parse(json['same_friends']) : 0;
-
+    is_friend = json['is_friend'];
     // ignore: prefer_interpolation_to_compose_strings
     // print("Debug: " + json["user_id"]);
   }
@@ -64,6 +65,7 @@ class Friend {
     data['same_friends'] = same_friends;
     data['avatar'] = avatar;
     data['created'] = created;
+    data['is_friend'] = is_friend;
     return data;
   }
 
@@ -72,10 +74,13 @@ class Friend {
 
 
 class ListFriend{
-  List<Friend>? list;
-  int? total;
+  late List<Friend> list;
+  late int total;
 
-  ListFriend({this.list, this.total});
+  ListFriend(){
+    list = [];
+    total = 0;
+  }
 
   ListFriend.fromJson(Map<String, dynamic> json) {
     String key = "list_users";
@@ -89,7 +94,7 @@ class ListFriend{
     if (json[key] != null) {
       list = <Friend>[];
       json[key].forEach((v) {
-        list!.add(Friend.fromJson(v));
+        list.add(Friend.fromJson(v));
       });
     }
     total = json['total'] != null ? int.parse(json['total']) : 0;
@@ -97,9 +102,7 @@ class ListFriend{
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    if (list != null) {
-      data['friends'] = list!.map((v) => v.toJson()).toList();
-    }
+    data['friends'] = list.map((v) => v.toJson()).toList();
     data['total'] = total;
     return data;
   }
@@ -108,6 +111,28 @@ class ListFriend{
     list = listFriend.list;
     total = listFriend.total;
   }
+
+  int length(){
+    total = list.length;
+    return total;
+  }
+
+  void clear(){
+    list.clear();
+    total = 0;
+  }
+
+  void append(ListFriend listFriend){
+    list.addAll(listFriend.list);
+    total = list.length;
+  }
+
+  void appendList(List<Friend> listFriend){
+    list.addAll(listFriend);
+    total = list.length;
+  }
+
+  bool get isEmpty => length() == 0;
 }
 
 

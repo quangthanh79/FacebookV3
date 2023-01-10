@@ -152,10 +152,10 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
           status = UserButtonStatus.IS_FRIEND;
           break;
         case "REQUESTED":
-          status = UserButtonStatus.REQUESTING;
+          status = UserButtonStatus.REQUESTED;
           break;
         case "REQUESTING":
-          status = UserButtonStatus.REQUESTED;
+          status = UserButtonStatus.REQUESTING;
           break;
         case "BLOCKING":
           status = UserButtonStatus.BLOCKING;

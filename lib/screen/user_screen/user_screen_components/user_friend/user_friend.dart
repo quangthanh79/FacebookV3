@@ -46,7 +46,7 @@ class UserFriendState_ extends UserScreenComponentState<UserFriend>{
   }
 
   Widget getBody(context){
-    int numfriends = listFriend.total ?? 0;
+    int numfriends = listFriend.length();
     return Column(
       children: [
         Container(
@@ -71,7 +71,7 @@ class UserFriendState_ extends UserScreenComponentState<UserFriend>{
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "${listFriend.total ?? 0} người bạn",
+                      "${listFriend.length()} người bạn",
                       style: TextStyle(
                           color: Colors.grey.shade500
                       ),
@@ -103,11 +103,11 @@ class UserFriendState_ extends UserScreenComponentState<UserFriend>{
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           child: Row(
             children: [
-              getFriendItem(numfriends > 0 ? listFriend.list![0] : null),
+              getFriendItem(numfriends > 0 ? listFriend.list[0] : null),
               const SizedBox(width: 8,),
-              getFriendItem(numfriends > 1 ? listFriend.list![1] : null),
+              getFriendItem(numfriends > 1 ? listFriend.list[1] : null),
               const SizedBox(width: 8,),
-              getFriendItem(numfriends > 2 ? listFriend.list![2] : null)
+              getFriendItem(numfriends > 2 ? listFriend.list[2] : null)
             ],
           ),
         ),
@@ -116,11 +116,11 @@ class UserFriendState_ extends UserScreenComponentState<UserFriend>{
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           child: Row(
             children: [
-              getFriendItem(numfriends > 3 ? listFriend.list![3] : null),
+              getFriendItem(numfriends > 3 ? listFriend.list[3] : null),
               const SizedBox(width: 8,),
-              getFriendItem(numfriends > 4 ? listFriend.list![4] : null),
+              getFriendItem(numfriends > 4 ? listFriend.list[4] : null),
               const SizedBox(width: 8,),
-              getFriendItem(numfriends > 5 ? listFriend.list![5] : null)
+              getFriendItem(numfriends > 5 ? listFriend.list[5] : null)
             ],
           ),
         ) : Container(),

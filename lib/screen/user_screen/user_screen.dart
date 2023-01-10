@@ -56,7 +56,7 @@ class UserScreen extends StatefulWidget{
 }
 
 class UserScreenState extends State<UserScreen>{
-  ListFriend listFriend = ListFriend(list: [], total: 0);
+  ListFriend listFriend = ListFriend();
   late User user;
   late UserInforBloc userInforBloc;
   late UserFriendBloc userFriendBloc;

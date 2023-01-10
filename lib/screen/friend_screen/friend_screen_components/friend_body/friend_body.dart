@@ -26,14 +26,14 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
   @override
   void initState() {
     super.initState();
-    numFriends = main.listFriend.length;
+    numFriends = main.listFriend.length();
     scrollController.addListener(() {
       // print("scroll controller: ");
       // print("offset: ${scrollController.offset}");
       // print("maxExtent: ${scrollController.position.maxScrollExtent}");
       // print("ratio: ${scrollController.offset / scrollController.position.maxScrollExtent}");
       if (scrollController.position.extentAfter < 200){
-        // main.loadMore();
+        main.loadMore();
         // print("call more............................");
       }
     });
@@ -107,7 +107,7 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
       ),
       const SizedBox(height: 8,)
     ];
-    for (User friend in main.listFriend) {
+    for (Friend friend in main.listFriend.list) {
       // print("Soos banj la: ${friend.username}");
       list.add(FriendItem(friend: friend,));
     }
