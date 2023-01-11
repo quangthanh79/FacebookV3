@@ -1,12 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
 
+import 'package:facebook_auth/screen/home_screen/image_view/image_view_beautiful.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:facebook_auth/core/helper/current_user.dart';
-import 'package:facebook_auth/screen/home_screen/image_view/image_list_view.dart';
 import 'package:facebook_auth/screen/home_screen/video_view/video_demo.dart';
 import 'package:facebook_auth/utils/constant.dart';
 import 'package:facebook_auth/utils/injection.dart';
@@ -162,21 +162,22 @@ class _AddPostViewState extends State<AddPostView> {
                     ),
                   ),
                   Expanded(
-                      child: state.addPostType != AddPostType.none
-                          ? (state.addPostType != AddPostType.video
-                              ? Container(
-                                  padding: const EdgeInsets.all(8),
-                                  child: ImageListView(
-                                    imageListType: ImageListType.file,
-                                    itemsFile: state.images,
-                                  ))
-                              : Container(
-                                  height: 300,
-                                  padding: const EdgeInsets.all(8),
-                                  child: VideoDemo(
-                                    isFile: state.video,
-                                  )))
-                          : Container())
+                      child: Container(
+                    alignment: Alignment.topCenter,
+                    child: state.addPostType != AddPostType.none
+                        ? (state.addPostType != AddPostType.video
+                            ? ImageViewBeautiful(
+                                imageListType: ImageListType.file,
+                                itemsFile: state.images,
+                              )
+                            : Container(
+                                height: 300,
+                                padding: const EdgeInsets.all(8),
+                                child: VideoDemo(
+                                  isFile: state.video,
+                                )))
+                        : Container(),
+                  ))
                 ],
               );
             },

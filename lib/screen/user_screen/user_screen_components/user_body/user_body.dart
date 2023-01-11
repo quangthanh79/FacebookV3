@@ -1,3 +1,9 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:visibility_detector/visibility_detector.dart';
+
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/post_repository_impl.dart';
 import 'package:facebook_auth/screen/home_screen/home_bloc/home_bloc.dart';
@@ -8,8 +14,6 @@ import 'package:facebook_auth/screen/user_screen/user_screen_components/user_fri
 import 'package:facebook_auth/screen/user_screen/user_screen_components/user_header.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/user_infor/user_infor.dart';
 import 'package:facebook_auth/utils/injection.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 // ignore: must_be_immutable
 class UserBody extends UserScreenComponent {
@@ -82,12 +86,13 @@ class UserBodyState extends UserScreenComponentState<UserBody> {
                             decoration:
                                 const BoxDecoration(color: Colors.black26)),
                       ),
-                      BlocProvider(
-                          create: (context) => HomeBloc(getIt(), getIt()),
-                          child: HomeBody(
-                            type: PostType.profile,
-                            targetId: user.id,
-                          ))
+                      mounted
+                          ? VisibilityDetector(
+                              onVisibilityChanged: (info) {},
+                              key: const Key('profile haha'),
+                              child: KeepShowingProfile(id: user.id!),
+                            )
+                          : Container()
                     ]),
                 onRefresh: () {
                   return Future.delayed(
@@ -98,4 +103,35 @@ class UserBodyState extends UserScreenComponentState<UserBody> {
           ],
         ));
   }
+}
+
+class KeepShowingProfile extends StatefulWidget {
+  final String id;
+  const KeepShowingProfile({
+    Key? key,
+    required this.id,
+  }) : super(key: key);
+
+  @override
+  State<KeepShowingProfile> createState() => _KeepShowingProfileState();
+}
+
+class _KeepShowingProfileState extends State<KeepShowingProfile>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return ChangeNotifierProvider(
+      create: (context) => ListPostNotify(),
+      child: BlocProvider(
+          create: (context) => HomeBloc(getIt(), getIt()),
+          child: HomeBody(
+            type: PostType.profile,
+            targetId: widget.id,
+          )),
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }
