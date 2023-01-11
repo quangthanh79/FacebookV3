@@ -33,6 +33,7 @@ abstract class FriendScreenState<T extends FriendScreen> extends State<T> with A
 
   @override void initState(){
     super.initState();
+    // print("recall initstate");
     listFriend = ListFriend();
     user = widget.user;
     // listFriend = ListFriend(list: [], total: 0);

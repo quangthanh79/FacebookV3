@@ -69,6 +69,14 @@ class Friend {
     return data;
   }
 
+  void copyFrom(Friend friend){
+    user_id = friend.user_id;
+    username = friend.username;
+    avatar = friend.avatar;
+    same_friends = friend.same_friends;
+    created = friend.created;
+    is_friend = friend.is_friend;
+  }
 }
 
 
@@ -112,27 +120,20 @@ class ListFriend{
     total = listFriend.total;
   }
 
-  int length(){
-    total = list.length;
-    return total;
-  }
+  int get length => list.length;
+  bool get isEmpty => list.isEmpty;
 
   void clear(){
     list.clear();
-    total = 0;
   }
 
   void append(ListFriend listFriend){
     list.addAll(listFriend.list);
-    total = list.length;
   }
 
   void appendList(List<Friend> listFriend){
     list.addAll(listFriend);
-    total = list.length;
   }
-
-  bool get isEmpty => length() == 0;
 }
 
 

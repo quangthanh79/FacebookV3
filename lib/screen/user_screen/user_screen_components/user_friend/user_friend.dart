@@ -46,7 +46,7 @@ class UserFriendState_ extends UserScreenComponentState<UserFriend>{
   }
 
   Widget getBody(context){
-    int numfriends = listFriend.length();
+    int numfriends = listFriend.total;
     return Column(
       children: [
         Container(
@@ -71,7 +71,7 @@ class UserFriendState_ extends UserScreenComponentState<UserFriend>{
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "${listFriend.length()} người bạn",
+                      "${listFriend.total} người bạn",
                       style: TextStyle(
                           color: Colors.grey.shade500
                       ),

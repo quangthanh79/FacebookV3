@@ -29,13 +29,13 @@ class FriendItemBloc extends Bloc<FriendItemEvent, FriendItemState>{
     emit(FriendItemState(status: FriendItemStatus.REQUESTING));
     ResponseListFriend? responseListFriend = await friendRepository.setRequestFriend(friend.user_id!);
     if (responseListFriend != null && responseListFriend.code == "1000"){
-      friend.is_friend = "REQUESTED";
+      friend.is_friend = "REQUESTING";
     } else {
       emit(FriendItemState(status: FriendItemStatus.NOT_FRIEND));
     }
   }
   Future<void> cancelRequestFriend(CancelRequestEvent e, Emitter<FriendItemState> emit) async{
-    if (friend.is_friend == null || friend.is_friend != "REQUESTED") return;
+    if (friend.is_friend == null || friend.is_friend != "REQUESTING") return;
     friend.is_friend = "NOT_FRIEND";
     emit(FriendItemState(status: FriendItemStatus.NOT_FRIEND));
     ResponseListFriend? responseListFriend = await friendRepository.setRequestFriend(friend.user_id!);
@@ -46,7 +46,7 @@ class FriendItemBloc extends Bloc<FriendItemEvent, FriendItemState>{
     }
   }
   Future<void> acceptRequestFriend(AcceptRequestEvent e, Emitter<FriendItemState> emit) async{
-    if (friend.is_friend == null || friend.is_friend != "REQUESTING") return;
+    if (friend.is_friend == null || friend.is_friend != "REQUESTED") return;
     if (e.code == Acceptable.ACCEPT){
       emit(FriendItemState(status: FriendItemStatus.IS_FRIEND));
     } else {
