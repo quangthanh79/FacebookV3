@@ -4,7 +4,9 @@ import 'package:facebook_auth/blocs/sign_in/models/password.dart';
 import 'package:facebook_auth/blocs/sign_in/models/phone.dart';
 import 'package:facebook_auth/blocs/sign_in/sign_in_event.dart';
 import 'package:facebook_auth/blocs/sign_in/sign_in_state.dart';
+import 'package:facebook_auth/data/datasource/local/flutter_secure_storage.dart';
 import 'package:facebook_auth/data/models/user_info.dart' as UserInfor;
+import 'package:facebook_auth/data/models/user_storage.dart';
 import 'package:facebook_auth/data/repository/authen_repository.dart';
 import 'package:facebook_auth/data/repository/user_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,20 +62,18 @@ class SignInBloc extends Bloc<SignInEvent,SignInState>{
       ) async{
     try {
       emit( state.copyWith(statusSignIn: FormzStatus.submissionInProgress));
-      final storage = new FlutterSecureStorage();
       ResponseSignIn? response = await _authenRepository.signIn(
           state.phone.value, state.password.value);
       if(response!= null){
         String token = response.data!.token!;
-        String isUser = response.data!.id!;
-        await storage.write(key: "token", value: token);
-        await storage.write(key: "idUser", value: isUser);
+        String idUser = response.data!.id!;
+        SecureStorage.instance.setUserData(UserStorage(token: token, idUser: idUser));
 
         SessionUser.token = token;
-        SessionUser.idUser = isUser;
+        SessionUser.idUser = idUser;
 
         UserRepository userRepository = UserRepository();
-        UserInfor.ResponseUser? responseUser = await userRepository.getUserInfor(isUser);
+        UserInfor.ResponseUser? responseUser = await userRepository.getUserInfor(idUser);
         if (responseUser != null && responseUser.code == "1000"){
           SessionUser.user = UserInfor.User();
           SessionUser.user!.copyFrom(responseUser.data!);

@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
+import 'package:facebook_auth/data/models/user_storage.dart';
 import 'package:facebook_auth/data/repository/user_repository.dart';
 import 'package:facebook_auth/utils/injection.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import '../../data/datasource/local/flutter_secure_storage.dart';
 import '../../data/models/user_sign_in.dart';
 import '../../utils/session_user.dart';
 import 'authentication_event.dart';
@@ -62,22 +64,18 @@ class AuthenticationBloc
   Stream<bool> _tryGetUser() async* {
     try {
       await Future.delayed(Duration(seconds: 1));
-      final storage = new FlutterSecureStorage();
-      await Future.delayed(Duration(milliseconds: 1));
 
-      String? token = await storage.read(key: "token");
-      String? idUser = await storage.read(key: "idUser");
-
+      UserStorage? userStorage = await SecureStorage.instance.getUserData();
       // await storage.delete(key: "token");
       // await storage.delete(key: "idUser");
 
-      SessionUser.token = token;
-      SessionUser.idUser = idUser;
+      SessionUser.token = userStorage?.token;
+      SessionUser.idUser = userStorage?.idUser;
 
       /**
        * real flow
        */
-      if (token != null) {
+      if (SessionUser.token != null) {
         yield true;
       } else {
         yield false;

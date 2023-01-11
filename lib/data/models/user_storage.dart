@@ -1,6 +1,7 @@
 
 class UserStorage {
   String? token;
+  String? idUser;
 
-  UserStorage({this.token});
+  UserStorage({this.token,this.idUser});
 }
