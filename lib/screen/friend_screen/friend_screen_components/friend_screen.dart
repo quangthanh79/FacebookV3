@@ -25,12 +25,16 @@ abstract class FriendScreen extends StatefulWidget{
 abstract class FriendScreenState<T extends FriendScreen> extends State<T> with AutomaticKeepAliveClientMixin{
   late User user;
   // late ListFriend listFriend;
-  List<User> listFriend = [];
+  late ListFriend listFriend;
   late FriendListBloc friendListBloc;
   late String label, responseForNoFriends;
 
+  FriendScreenState();
+
   @override void initState(){
     super.initState();
+    // print("recall initstate");
+    listFriend = ListFriend();
     user = widget.user;
     // listFriend = ListFriend(list: [], total: 0);
     friendListBloc = FriendListBloc(

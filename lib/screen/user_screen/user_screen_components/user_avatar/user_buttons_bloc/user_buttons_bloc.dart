@@ -37,7 +37,7 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
     emit(UserButtonsState(userButtonStatus: UserButtonStatus.REQUESTING));
     ResponseListFriend? responseListFriend = await friendRepository.setRequestFriend(user.id!);
     if (responseListFriend != null && responseListFriend.code == "1000"){
-      user.is_friend = "REQUESTED";
+      user.is_friend = "REQUESTING";
     } else {
       emit(UserButtonsState(userButtonStatus: UserButtonStatus.NOT_FRIEND));
     }
@@ -46,7 +46,7 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
   Future<void> cancelRequestFriend(
       CancelRequestFriendEvent e,
       Emitter<UserButtonsState> emit) async{
-    if (user.is_friend == null || user.is_friend != "REQUESTED") return;
+    if (user.is_friend == null || user.is_friend != "REQUESTING") return;
     user.is_friend = "NOT_FRIEND";
     emit(UserButtonsState(userButtonStatus: UserButtonStatus.NOT_FRIEND));
     ResponseListFriend? responseListFriend = await friendRepository.setRequestFriend(user.id!);
@@ -60,7 +60,7 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
   Future<void> acceptRequestFriend(
       AcceptRequestFriendEvent e,
       Emitter<UserButtonsState> emit) async{
-    if (user.is_friend == null || user.is_friend != "REQUESTING") return;
+    if (user.is_friend == null || user.is_friend != "REQUESTED") return;
     if (e.code == Acceptable.ACCEPT){
       emit(UserButtonsState(userButtonStatus: UserButtonStatus.IS_FRIEND));
     } else {
@@ -152,10 +152,10 @@ class UserButtonsBloc extends Bloc<UserButtonsEvent, UserButtonsState>{
           status = UserButtonStatus.IS_FRIEND;
           break;
         case "REQUESTED":
-          status = UserButtonStatus.REQUESTING;
+          status = UserButtonStatus.REQUESTED;
           break;
         case "REQUESTING":
-          status = UserButtonStatus.REQUESTED;
+          status = UserButtonStatus.REQUESTING;
           break;
         case "BLOCKING":
           status = UserButtonStatus.BLOCKING;
