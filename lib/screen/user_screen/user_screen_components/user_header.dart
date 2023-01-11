@@ -1,5 +1,6 @@
 
 import 'package:facebook_auth/data/models/user_info.dart';
+import 'package:facebook_auth/screen/search_screen/search_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_edit/user_edit_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class UserHeader extends UserScreenComponent {
 class UserHeaderState extends UserScreenComponentState<UserHeader>{
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       decoration: const BoxDecoration(
         border: Border(
@@ -58,13 +60,7 @@ class UserHeaderState extends UserScreenComponentState<UserHeader>{
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     user.isMe ? GestureDetector(
-                      onTap: ()=>Navigator.push(
-                          context,
-                          UserEditScreen.route(
-                            user: user,
-                            onBack: main.onBackThisPage
-                          )
-                      ),
+                      onTap: main.routeEditScreen,
                       child: const Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 0, vertical: 12),
@@ -75,7 +71,12 @@ class UserHeaderState extends UserScreenComponentState<UserHeader>{
                       )
                     ) : Container(),
                     GestureDetector(
-                        onTap: (){},
+                        onTap: (){
+                          showSearch(
+                              context: context,
+                              delegate: MyCustomDelegate()
+                          );
+                        },
                         child: const Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: 12.0, vertical: 12),

@@ -91,7 +91,9 @@ class UserBodyState extends UserScreenComponentState<UserBody> {
                     ]),
                 onRefresh: () {
                   return Future.delayed(
-                      const Duration(seconds: 1), main.refresh);
+                      const Duration(seconds: 1),
+                      main.refresh
+                  );
                 },
               ),
             )

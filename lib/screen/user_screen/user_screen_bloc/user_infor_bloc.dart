@@ -21,14 +21,14 @@ class UserInforBloc extends Bloc<UserInforEvent, UserInforState> {
     // required this.friendRepository,
     required this.user,
     // required this.list stFriend
-  }) : super(const UserInforState(status: UserInforStatus.LOADING)) {
+  }) : super(UserInforState(status: UserInforStatus.LOADING)) {
     on<LoadUserEvent>(loadUser);
     on<ReloadUserEvent>(reloadUser);
     on<BackgroundLoadUserEvent>(loadUserBackground);
   }
 
   Future<void> loadUser(UserInforEvent event, Emitter<UserInforState> emit) async{
-    emit(const UserInforState(status: UserInforStatus.LOADING));
+    emit(UserInforState(status: UserInforStatus.LOADING));
     
     ResponseUser? responseUser;
     // ResponseListFriend? responseListFriend;
@@ -44,7 +44,7 @@ class UserInforBloc extends Bloc<UserInforEvent, UserInforState> {
 
     if (responseUser == null){
       // print("FAILURE: "+ response_list_friend.toString());
-      emit(const UserInforState(status: UserInforStatus.FAIL));
+      emit(UserInforState(status: UserInforStatus.FAIL));
       return;
     }
     if (responseUser.code == "9995"){
@@ -72,17 +72,19 @@ class UserInforBloc extends Bloc<UserInforEvent, UserInforState> {
       responseUser.data.is_friend = responseUser.details;
     }
     user.copyFrom(responseUser.data);
-    emit(getState());
+    var state = getState();
+    // print(state.status);
+    emit(state);
   }
 
   UserInforState getState(){
     switch (user.is_friend){
       case "BLOCKING":
-        return const UserInforState(status: UserInforStatus.BLOCKING);
+        return UserInforState(status: UserInforStatus.BLOCKING);
       case "BLOCKED":
-        return const UserInforState(status: UserInforStatus.BLOCKED);
+        return UserInforState(status: UserInforStatus.BLOCKED);
       default:
-        return const UserInforState(status: UserInforStatus.LOADED);
+        return UserInforState(status: UserInforStatus.LOADED);
     }
   }
 

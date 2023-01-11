@@ -53,6 +53,18 @@ class FriendApiProvider extends BaseClient{
     return null;
   }
 
+  Future<ResponseActionFriend?> setCancelFriend(String user_id) async{
+    var url = "friend/set_accept_friend";
+    var params = {
+      "token" : SessionUser.token, "user_id": user_id , "is_accept" : -1
+    };
+    final response = await post(
+        url, params.map((key, value) => MapEntry(key, value.toString()))
+    );
+    if (response != null) return ResponseActionFriend.fromJson(response);
+    return null;
+  }
+
   Future<ResponseListFriend?> getUserFriends(String user_id, int page) async{
     var url = "friend/get_user_friends";
     final response = await post(
