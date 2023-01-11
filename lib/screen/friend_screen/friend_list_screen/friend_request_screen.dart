@@ -17,6 +17,7 @@ class FriendRequestScreen extends FriendScreen{
     required User user,
     void Function()? onBack
   }) {
+    print(onBack != null ? "on back khác null": "onback bằng null");//
     return MaterialPageRoute(
         builder: (context) => FriendRequestScreen(
             user: user, onBack: onBack,

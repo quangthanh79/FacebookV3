@@ -1,14 +1,13 @@
 
 import 'package:facebook_auth/data/models/friend.dart';
-import 'package:facebook_auth/data/models/user_info.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_list_bloc/friend_list_bloc.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_list_screen.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_request_screen.dart';
-import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_suggest_screen.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_screen_components/friend_header.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_screen_components/friend_item.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_screen_components/friend_screen.dart';
-import 'package:facebook_auth/screen/friend_screen/friend_screen_components/my_button_style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 // ignore: must_be_immutable
@@ -26,70 +25,74 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
   @override
   void initState() {
     super.initState();
-    numFriends = main.listFriend.length;
+    numFriends = main.listFriend.total;
     scrollController.addListener(() {
-      // print("scroll controller: ");
-      // print("offset: ${scrollController.offset}");
-      // print("maxExtent: ${scrollController.position.maxScrollExtent}");
-      // print("ratio: ${scrollController.offset / scrollController.position.maxScrollExtent}");
       if (scrollController.position.extentAfter < 200){
-        // main.loadMore();
-        print("call more............................");
+        main.loadMore();
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        const SizedBox(height: 28),
-        FriendHeader(main: main,),
-        // Container(
-        //   padding: const EdgeInsets.all(16),
-        //   // decoration: const BoxDecoration(
-        //   //   border: Border(bottom: BorderSide(width: 1, color: Colors.black12))
-        //   // ),  //
-        //   child: Column(
-        //     mainAxisAlignment: MainAxisAlignment.start,
-        //     children: [
-        //       getSearchBar(context)
-        //     ],
-        //   ),
-        // ),
-        Expanded(
-          flex: 1,
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: [
-                Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: () => Future.delayed(
-                        const Duration(seconds: 1),
-                        () => main.reloadListFriend(),
-                      ),
-                      child: ListView(
-                          controller: scrollController,
-                          addAutomaticKeepAlives: true,
-                          padding: const EdgeInsets.all(0),
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          children: getListWidgetFriends(),
-                      ),
-                    ),
+    return BlocBuilder<FriendListBloc, FriendListState>(
+        bloc: main.friendListBloc,
+        builder: (context, state){
+          numFriends = main.listFriend.total;
+          print("debug: $numFriends"); //
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 28),
+              FriendHeader(main: main,),
+              // Container(
+              //   padding: const EdgeInsets.all(16),
+              //   // decoration: const BoxDecoration(
+              //   //   border: Border(bottom: BorderSide(width: 1, color: Colors.black12))
+              //   // ),  //
+              //   child: Column(
+              //     mainAxisAlignment: MainAxisAlignment.start,
+              //     children: [
+              //       getSearchBar(context)
+              //     ],
+              //   ),
+              // ),
+              Expanded(
+                flex: 1,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: RefreshIndicator(
+                          onRefresh: () => Future.delayed(
+                            const Duration(seconds: 1),
+                                () => main.reloadListFriend(),
+                          ),
+                          child: ListView(
+                            controller: scrollController,
+                            addAutomaticKeepAlives: true,
+                            padding: const EdgeInsets.all(0),
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            children: getListWidgetFriends(),
+                          ),
+                        ),
 
-                )
-              ],
-            ),
-          ),
-        )
-      ],
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          );
+        }
     );
   }
 
   List<Widget> getListWidgetFriends(){
-    // print("rebuild all  children");
+    print("rebuild all  children");
+    // print(user);
     List<Widget> list = [
       const SizedBox(height: 8,),
       main is FriendListScreenState && user.isMe ?
@@ -98,102 +101,23 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
       Text(
         main is FriendListScreenState ? "$numFriends bạn bè" :
         main is FriendRequestScreenState ?
-          "$numFriends lời mời" : "$numFriends gợi ý",
+        "$numFriends lời mời" : "$numFriends gợi ý",
         style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.w600
+            fontSize: 20,
+            fontWeight: FontWeight.w600
         ),
       ),
       const SizedBox(height: 8,)
     ];
-    for (User friend in main.listFriend) {
+    for (Friend friend in main.listFriend.list) {
       // print("Soos banj la: ${friend.username}");
-      list.add(FriendItem(friend: friend,));
+      list.add(Container(
+        child: FriendItem(friend: friend,),
+      ));
     }
     return list;
   }
 
-  Widget getButtonsBar(BuildContext context){
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        getButton(
-          label: "Lời mời",
-          callback: (){
-            Navigator.push(
-              context,
-              FriendRequestScreen.route(user: user, onBack: (){})
-            );
-          }
-        ),
-        getButton(
-          label: "Gợi ý",
-            callback: (){
-              Navigator.push(
-                  context,
-                  FriendSuggestScreen.route(user: user, onBack: (){})
-              );
-            }
-        )
-      ],
-    );
-  }
-
-  Widget getButton({
-    String label = "Button",
-    void Function()? callback
-  }){
-    return Container(
-      margin: const EdgeInsets.only(right: 12, top: 0),
-      child: TextButton(
-        onPressed: callback ?? (){},
-        style: MyButtonStyle(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          borderRadius: BorderRadius.circular(18.0),
-          backgroundColor: Colors.black12.withAlpha(25),
-        ),
-        child: Text(
-          label,
-          style: const TextStyle(
-              color: Colors.black,
-              fontSize: 16
-          )
-        ),
-      ),
-    );
-  }
-
-  Widget getSearchBar(BuildContext context){
-    return Container(
-      constraints: const BoxConstraints(
-        maxHeight: 40
-      ),
-      margin: const EdgeInsets.all(0),
-      padding: const EdgeInsets.all(0),
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(48)),
-        color: Colors.black12.withAlpha(15)
-      ),
-      child: TextField(
-        controller: textEditingController,
-        decoration: const InputDecoration(
-          hintText: "Tìm kiếm bạn bè",
-          border: InputBorder.none,
-          prefixIcon: Icon(Icons.search, color: Colors.black45,)
-        ),
-        cursorColor: Colors.black,
-        style: const TextStyle(
-          fontSize: 18,
-          color: Colors.black,
-          fontWeight: FontWeight.w500
-        ),
-        onSubmitted: (text){
-          textEditingController.text = text;
-        },
-        maxLines: 1,
-      ),
-    );
-  }
 }
 
 

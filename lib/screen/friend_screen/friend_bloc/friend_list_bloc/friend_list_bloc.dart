@@ -22,10 +22,10 @@ class Key{
 }
 
 class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
-  static const int numFriendsPerPage = 10;
+  static const int numFriendsPerPage = 20;
   FriendRepository friendRepository;
   User user;
-  List<User> listFriend;
+  ListFriend listFriend;
 
   Key loadMoreKey = Key();
 
@@ -55,34 +55,20 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
     add(BackgroundLoadListFriendEvent());
   }
   Future<void> reloadFriend(ReloadListFriendEvent e, Emitter<FriendListState> emit) async{
-    if (listFriend.isEmpty){
+    loadMoreKey.unblock();
+    if (listFriend.list.isEmpty){
       emit(FriendListState(status: FriendListStatus.NO_FRIENDS));
     } else {
       emit(FriendListState(status: FriendListStatus.LOADED));
     }
   }
   Future<void> backgroundLoadFriend(BackgroundLoadListFriendEvent e, Emitter<FriendListState> emit) async{
-    // get 2 pages
-    ResponseListFriend? responseListFriend1, responseListFriend2;
-    await Future.wait([
-      Future( () async {
-        responseListFriend1 = await friendRepository.getUserFriends(user.id!, 1);
-      }),
-      Future( () async {
-        responseListFriend2 = await friendRepository.getUserFriends(user.id!, 2);
-      }),
-    ]);
+    ResponseListFriend? responseListFriend1 = await friendRepository.getUserFriends(user.id!, 1);
     listFriend.clear();
     // combines to listFriend:
-    if (responseListFriend1 != null && responseListFriend1!.data != null){
-      for (var element in responseListFriend1!.data!.list!) {
-        listFriend.add(User(id: element.user_id, same_friends: element.same_friends ?? 0));
-      }
-    }
-    if (responseListFriend2 != null && responseListFriend2!.data != null){
-      for (var element in responseListFriend2!.data!.list!) {
-        listFriend.add(User(id: element.user_id, same_friends: element.same_friends ?? 0));
-      }
+    if (responseListFriend1 != null && responseListFriend1.data != null){
+      listFriend.append(responseListFriend1.data!);
+      listFriend.total = responseListFriend1.data!.total;
     }
     add(ReloadListFriendEvent());
   }
@@ -91,15 +77,13 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
     loadMoreKey.block();
 
     int currentNumFriends = listFriend.length;
-    int currentPages = ((currentNumFriends - 1) / numFriendsPerPage).floor();
+    int currentPages = ((currentNumFriends - 1) / numFriendsPerPage).floor() + 1;
 
     ResponseListFriend? responseListFriend = await friendRepository.getUserFriends(user.id!, currentPages + 1);
     if (responseListFriend != null && responseListFriend.code == "1000"){
-      List<Friend> lsFriend = responseListFriend.data!.list!;
+      List<Friend> lsFriend = responseListFriend.data!.list;
       if (lsFriend.isNotEmpty){
-        for (var element in lsFriend) {
-          listFriend.add(User(id: element.user_id, same_friends: element.same_friends ?? 0));
-        }
+        listFriend.appendList(lsFriend);
       } else {
         return;
       }
@@ -116,6 +100,7 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
     add(BackgroundLoadListRequestEvent());
   }
   Future<void> reloadRequest(ReloadListRequestEvent e, Emitter<FriendListState> emit) async{
+    loadMoreKey.unblock();
     if (listFriend.isEmpty){
       emit(FriendListState(status: FriendListStatus.NO_FRIENDS));
     } else {
@@ -123,18 +108,12 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
     }
   }
   Future<void> backgroundLoadRequest(BackgroundLoadListRequestEvent e, Emitter<FriendListState> emit) async{
-    ResponseListFriend? responseListFriend1;
-    await Future.wait([
-      Future( () async {
-        responseListFriend1 = await friendRepository.getRequestedFriends(0, 100);
-      }),
-    ]);
+    ResponseListFriend? responseListFriend1 = await friendRepository.getRequestedFriends(0, 10);
     listFriend.clear();
     // combines to listFriend:
-    if (responseListFriend1 != null && responseListFriend1!.data != null){
-      for (var element in responseListFriend1!.data!.list!) {
-        listFriend.add(User(id: element.user_id, same_friends: element.same_friends ?? 0));
-      }
+    if (responseListFriend1 != null && responseListFriend1.data != null){
+      listFriend.append(responseListFriend1.data!);
+      listFriend.total = responseListFriend1.data!.total;
     }
     add(ReloadListRequestEvent());
   }
@@ -147,11 +126,9 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
 
     ResponseListFriend? responseListFriend = await friendRepository.getRequestedFriends(currentNumFriends, 10);
     if (responseListFriend != null && responseListFriend.code == "1000"){
-      List<Friend> lsFriend = responseListFriend.data!.list!;
+      List<Friend> lsFriend = responseListFriend.data!.list;
       if (lsFriend.isNotEmpty){
-        for (var element in lsFriend) {
-          listFriend.add(User(id: element.user_id, same_friends: element.same_friends ?? 0));
-        }
+        listFriend.appendList(lsFriend);
       } else {
         return;
       }
@@ -167,52 +144,41 @@ class FriendListBloc extends Bloc<FriendListEvent, FriendListState>{
     emit(FriendListState(status: FriendListStatus.LOADING));
     add(BackgroundLoadListSuggestEvent());
   }
+  Future<void> backgroundLoadSuggest(BackgroundLoadListSuggestEvent e, Emitter<FriendListState> emit) async{
+    ResponseListFriend? responseListFriend1 = await friendRepository.getListSuggestedFriends(0, 10);
+    listFriend.clear();
+    if (responseListFriend1 != null && responseListFriend1.data != null){
+      listFriend.append(responseListFriend1.data!);
+      listFriend.total = responseListFriend1.data!.total;
+      // listFriend.removeWhere((element) {
+      //   return element.is_friend == "BLOCKING" || element.is_friend == "BLOCKED";
+      // });
+    }
+    add(ReloadListSuggestEvent());
+  }
   Future<void> reloadSuggest(ReloadListSuggestEvent e, Emitter<FriendListState> emit) async{
+    loadMoreKey.unblock();
     if (listFriend.isEmpty){
       emit(FriendListState(status: FriendListStatus.NO_FRIENDS));
     } else {
       emit(FriendListState(status: FriendListStatus.LOADED));
     }
   }
-  Future<void> backgroundLoadSuggest(BackgroundLoadListSuggestEvent e, Emitter<FriendListState> emit) async{
-    ResponseListFriend? responseListFriend1;
-    await Future.wait([
-      Future( () async {
-        responseListFriend1 = await friendRepository.getListSuggestedFriends(0, 100);
-      }),
-    ]);
-    listFriend.clear();
-    // combines to listFriend:
-    if (responseListFriend1 != null && responseListFriend1!.data != null){
-      for (var element in responseListFriend1!.data!.list!) {
-        listFriend.add(User(id: element.user_id, same_friends: element.same_friends ?? 0));
-      }
-      // listFriend.removeWhere((element) {
-      //   return element.is_friend == "BLOCKING" || element.is_friend == "BLOCKED";
-      // });
-    }
-    print("total request friends: ${responseListFriend1!.data!.total}");
-    add(ReloadListSuggestEvent());
-  }
   Future<void> loadMoreListSuggest(LoadMoreListSuggestEvent e, Emitter<FriendListState> emit) async {
     if (loadMoreKey.isBlock) return;
     loadMoreKey.block();
 
     int currentNumFriends = listFriend.length;
-
-    ResponseListFriend? responseListFriend = await friendRepository.getListSuggestedFriends(currentNumFriends, 2);
+    ResponseListFriend? responseListFriend = await friendRepository.getListSuggestedFriends(currentNumFriends, 10);
     if (responseListFriend != null && responseListFriend.code == "1000"){
-      List<Friend> lsFriend = responseListFriend.data!.list!;
+      List<Friend> lsFriend = responseListFriend.data!.list;
       if (lsFriend.isNotEmpty){
-        for (var element in lsFriend) {
-          listFriend.add(User(id: element.user_id, same_friends: element.same_friends ?? 0));
-        }
+        listFriend.appendList(lsFriend);
       } else {
         return;
       }
     }
-
-    add(ReloadListFriendEvent());
+    add(ReloadListSuggestEvent());
 
     loadMoreKey.unblock();
   }

@@ -1,10 +1,8 @@
 
 
 import 'package:facebook_auth/data/models/chat.dart';
-import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/friend_repository.dart';
 import 'package:facebook_auth/screen/chat_screen/chat_detail_screen.dart';
-import 'package:facebook_auth/screen/user_screen/user_edit/user_edit_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_bloc/user_infor_bloc.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/menu_bottom.dart';
@@ -110,27 +108,11 @@ class UserButtonsState_ extends UserScreenComponentState<UserButtons>{
                   label: "Chỉnh sửa trang cá nhân",
                   flex: 7,
                   icon: Icons.edit,
-                  function: (){
-                    Navigator.push(
-                        context,
-                        UserEditScreen.route(
-                            user: user,
-                            onBack: main.onBackThisPage
-                        )
-                    );
-                  }
+                  function: main.routeEditScreen
               ),
               const SizedBox(width: 8,),
               getButtonMore(
-                function: (){
-                  Navigator.push(
-                      context,
-                      UserEditScreen.route(
-                        user: user,
-                        onBack: () => main.userInforBloc.add(ReloadUserEvent())
-                      )
-                  );
-                },
+                function: main.routeEditScreen,
               )
             ],
           )
@@ -254,7 +236,7 @@ class UserButtonsState_ extends UserScreenComponentState<UserButtons>{
               flex: 3,
               function: (){
                 userButtonsBloc.add(UnblockUserEvent(onSuccess: (){
-                  main.userInforBloc.add(ReloadUserEvent());
+                  main.userInforBloc.add(BackgroundLoadUserEvent());
                 }));
               }
           )

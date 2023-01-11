@@ -3,6 +3,7 @@
 import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_list_screen.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_list_screen/friend_suggest_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen_components/user_friend/user_friend_bloc/user_friend_bloc.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +46,7 @@ class UserFriendState_ extends UserScreenComponentState<UserFriend>{
   }
 
   Widget getBody(context){
-    int numfriends = listFriend.total ?? 0;
+    int numfriends = listFriend.total;
     return Column(
       children: [
         Container(
@@ -70,7 +71,7 @@ class UserFriendState_ extends UserScreenComponentState<UserFriend>{
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "${listFriend.total ?? 0} người bạn",
+                      "${listFriend.total} người bạn",
                       style: TextStyle(
                           color: Colors.grey.shade500
                       ),
@@ -85,7 +86,15 @@ class UserFriendState_ extends UserScreenComponentState<UserFriend>{
                             fontSize: 15
                         )
                     ),
-                    onTap: (){}
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        FriendSuggestScreen.route(
+                          user: main.user,
+                          onBack: (){}
+                        )
+                      );
+                    }
                 ) : Container()
               ],
             )
@@ -94,11 +103,11 @@ class UserFriendState_ extends UserScreenComponentState<UserFriend>{
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           child: Row(
             children: [
-              getFriendItem(numfriends > 0 ? listFriend.list![0] : null),
+              getFriendItem(numfriends > 0 ? listFriend.list[0] : null),
               const SizedBox(width: 8,),
-              getFriendItem(numfriends > 1 ? listFriend.list![1] : null),
+              getFriendItem(numfriends > 1 ? listFriend.list[1] : null),
               const SizedBox(width: 8,),
-              getFriendItem(numfriends > 2 ? listFriend.list![2] : null)
+              getFriendItem(numfriends > 2 ? listFriend.list[2] : null)
             ],
           ),
         ),
@@ -107,11 +116,11 @@ class UserFriendState_ extends UserScreenComponentState<UserFriend>{
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           child: Row(
             children: [
-              getFriendItem(numfriends > 3 ? listFriend.list![3] : null),
+              getFriendItem(numfriends > 3 ? listFriend.list[3] : null),
               const SizedBox(width: 8,),
-              getFriendItem(numfriends > 4 ? listFriend.list![4] : null),
+              getFriendItem(numfriends > 4 ? listFriend.list[4] : null),
               const SizedBox(width: 8,),
-              getFriendItem(numfriends > 5 ? listFriend.list![5] : null)
+              getFriendItem(numfriends > 5 ? listFriend.list[5] : null)
             ],
           ),
         ) : Container(),

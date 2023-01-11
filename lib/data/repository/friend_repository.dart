@@ -26,4 +26,7 @@ class FriendRepository{
   Future<ResponseActionFriend?> setBlock(String user_id, int type)
     => friendApiProvider.setBlock(user_id, type);
 
+  Future<ResponseActionFriend?> setCancelFriend(String user_id)
+  => friendApiProvider.setCancelFriend(user_id);
+
 }

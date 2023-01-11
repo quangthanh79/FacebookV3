@@ -5,6 +5,7 @@ import 'package:facebook_auth/data/models/friend.dart';
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/friend_repository.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_bloc/friend_item_bloc/friend_item_bloc.dart';
+import 'package:facebook_auth/screen/friend_screen/friend_screen_components/cancel_friend_menu_bottom.dart';
 import 'package:facebook_auth/screen/friend_screen/friend_screen_components/my_button_style.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
 import 'package:facebook_auth/utils/image.dart';
@@ -18,33 +19,38 @@ import 'package:shimmer/shimmer.dart';
 
 // ignore: must_be_immutable
 class FriendItem extends StatefulWidget{
-  User friend;
+  Friend friend;
   FriendItem({super.key, required this.friend});
+  // ignore: no_logic_in_create_state
   @override FriendItemState_ createState() => FriendItemState_();
 }
 
 // ignore: must_be_immutable, camel_case_types
 class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMixin{
-  late User friend;
+  late Friend friend;
   late FriendItemBloc friendItemBloc;
 
   @override void initState(){
     super.initState();
     friend = widget.friend;
     friendItemBloc = FriendItemBloc(
-        user: friend,
+        friend: friend,
         friendRepository: getIt<FriendRepository>()
     );
+    print("init friend ${friend.username}");
+  }
+
+  @override void didUpdateWidget(FriendItem oldWidget){
+    super.didUpdateWidget(oldWidget);
+    friend.copyFrom(widget.friend);
+    print("update friend ${friend.username}");
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    if (friend.created != null) {
-      friendItemBloc.add(UpdateButtonsEvent());
-    } else {
-      friendItemBloc.add(InitButtonsEvent());
-    }
+    friendItemBloc.add(InitButtonsEvent());
+    print("rebuild friend ${friend.username}");
     return BlocProvider<FriendItemBloc>(
       create: (ctx) => friendItemBloc,
       child: BlocBuilder<FriendItemBloc, FriendItemState>(
@@ -166,7 +172,10 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
     Navigator.push(
       context,
       UserScreen.route(
-          user: friend,
+          user: User(
+            id: friend.user_id,
+            avatar: friend.avatar
+          ),
           onBack: (){
             friendItemBloc.add(UpdateButtonsEvent());
           }
@@ -186,7 +195,15 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
         return getButton(
           theme: Theme.DARK,
           label: "Hủy kết bạn",
-          function: () => friendItemBloc.add(CancelFriendEvent())
+          function: (){
+            CancelFriendMenuBottom.showBottomMenu(
+              context: context,
+              onSuccess: (){
+                friendItemBloc.add(CancelFriendEvent());
+              }
+            );
+          }
+          // function: () => friendItemBloc.add(CancelFriendEvent())
         );
       case FriendItemStatus.REQUESTED:
         return Row(

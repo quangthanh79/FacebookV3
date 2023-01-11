@@ -16,6 +16,7 @@ class UserAvatar extends UserScreenComponent {
 class UserAvatarState extends UserScreenComponentState<UserAvatar>{
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -45,6 +46,7 @@ class UserAvatarState extends UserScreenComponentState<UserAvatar>{
                     right: 0,
                     bottom: 0,
                     child: user.isMe ? GestureDetector(
+                      onTap: main.routeEditScreen,
                       child: Padding(
                         padding: const EdgeInsets.all(12),
                         child: Container(
@@ -59,7 +61,6 @@ class UserAvatarState extends UserScreenComponentState<UserAvatar>{
                           ),
                         ),
                       ),
-                      onTap: (){},
                     ) : Container()
                 )
               ]
@@ -89,6 +90,7 @@ class UserAvatarState extends UserScreenComponentState<UserAvatar>{
                       right: 0,
                       bottom: 0,
                       child: user.isMe ? GestureDetector(
+                        onTap: main.routeEditScreen,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                           child: Container(
@@ -103,7 +105,6 @@ class UserAvatarState extends UserScreenComponentState<UserAvatar>{
                             ),
                           ),
                         ),
-                        onTap: (){},
                       ) : Container()
                   )
                 ],

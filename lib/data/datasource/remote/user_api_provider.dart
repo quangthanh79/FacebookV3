@@ -33,18 +33,22 @@ class UserApiProvider extends BaseClient{
         body
     );
     if (response != null) return ResponseUser.fromJson(response);
-    print("null rồi bạn ơi");
+    // print("null rồi bạn ơi");
     return null;
   }
 
   Future<ResponseUser?> getUserInfor(String user_id) async {
-    var url = "user/get_user_info";
-    final response = await post(
-        url,
-        {"token": SessionUser.token,"user_id": user_id}
-            .map((key, value) => MapEntry(key, value.toString()))
-    );
-    if (response != null) return ResponseUser.fromJson(response);
+    try{
+      var url = "user/get_user_info";
+      final response = await post(
+          url,
+          {"token": SessionUser.token,"user_id": user_id}
+              .map((key, value) => MapEntry(key, value.toString()))
+      );
+      if (response != null) return ResponseUser.fromJson(response);
+    } on Exception catch (e){
+      print("Catch exception: " + e.toString());
+    }
     return null;
   }
 

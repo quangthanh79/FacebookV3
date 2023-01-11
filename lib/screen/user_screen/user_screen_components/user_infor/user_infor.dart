@@ -58,13 +58,7 @@ class UserInforState extends UserScreenComponentState<UserInfor>{
             value: "${user.listing ?? 0} bạn bè"
         ),
         user.isMe ? GestureDetector(
-          onTap: () => Navigator.push(
-              context,
-              UserEditScreen.route(
-                user: user,
-                onBack: main.onBackThisPage
-            )
-          ),
+          onTap: main.routeEditScreen,
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             padding: const EdgeInsets.symmetric(vertical: 12),

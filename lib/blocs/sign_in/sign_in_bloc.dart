@@ -70,6 +70,8 @@ class SignInBloc extends Bloc<SignInEvent,SignInState>{
         SecureStorage.instance.setUserData(UserStorage(token: token, idUser: idUser));
 
         SessionUser.token = token;
+        print("LOGIN SUCESS-------------------------");
+        print("ID USER: "+ idUser);
         SessionUser.idUser = idUser;
 
         UserRepository userRepository = UserRepository();
