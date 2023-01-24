@@ -88,6 +88,7 @@ class User {
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     isMe = id == SessionUser.idUser;
+    print("id: ${id} session user: ${SessionUser.idUser}");
     username = json['username'];
     created = json['created'] != null ? int.parse(json['created']) : 0;
     updateJoinTime();
