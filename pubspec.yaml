@@ -54,6 +54,8 @@ dependencies:
   flick_video_player: ^0.5.0
   visibility_detector: ^0.3.3
 
+  flutter_staggered_grid_view: ^0.6.2
+
 dependency_overrides:
   freezed: 2.1.0
 dev_dependencies:

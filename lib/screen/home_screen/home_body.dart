@@ -38,7 +38,7 @@ class _HomeBodyState extends State<HomeBody>
   final _scrollController = ScrollController();
 
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => widget.type != PostType.profile ? true : false;
 
   @override
   void dispose() {
@@ -46,6 +46,11 @@ class _HomeBodyState extends State<HomeBody>
       ..removeListener(_onScroll)
       ..dispose();
     super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
   }
 
   void _onScroll() {
@@ -80,7 +85,12 @@ class _HomeBodyState extends State<HomeBody>
   @override
   void initState() {
     if (widget.type == PostType.profile) {
-      context.read<ListPostNotify>().assignList([], PostType.profile);
+      Future.delayed(
+        const Duration(seconds: 0),
+        () {
+          context.read<ListPostNotify>().assignList([], PostType.profile);
+        },
+      );
     }
     super.initState();
     context.read<HomeBloc>().add(DisposePost(context: context));
@@ -100,6 +110,7 @@ class _HomeBodyState extends State<HomeBody>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     bool isProfile = widget.type == PostType.profile;
     return BlocListener<HomeBloc, HomeState>(
       listenWhen: (previous, current) =>

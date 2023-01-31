@@ -4,6 +4,7 @@ import 'package:facebook_auth/core/helper/current_user.dart';
 import 'package:facebook_auth/domain/use_cases/like_use_case%20copy.dart';
 import 'package:facebook_auth/screen/home_screen/add_post/add_post_screen.dart';
 import 'package:facebook_auth/screen/home_screen/add_post/bloc/add_post_bloc.dart';
+import 'package:facebook_auth/screen/home_screen/image_view/image_view_beautiful.dart';
 import 'package:facebook_auth/screen/home_screen/video_view/network_video.dart';
 import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter/gestures.dart';
@@ -15,10 +16,8 @@ import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/data/repository/post_repository_impl.dart';
 import 'package:facebook_auth/screen/home_screen/comment_list/comment_list_view.dart';
 import 'package:facebook_auth/screen/home_screen/home_body.dart';
-import 'package:facebook_auth/screen/home_screen/image_view/image_list_view.dart';
 import 'package:facebook_auth/screen/home_screen/post_in_image_screen/post_in_image_screen.dart';
 import 'package:facebook_auth/screen/home_screen/post_item/bloc/post_item_bloc.dart';
-import 'package:facebook_auth/screen/home_screen/video_view/video_demo.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
 import 'package:facebook_auth/utils/constant.dart';
 import 'package:facebook_auth/utils/injection.dart';
@@ -348,7 +347,7 @@ class AssetsContent extends StatelessWidget {
                 ),
               ));
         },
-        child: ImageListView(
+        child: ImageViewBeautiful(
           imageListType: ImageListType.network,
           itemsNetwork: post.assetContentUrl,
         ),
