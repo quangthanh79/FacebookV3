@@ -31,18 +31,21 @@ class BlockModel {
 class BlockItem {
   String? id;
   String? username;
+  String? avatar;
 
-  BlockItem({this.id, this.username});
+  BlockItem({this.id, this.username, this.avatar});
 
   BlockItem.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     username = json['username'];
+    avatar = json['avatar'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['username'] = this.username;
+    data['avatar'] = this.avatar;
     return data;
   }
 }

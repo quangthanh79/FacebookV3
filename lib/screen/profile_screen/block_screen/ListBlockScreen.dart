@@ -43,7 +43,7 @@ class ListBlockScreen extends StatelessWidget{
             bloc: ListBlockScreen.blockBloc,
             builder: (context, state) {
               BlockModel? resultBlocModel;
-              if(state is BlockState){
+              if (state is BlockState) {
                 if(state.statusGetListBlock == FormzStatus.submissionSuccess){
                   progressDialog.hideProgress();
                   resultBlocModel = state.blockModel;
@@ -55,10 +55,18 @@ class ListBlockScreen extends StatelessWidget{
                       return ItemBlockScreen(key, resultBlocModel?.data?[position]);
                     }
                   );
-                } else if(state.statusGetListBlock == FormzStatus.submissionInProgress){
-
+                } else if (state.statusGetListBlock == FormzStatus.submissionInProgress) {
+                  return Center(
+                    child: SizedBox(
+                      height: 30,
+                      width: 30,
+                      child: CircularProgressIndicator(
+                        color: Colors.black38,
+                      ),
+                    ),
+                  );
                 }
-              } else{
+              } else {
                 return Padding(padding: EdgeInsets.only(left: 20.0), child: Text("Danh sách chặn trống"));
               }
               return Padding(padding: EdgeInsets.only(left: 20.0), child: Text("Danh sách chặn trống"));
