@@ -76,40 +76,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - assets/images/top_background.jpg
-    - assets/images/facebook_splash.png
-    - assets/images/meta.png
-    - assets/images/video.png
-    - assets/images/video_non.png
-    - assets/images/messenger.png
-    - assets/images/messenger_non.png
-    - assets/images/home.png
-    - assets/images/home_non.png
-    - assets/images/bell.png
-    - assets/images/bell_non.png
-    - assets/images/menu.png
-    - assets/images/menu_non.png
-    - assets/images/add.png
-    - assets/images/loupe.png
-    - assets/images/LogoFb.png
-    - assets/images/logo_signup.png
-    - assets/images/text_start_register.png
-    - assets/webview/register_success.html
-    - assets/images/avatarDefault.png
-    - assets/images/setting.png
-    - assets/images/ic_market_place.png
-    - assets/images/ic_event.png
-    - assets/images/ic_feed.png
-    - assets/images/ic_friend_fb.png
-    - assets/images/ic_game.png
-    - assets/images/ic_group.png
-    - assets/images/ic_love.png
-    - assets/images/ic_marketplace.png
-    - assets/images/ic_memory.png
-    - assets/images/ic_page.png
-    - assets/images/ic_reels.png
-    - assets/images/ic_save.png
-    - assets/images/ic_video_watch.png
 
   fonts:
     - family: Mic
