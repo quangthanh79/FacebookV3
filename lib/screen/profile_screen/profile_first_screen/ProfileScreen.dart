@@ -11,6 +11,7 @@ import 'package:facebook_auth/screen/profile_screen/block_screen/ListBlockScreen
 import 'package:facebook_auth/screen/profile_screen/PrivacyScreen.dart';
 import 'package:facebook_auth/screen/profile_screen/profile_first_screen/ExpandedTagProfile.dart';
 import 'package:facebook_auth/screen/profile_screen/TermsOfServiceScreen.dart';
+import 'package:facebook_auth/screen/signup/set_info_after_signup.dart';
 import 'package:facebook_auth/utils/Progress_Dialog.dart';
 import 'package:facebook_auth/utils/injection.dart';
 import 'package:facebook_auth/utils/session_user.dart';
@@ -147,7 +148,17 @@ class ProfileScreen extends StatelessWidget {
                   child: TagProfile(key, "Bạn bè", Icon(Setting.settings)),
                 )
               ),
-              TagProfile(key, "Nhóm", Icon(Setting.settings)),
+              Expanded(
+                  child: GestureDetector(
+                    onTap: (){
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(builder: (context) => const SetInfoAfterSignup())
+                      // );
+                    },
+                    child: TagProfile(key, "Nhóm", Icon(Setting.settings)),
+                  )
+              ),
             ],
           ),
         ),

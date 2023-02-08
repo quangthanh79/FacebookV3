@@ -71,16 +71,23 @@ class SetInfoAfterSignupState extends State<SetInfoAfterSignup>{
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               getAppBar2(context, "Cài đặt thông tin cho tài khoản của bạn"),
-                              Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 16),
-                                child: Column(
+                              Expanded(
+                                flex: 1,
+                                child: ListView(
                                   children: [
-                                    const SizedBox(height: 20,),
-                                    getUsername(context, state),
-                                    const SizedBox(height: 30,),
-                                    getAvatar(context, state),
-                                    const SizedBox(height: 40,),
-                                    getButton(context, state)
+                                    Container(
+                                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                                      child: Column(
+                                        children: [
+                                          const SizedBox(height: 20,),
+                                          getUsername(context, state),
+                                          const SizedBox(height: 30,),
+                                          getAvatar(context, state),
+                                          const SizedBox(height: 40,),
+                                          getButton(context, state)
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ),
                               )
