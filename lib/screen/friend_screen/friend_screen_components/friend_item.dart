@@ -37,20 +37,21 @@ class FriendItemState_ extends State<FriendItem> with AutomaticKeepAliveClientMi
         friend: friend,
         friendRepository: getIt<FriendRepository>()
     );
-    print("init friend ${friend.username}");
+    // print("init friend ${friend.username}");
   }
 
   @override void didUpdateWidget(FriendItem oldWidget){
     super.didUpdateWidget(oldWidget);
+    // widget is not change, data is change
     friend.copyFrom(widget.friend);
-    print("update friend ${friend.username}");
+    // print("update friend ${friend.username}");
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     friendItemBloc.add(InitButtonsEvent());
-    print("rebuild friend ${friend.username}");
+    // print("rebuild friend ${friend.username}");
     return BlocProvider<FriendItemBloc>(
       create: (ctx) => friendItemBloc,
       child: BlocBuilder<FriendItemBloc, FriendItemState>(

@@ -200,7 +200,7 @@ class UserFriendState_ extends UserScreenComponentState<UserFriend>{
                       !user.isMe ? SizedBox(
                         height: 17,
                         child: Text(
-                          "${friend.same_friends ?? 0} bạn chung",
+                          "${friend.same_friends} bạn chung",
                           style: const TextStyle(
                               fontSize: 12
                           ),
