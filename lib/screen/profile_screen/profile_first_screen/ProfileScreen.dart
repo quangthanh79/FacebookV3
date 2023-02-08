@@ -12,6 +12,7 @@ import 'package:facebook_auth/screen/profile_screen/PrivacyScreen.dart';
 import 'package:facebook_auth/screen/profile_screen/profile_first_screen/ExpandedTagProfile.dart';
 import 'package:facebook_auth/screen/profile_screen/TermsOfServiceScreen.dart';
 import 'package:facebook_auth/screen/signup/set_info_after_signup.dart';
+import 'package:facebook_auth/screen/profile_screen/profile_first_screen/TagProfileNew.dart';
 import 'package:facebook_auth/utils/Progress_Dialog.dart';
 import 'package:facebook_auth/utils/injection.dart';
 import 'package:facebook_auth/utils/session_user.dart';
@@ -130,6 +131,23 @@ class ProfileScreen extends StatelessWidget {
                 );
               },
             )),
+
+        Padding(
+          padding: EdgeInsets.all(10.0),
+          child: Text("Tất cả lối tắt",
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+        ),
+
+
+        Padding(
+          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+          child: Row(
+            children: <Widget>[
+              TagProfileNew(key, "Kỷ niệm", "assets/images/ic_memory.png"),
+              TagProfileNew(key, "Bảng feed", "assets/images/ic_feed.png"),
+            ],
+          ),
+        ),
         Padding(
           padding: EdgeInsets.only(left: 10.0, right: 10.0),
           child: Row(
@@ -145,29 +163,46 @@ class ProfileScreen extends StatelessWidget {
                         )
                     );
                   },
-                  child: TagProfile(key, "Bạn bè", Icon(Setting.settings)),
+                  child: TagProfileNew(key, "Bạn bè", "assets/images/ic_friend_fb.png"),
                 )
               ),
-              Expanded(
-                  child: GestureDetector(
-                    onTap: (){
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(builder: (context) => const SetInfoAfterSignup())
-                      // );
-                    },
-                    child: TagProfile(key, "Nhóm", Icon(Setting.settings)),
-                  )
-              ),
+              TagProfileNew(key, "Nhóm", "assets/images/ic_group.png"),
             ],
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(left: 10.0, right: 10.0, bottom: 200.0),
+          padding: EdgeInsets.only(left: 10.0, right: 10.0),
           child: Row(
             children: <Widget>[
-              TagProfile(key, "Video trên watch", Icon(Icons.ondemand_video, color: AppTheme.primary,)),
-              TagProfile(key, "Kỷ niệm", Icon(Icons.history_rounded, color: AppTheme.primary,)),
+              TagProfileNew(key, "Marketplace", "assets/images/ic_market_place.png"),
+              TagProfileNew(key, "Video trên watch", "assets/images/ic_video_watch.png"),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+          child: Row(
+            children: <Widget>[
+              TagProfileNew(key, "Đã lưu", "assets/images/ic_save.png"),
+              TagProfileNew(key, "Trang", "assets/images/ic_page.png"),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+          child: Row(
+            children: <Widget>[
+              TagProfileNew(key, "Reels", "assets/images/ic_reels.png"),
+              TagProfileNew(key, "Hẹn hò", "assets/images/ic_love.png"),
+            ],
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(left: 10.0, right: 10.0, bottom: 32),
+          child: Row(
+            children: <Widget>[
+              TagProfileNew(key, "Sự kiện", "assets/images/ic_event.png"),
+              TagProfileNew(key, "Chơi game", "assets/images/ic_game.png"),
             ],
           ),
         ),

@@ -96,12 +96,9 @@ class MyCustomDelegate extends SearchDelegate<String> {
   Widget buildResults(BuildContext context) {
     return BlocProvider(
         create: (context) => HomeBloc(getIt(), getIt()),
-        child: Container(
-          padding: const EdgeInsets.only(top: 50),
-          child: HomeBody(
-            type: PostType.search,
-            keyword: query,
-          ),
+        child: HomeBody(
+          type: PostType.search,
+          keyword: query,
         ));
   }
 

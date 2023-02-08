@@ -11,7 +11,6 @@ import 'package:facebook_auth/domain/use_cases/get_user_info_use_case.dart';
 import 'package:facebook_auth/domain/use_cases/load_list_posts_use_case.dart';
 import 'package:facebook_auth/screen/home_screen/model/post.dart';
 import 'package:facebook_auth/utils/constant.dart';
-import 'package:facebook_auth/utils/injection.dart';
 import 'package:facebook_auth/utils/session_user.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -57,12 +56,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     result.fold((l) {
       emit(state.copyWith(status: HomeStatus.loadedFailure, error: l.message));
     }, (r) {
+      List<Post> arrResult =
+          r.posts != null ? List.of(r.posts!.map((e) => e.toEntity())) : [];
+      arrResult.sort((a, b) => b.date - a.date);
       emit(state.copyWith(
           pageIndex: state.pageIndex + 1,
           status: HomeStatus.loadedSuccess,
-          itemList: r.posts != null
-              ? List.of(r.posts!.map((e) => e.toEntity()))
-              : []));
+          itemList: arrResult));
     });
   }
 

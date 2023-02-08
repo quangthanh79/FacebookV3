@@ -125,7 +125,8 @@ extension PostModelX on PostModel {
         avatarUrl: author != null ? (author!.avatarUrl) : null,
         postId: id ?? '',
         content: described ?? '',
-        user_id: author?.id ?? null,
+        user_id: author?.id,
+        date: int.parse(created ?? '0'),
         userName: author?.userName ?? 'Facebook user',
         time: created != null
             ? toTime(DateTime.now().millisecondsSinceEpoch ~/ 1000 -

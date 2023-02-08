@@ -53,6 +53,7 @@ dependencies:
   video_player: ^2.4.7
   flick_video_player: ^0.5.0
   visibility_detector: ^0.3.3
+  photo_view: ^0.14.0
 
   flutter_staggered_grid_view: ^0.6.2
 
@@ -75,27 +76,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - assets/images/top_background.jpg
-    - assets/images/facebook_splash.png
-    - assets/images/meta.png
-    - assets/images/video.png
-    - assets/images/video_non.png
-    - assets/images/messenger.png
-    - assets/images/messenger_non.png
-    - assets/images/home.png
-    - assets/images/home_non.png
-    - assets/images/bell.png
-    - assets/images/bell_non.png
-    - assets/images/menu.png
-    - assets/images/menu_non.png
-    - assets/images/add.png
-    - assets/images/loupe.png
-    - assets/images/LogoFb.png
-    - assets/images/logo_signup.png
-    - assets/images/text_start_register.png
-    - assets/webview/register_success.html
-    - assets/images/avatarDefault.png
-    - assets/images/setting.png
 
   fonts:
     - family: Mic

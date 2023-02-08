@@ -1,12 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:developer';
 import 'dart:io';
 
-import 'package:facebook_auth/screen/home_screen/image_view/image_view_beautiful.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:facebook_auth/core/helper/app_helper.dart';
 import 'package:facebook_auth/core/helper/current_user.dart';
+import 'package:facebook_auth/data/repository/post_repository_impl.dart';
+import 'package:facebook_auth/screen/home_screen/image_view/image_view_beautiful.dart';
 import 'package:facebook_auth/screen/home_screen/video_view/video_demo.dart';
 import 'package:facebook_auth/utils/constant.dart';
 import 'package:facebook_auth/utils/injection.dart';
@@ -20,6 +23,11 @@ class AddPostView extends StatefulWidget {
   final File? video;
   final AddPostType? addPostType;
   final String? content;
+  final PostType postType;
+  final int? editIndex;
+  final int? likesNumber;
+  final int? commentsNumber;
+  final bool? isSelfLiking;
   const AddPostView({
     Key? key,
     required this.isEditing,
@@ -28,6 +36,11 @@ class AddPostView extends StatefulWidget {
     this.video,
     this.addPostType,
     this.content,
+    required this.postType,
+    this.editIndex,
+    this.likesNumber,
+    this.commentsNumber,
+    this.isSelfLiking,
   }) : super(key: key);
 
   @override
@@ -70,7 +83,10 @@ class _AddPostViewState extends State<AddPostView> {
                 if (context.read<AddPostBloc>().state.content != '') {
                   context.read<AddPostBloc>().add(AddPost(
                       context: context,
-                      id: widget.isEditing ? widget.id : null));
+                      id: widget.isEditing ? widget.id : null,
+                      likesNumber: widget.likesNumber,
+                      commentsNumber: widget.commentsNumber,
+                      isSelfLiking: widget.isSelfLiking));
                 }
               },
               child: const Text("POST"))
@@ -134,10 +150,7 @@ class _AddPostViewState extends State<AddPostView> {
           const SizedBox(
             height: 12,
           ),
-          Expanded(
-              child: BlocBuilder<AddPostBloc, AddPostState>(
-            buildWhen: (previous, current) =>
-                previous.addPostType != current.addPostType,
+          Expanded(child: BlocBuilder<AddPostBloc, AddPostState>(
             builder: (contextBloc, state) {
               return Column(
                 children: [
@@ -244,7 +257,7 @@ class _AddPostViewState extends State<AddPostView> {
                                       SizedBox(
                                         width: 8,
                                       ),
-                                      Text('Add image'),
+                                      Text('Add image', style: BOLD_STYLE),
                                       Spacer()
                                     ],
                                   ),
@@ -273,7 +286,7 @@ class _AddPostViewState extends State<AddPostView> {
                                       SizedBox(
                                         width: 8,
                                       ),
-                                      Text('Add video'),
+                                      Text('Add video', style: BOLD_STYLE),
                                       Spacer()
                                     ],
                                   ),
@@ -301,10 +314,13 @@ class _AddPostViewState extends State<AddPostView> {
 
   @override
   Widget build(BuildContext context) {
+    log(widget.editIndex.toString());
     return BlocProvider<AddPostBloc>(
       create: (context) => widget.isEditing
           ? (AddPostBloc(getIt(), getIt())
-            ..add(EditPostEvent(
+            ..add(InitEditPostEvent(
+                postType: widget.postType,
+                editIndex: widget.editIndex ?? 0,
                 addPostType: widget.addPostType,
                 content: widget.content,
                 images: widget.images,
@@ -356,9 +372,37 @@ class _AddPostViewState extends State<AddPostView> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        CircularProgressIndicator(),
-                        Text('Uploading your post...')
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(8.0)),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.black.withOpacity(0.8),
+                                  blurRadius: 12,
+                                  offset: const Offset(3, 3)),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const CircularProgressIndicator(),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Container(
+                                  margin: const EdgeInsets.only(left: 8),
+                                  width: DeviceHelper.screenSizeWidth(context) *
+                                      0.5,
+                                  child: const Text('Uploading your post...',
+                                      maxLines: null, style: BOLD_STYLE)),
+                            ],
+                          ),
+                        )
                       ],
                     );
                   }

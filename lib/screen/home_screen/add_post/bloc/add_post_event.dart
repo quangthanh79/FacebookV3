@@ -8,31 +8,21 @@ abstract class AddPostEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class EditPostEvent extends AddPostEvent {
+class InitEditPostEvent extends AddPostEvent {
   final List<File>? images;
   final File? video;
   final AddPostType? addPostType;
   final String? content;
-  const EditPostEvent({
+  final PostType postType;
+  final int editIndex;
+  const InitEditPostEvent({
     this.images,
     this.video,
     this.addPostType,
     this.content,
+    required this.postType,
+    required this.editIndex,
   });
-
-  EditPostEvent copyWith({
-    List<File>? images,
-    File? video,
-    AddPostType? addPostType,
-    String? content,
-  }) {
-    return EditPostEvent(
-      images: images ?? this.images,
-      video: video ?? this.video,
-      addPostType: addPostType ?? this.addPostType,
-      content: content ?? this.content,
-    );
-  }
 }
 
 class PickImage extends AddPostEvent {
@@ -75,12 +65,16 @@ class PickVideo extends AddPostEvent {
 class AddPost extends AddPostEvent {
   final BuildContext context;
   final String? id;
+  final int? likesNumber;
+  final int? commentsNumber;
+  final bool? isSelfLiking;
   const AddPost({
     required this.context,
     this.id,
+    this.likesNumber,
+    this.commentsNumber,
+    this.isSelfLiking,
   });
-  @override
-  List<Object> get props => [context];
 }
 
 class PostContentChange extends AddPostEvent {
