@@ -8,11 +8,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import '../../../utils/image.dart';
 
 import '../../../blocs/block/BlockApiProvider.dart';
 import '../../../blocs/block/block_event.dart';
 import '../../../blocs/block/unblock_bloc.dart';
 import '../../../blocs/block/unblock_state.dart';
+import '../../../utils/session_user.dart';
 
 class ItemBlockScreen extends StatelessWidget{
   ItemBlockScreen(Key? key, this.userBlockInfo): super(key: key);
@@ -27,10 +29,19 @@ class ItemBlockScreen extends StatelessWidget{
       child: Expanded(
           child: Row(
             children: <Widget>[
-              CircleAvatar(
-                radius: 20.0,
-                backgroundColor: Colors.transparent,
-                backgroundImage: AssetImage("images/avatarDefault.png"),
+              // CircleAvatar(
+              //   radius: 20.0,
+              //   backgroundColor: Colors.transparent,
+              //   backgroundImage: AssetImage("images/avatarDefault.png"),
+              // ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(100),
+                child: getImage(
+                  uri: userBlockInfo?.avatar ?? 'assets/images/default_avatar_image.jpg',
+                  defaultUri: 'assets/images/default_avatar_image.jpg',
+                  width: 60,
+                  height: 60,
+                ),
               ),
               Padding(padding: EdgeInsets.only(left: 20.0), child: Text(userBlockInfo?.username ?? "", style: TextStyle(color: Colors.black),),),
               Expanded(child: SizedBox(),),
