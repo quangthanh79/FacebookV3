@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:facebook_auth/screen/home_screen/image_view/image_gallery_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -51,29 +52,27 @@ class PostInImageScreen extends StatelessWidget {
                     children: [
                       GestureDetector(
                         onPanUpdate: (details) {
-                          // Swiping in right direction.
-                          if (details.delta.dx > 100) {
-                            Navigator.maybePop(context);
-                          }
-                          if (details.delta.dy > 100) {
-                            Navigator.maybePop(context);
-                          }
-                          if (details.delta.dy < 100) {
-                            Navigator.maybePop(context);
-                          }
-                          // Swiping in left direction.
-                          if (details.delta.dx < 100) {
-                            Navigator.maybePop(context);
-                          }
+                          // // Swiping in right direction.
+                          // if (details.delta.dx > 100) {
+                          //   Navigator.maybePop(context);
+                          // }
+                          // if (details.delta.dy > 100) {
+                          //   Navigator.maybePop(context);
+                          // }
+                          // if (details.delta.dy < 100) {
+                          //   Navigator.maybePop(context);
+                          // }
+                          // // Swiping in left direction.
+                          // if (details.delta.dx < 100) {
+                          //   Navigator.maybePop(context);
+                          // }
                         },
                         onTap: () {
                           value.changeState();
                         },
                         child: SizedBox.expand(
-                          child: Image.network(
-                            items[index].assetContentUrl![0],
-                            fit: BoxFit.fitWidth,
-                          ),
+                          child: ImageGalleryView(
+                              urls: items[index].assetContentUrl!),
                         ),
                       ),
                       Controller(
@@ -124,44 +123,61 @@ class _ControllerState extends State<Controller> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-              alignment: Alignment.topRight,
-              padding: const EdgeInsets.only(top: 4, right: 4),
-              child: GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context2) => Dialog(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 16),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context2);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text("Report post success!")));
-                            },
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: const [
-                                SizedBox(
-                                  width: 8,
+              alignment: Alignment.topCenter,
+              padding: const EdgeInsets.only(top: 16, right: 8, left: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                  GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context2) => Dialog(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 16),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context2);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                              Text("Report post success!")));
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: const [
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Icon(Icons.report),
+                                    SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text('Report this post'),
+                                    Spacer()
+                                  ],
                                 ),
-                                Icon(Icons.report),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                Text('Report this post'),
-                                Spacer()
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                  child:
-                      Image.asset('assets/images/menu_3_dots_vertical.png'))),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.only(right: 4),
+                        child: Image.asset(
+                            'assets/images/menu_3_dots_vertical.png'),
+                      )),
+                ],
+              )),
           Container(
             color: Colors.black.withOpacity(0.4),
             padding: const EdgeInsets.all(6),

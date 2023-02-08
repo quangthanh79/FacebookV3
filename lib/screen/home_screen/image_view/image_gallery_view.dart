@@ -14,24 +14,6 @@ class ImageGalleryView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Container(
-                padding: const EdgeInsets.only(top: 24),
-                child: const Icon(
-                  Icons.close,
-                  color: Colors.green,
-                  size: 32,
-                ),
-              ),
-            )
-          ],
-        ),
         Expanded(
           child: PhotoViewGallery.builder(
             scrollPhysics: const BouncingScrollPhysics(),
