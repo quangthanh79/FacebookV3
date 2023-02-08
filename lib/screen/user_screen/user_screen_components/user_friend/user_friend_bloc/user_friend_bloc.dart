@@ -34,7 +34,7 @@ class UserFriendBloc extends Bloc<UserFriendEvent, UserFriendState>{
   }
 
   Future<void> reloadFriend(ReloadFriendEvent event, Emitter<UserFriendState> emit) async {
-    emit(LoadingFriendState());
+    emit(LoadedFriendState());
   }
 
 }

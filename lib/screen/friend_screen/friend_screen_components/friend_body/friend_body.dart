@@ -100,8 +100,7 @@ class FriendBodyState extends FriendScreenComponentState<FriendBody>{
       const SizedBox(height: 8,),
       Text(
         main is FriendListScreenState ? "$numFriends bạn bè" :
-        main is FriendRequestScreenState ?
-        "$numFriends lời mời" : "$numFriends gợi ý",
+        main is FriendRequestScreenState ? "$numFriends lời mời" : "$numFriends gợi ý",
         style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w600
