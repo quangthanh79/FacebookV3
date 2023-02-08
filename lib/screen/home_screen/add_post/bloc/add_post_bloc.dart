@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
@@ -29,7 +30,7 @@ class AddPostBloc extends Bloc<AddPostEvent, AddPostState> {
     on<PostContentChange>(_onPostContentChange);
     on<PickImage>(_onPickImage);
     on<PickVideo>(_onPickVideo);
-    on<EditPostEvent>(_onEditPostEvent);
+    on<InitEditPostEvent>(_onInitEditPostEvent);
   }
 
   _onAddPost(AddPost event, Emitter emit) async {
@@ -57,7 +58,7 @@ class AddPostBloc extends Bloc<AddPostEvent, AddPostState> {
           postType = TYPE_VIDEO;
           assetContentUrl = [r.video!];
         }
-        event.context.read<ListPostNotify>().addPost(
+        event.context.read<ListPostNotify>().editPost(
             Post(
                 postId: r.id!,
                 assetType: postType,
@@ -67,10 +68,12 @@ class AddPostBloc extends Bloc<AddPostEvent, AddPostState> {
                 content: state.content,
                 user_id: CurrentUser.id,
                 time: 'Just ago',
-                likesNumber: 0,
-                commentsNumber: 0,
-                isSelfLiking: false),
-            PostType.home);
+                date: 11,
+                likesNumber: event.likesNumber!,
+                commentsNumber: event.commentsNumber!,
+                isSelfLiking: event.isSelfLiking!),
+            state.postType ?? PostType.home,
+            state.editIndex ?? 0);
         emit(state.copyWith(status: AddPostStatus.success));
       });
     } else {
@@ -98,6 +101,7 @@ class AddPostBloc extends Bloc<AddPostEvent, AddPostState> {
         event.context.read<ListPostNotify>().addPost(
             Post(
                 postId: r.id!,
+                date: 11,
                 assetType: postType,
                 assetContentUrl: assetContentUrl,
                 userName: CurrentUser.userName ?? 'Facebook user',
@@ -126,11 +130,12 @@ class AddPostBloc extends Bloc<AddPostEvent, AddPostState> {
     emit(state.copyWith(video: event.video, addPostType: AddPostType.video));
   }
 
-  _onEditPostEvent(EditPostEvent event, Emitter emit) {
+  _onInitEditPostEvent(InitEditPostEvent event, Emitter emit) {
     emit(state.copyWith(
         isEditing: true,
         video: event.video,
         addPostType: event.addPostType,
+        editIndex: event.editIndex,
         images: event.images,
         content: event.content));
   }

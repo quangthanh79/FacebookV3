@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'dart:developer';
+
 import 'package:facebook_auth/data/models/user_info.dart';
 import 'package:facebook_auth/screen/user_screen/user_screen.dart';
 import 'package:facebook_auth/utils/constant.dart';
@@ -54,6 +56,9 @@ class _HomeBodyState extends State<HomeBody>
   }
 
   void _onScroll() {
+    // log('top í $_isTop and bottom is $_isBottom' +
+    //     ' and flag is ' +
+    //     (!PreventLoadOverlapFlag.isLoading).toString());
     if (_isBottom && !PreventLoadOverlapFlag.isLoading) {
       context.read<HomeBloc>().add(
           LoadListPost(keyword: widget.keyword, targetId: widget.targetId));
@@ -77,9 +82,9 @@ class _HomeBodyState extends State<HomeBody>
 
   bool get _isTop {
     if (!_scrollController.hasClients) return false;
-    final maxScroll = _scrollController.position.maxScrollExtent;
+    final maxScroll = MediaQuery.of(context).size.height;
     final currentScroll = _scrollController.offset;
-    return currentScroll < (maxScroll * -0.03);
+    return currentScroll < (maxScroll * -0.2);
   }
 
   @override
@@ -120,20 +125,21 @@ class _HomeBodyState extends State<HomeBody>
           .addOnList(state.itemList!, widget.type),
       child: Container(
         color: Colors.black26,
-        margin: EdgeInsets.only(top: widget.type == PostType.home ? 100 : 0),
+        margin: EdgeInsets.only(
+            top: widget.type == PostType.home
+                ? 100
+                : (widget.type == PostType.search ? 0 : 0)),
         child: BlocBuilder<HomeBloc, HomeState>(
           buildWhen: (previous, current) => previous.status != current.status,
           builder: (context, state) {
             if (state.status == HomeStatus.loading && state.pageIndex == 0) {
-              return Expanded(
-                child: Container(
-                  color: Colors.white,
-                  alignment: Alignment.center,
-                  child: Wrap(
-                    children: const [
-                      CircularProgressIndicator(),
-                    ],
-                  ),
+              return Container(
+                color: Colors.white,
+                alignment: Alignment.center,
+                child: Wrap(
+                  children: const [
+                    CircularProgressIndicator(),
+                  ],
                 ),
               );
             }
@@ -175,6 +181,7 @@ class _HomeBodyState extends State<HomeBody>
                     )
                   : SingleChildScrollView(
                       controller: _scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -306,6 +313,26 @@ class ListPostNotify with ChangeNotifier {
         break;
       default:
         itemsHome.insert(0, post);
+    }
+    notifyListeners();
+  }
+
+  void editPost(Post post, PostType type, int indexEdit) {
+    switch (type) {
+      case PostType.home:
+        itemsHome[indexEdit] = post;
+        break;
+      case PostType.profile:
+        itemsProfile[indexEdit] = post;
+        break;
+      case PostType.search:
+        itemsSearch[indexEdit] = post;
+        break;
+      case PostType.video:
+        itemsVideo[indexEdit] = post;
+        break;
+      default:
+        itemsHome[indexEdit] = post;
     }
     notifyListeners();
   }
@@ -458,6 +485,7 @@ class _AddPostHeaderState extends State<AddPostHeader> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => const AddPostView(
+                    postType: PostType.home,
                     isEditing: false,
                   ),
                 )),
@@ -525,14 +553,14 @@ class _AddPostHeaderState extends State<AddPostHeader> {
                       Container(
                         width: 1,
                         height: 32,
-                        margin: EdgeInsets.only(top: 4),
+                        margin: const EdgeInsets.only(top: 4),
                         color: Colors.grey,
                       ),
                       buildBox('Photo', Icons.image, Colors.greenAccent),
                       Container(
                         width: 1,
                         height: 32,
-                        margin: EdgeInsets.only(top: 4),
+                        margin: const EdgeInsets.only(top: 4),
                         color: Colors.grey,
                       ),
                       buildBox(
@@ -553,7 +581,7 @@ class _AddPostHeaderState extends State<AddPostHeader> {
     return Expanded(
       child: Container(
         alignment: Alignment.center,
-        padding: EdgeInsets.only(top: 8),
+        padding: const EdgeInsets.only(top: 8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

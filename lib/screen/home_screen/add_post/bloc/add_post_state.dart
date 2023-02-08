@@ -14,6 +14,8 @@ class AddPostState extends Equatable {
   final Post? post;
   final AddPostType addPostType;
   final bool isEditing;
+  final PostType? postType;
+  final int? editIndex;
   const AddPostState({
     this.status = AddPostStatus.initial,
     this.content = '',
@@ -23,11 +25,13 @@ class AddPostState extends Equatable {
     this.post,
     this.addPostType = AddPostType.none,
     this.isEditing = false,
+    this.postType,
+    this.editIndex,
   });
 
   @override
   List<Object?> get props =>
-      [content, status, error, images, addPostType, video];
+      [content, status, error, images, addPostType, video, postType, editIndex];
 
   AddPostState copyWith({
     AddPostStatus? status,
@@ -38,6 +42,8 @@ class AddPostState extends Equatable {
     Post? post,
     AddPostType? addPostType,
     bool? isEditing,
+    PostType? postType,
+    int? editIndex,
   }) {
     return AddPostState(
       status: status ?? this.status,
@@ -48,6 +54,8 @@ class AddPostState extends Equatable {
       post: post ?? this.post,
       addPostType: addPostType ?? this.addPostType,
       isEditing: isEditing ?? this.isEditing,
+      postType: postType ?? this.postType,
+      editIndex: editIndex ?? this.editIndex,
     );
   }
 }

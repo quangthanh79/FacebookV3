@@ -10,7 +10,7 @@ extension ImageListTypeX on ImageListType {
   bool get isFile => this == ImageListType.file;
 }
 
-class ImageViewBeautiful extends StatefulWidget {
+class ImageViewBeautiful extends StatelessWidget {
   final List<String>? itemsNetwork;
   final List<File>? itemsFile;
   final ImageListType imageListType;
@@ -23,76 +23,127 @@ class ImageViewBeautiful extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ImageViewBeautiful> createState() => _ImageViewBeautifulState();
-}
-
-class _ImageViewBeautifulState extends State<ImageViewBeautiful> {
-  @override
   Widget build(BuildContext context) {
     int numberImage = 0;
-    if (widget.imageListType.isNetwork) {
-      numberImage = widget.itemsNetwork!.length;
-    } else if (widget.imageListType.isFile) {
-      numberImage = widget.itemsFile!.length;
+    if (itemsFile == null && itemsNetwork == null) {
+      return Container();
+    }
+    if (imageListType.isNetwork) {
+      numberImage = itemsNetwork!.length;
+    } else if (imageListType.isFile) {
+      numberImage = itemsFile!.length;
     } else {
       return Container();
     }
+    if (numberImage > 4) {
+      return SizedBox(
+        height: 352,
+        child: GridView.custom(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          gridDelegate: SliverQuiltedGridDelegate(
+            crossAxisCount: 2,
+            mainAxisSpacing: 4,
+            crossAxisSpacing: 4,
+            repeatPattern: QuiltedGridRepeatPattern.inverted,
+            pattern: [
+              const QuiltedGridTile(1, 1),
+              const QuiltedGridTile(1, 1),
+            ],
+          ),
+          childrenDelegate: SliverChildBuilderDelegate(
+            (context, index) => index < 4
+                ? (index == 3
+                    ? Stack(
+                        children: [
+                          buildImage(index),
+                          Positioned.fill(
+                              child: Container(
+                            color: Colors.black.withOpacity(0.3),
+                            child: const Icon(
+                              Icons.add,
+                              size: 44,
+                            ),
+                          ))
+                        ],
+                      )
+                    : buildImage(index))
+                : null,
+          ),
+        ),
+      );
+    }
     switch (numberImage) {
       case 1:
-        return widget.imageListType.isNetwork
-            ? Image.network(widget.itemsNetwork![0], fit: BoxFit.contain)
+        return imageListType.isNetwork
+            ? Image.network(itemsNetwork![0], fit: BoxFit.contain)
             : Image.file(
-                widget.itemsFile![0],
+                itemsFile![0],
                 fit: BoxFit.contain,
               );
 
       case 2:
-        return GridView.custom(
-          gridDelegate: SliverQuiltedGridDelegate(
-            crossAxisCount: 2,
-            mainAxisSpacing: 4,
-            crossAxisSpacing: 4,
-            repeatPattern: QuiltedGridRepeatPattern.inverted,
-            pattern: [
-              const QuiltedGridTile(1, 1),
-              const QuiltedGridTile(1, 1),
-            ],
-          ),
-          childrenDelegate: SliverChildBuilderDelegate(
-            (context, index) => index < 2 ? buildImage(index) : null,
+        return SizedBox(
+          height: 180,
+          child: GridView.custom(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: SliverQuiltedGridDelegate(
+              crossAxisCount: 2,
+              mainAxisSpacing: 4,
+              crossAxisSpacing: 4,
+              repeatPattern: QuiltedGridRepeatPattern.inverted,
+              pattern: [
+                const QuiltedGridTile(1, 1),
+                const QuiltedGridTile(1, 1),
+              ],
+            ),
+            childrenDelegate: SliverChildBuilderDelegate(
+              (context, index) => index < 2 ? buildImage(index) : null,
+            ),
           ),
         );
       case 3:
-        return GridView.custom(
-          gridDelegate: SliverQuiltedGridDelegate(
-            crossAxisCount: 2,
-            mainAxisSpacing: 4,
-            crossAxisSpacing: 4,
-            repeatPattern: QuiltedGridRepeatPattern.inverted,
-            pattern: [
-              const QuiltedGridTile(1, 1),
-              const QuiltedGridTile(1, 1),
-              const QuiltedGridTile(1, 2),
-            ],
-          ),
-          childrenDelegate: SliverChildBuilderDelegate(
-            (context, index) => index < 3 ? buildImage(index) : null,
+        return SizedBox(
+          height: 352,
+          child: GridView.custom(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: SliverQuiltedGridDelegate(
+              crossAxisCount: 2,
+              mainAxisSpacing: 4,
+              crossAxisSpacing: 4,
+              repeatPattern: QuiltedGridRepeatPattern.inverted,
+              pattern: [
+                const QuiltedGridTile(1, 1),
+                const QuiltedGridTile(1, 1),
+                const QuiltedGridTile(1, 2),
+              ],
+            ),
+            childrenDelegate: SliverChildBuilderDelegate(
+              (context, index) => index < 3 ? buildImage(index) : null,
+            ),
           ),
         );
       case 4:
-        return GridView.custom(
-          gridDelegate: SliverQuiltedGridDelegate(
-            crossAxisCount: 2,
-            mainAxisSpacing: 4,
-            crossAxisSpacing: 4,
-            repeatPattern: QuiltedGridRepeatPattern.inverted,
-            pattern: [
-              const QuiltedGridTile(1, 1),
-              const QuiltedGridTile(1, 1),
-            ],
-          ),
-          childrenDelegate: SliverChildBuilderDelegate(
-            (context, index) => index < 4 ? buildImage(index) : null,
+        return SizedBox(
+          height: 352,
+          child: GridView.custom(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: SliverQuiltedGridDelegate(
+              crossAxisCount: 2,
+              mainAxisSpacing: 4,
+              crossAxisSpacing: 4,
+              repeatPattern: QuiltedGridRepeatPattern.inverted,
+              pattern: [
+                const QuiltedGridTile(1, 1),
+                const QuiltedGridTile(1, 1),
+              ],
+            ),
+            childrenDelegate: SliverChildBuilderDelegate(
+              (context, index) => index < 4 ? buildImage(index) : null,
+            ),
           ),
         );
       default:
@@ -101,13 +152,13 @@ class _ImageViewBeautifulState extends State<ImageViewBeautiful> {
   }
 
   Widget buildImage(int index) {
-    return widget.imageListType.isNetwork
+    return imageListType.isNetwork
         ? Image.network(
-            widget.itemsNetwork![index],
+            itemsNetwork![index],
             fit: BoxFit.cover,
           )
         : Image.file(
-            widget.itemsFile![index],
+            itemsFile![index],
             fit: BoxFit.cover,
           );
   }

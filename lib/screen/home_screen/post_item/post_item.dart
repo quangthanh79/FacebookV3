@@ -173,12 +173,17 @@ class Header extends StatelessWidget {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => AddPostView(
+                                            postType: type,
+                                            editIndex: index,
                                             isEditing: true,
                                             id: post.postId,
                                             addPostType: _type,
                                             content: post.content,
                                             images: images,
                                             video: video,
+                                            likesNumber: post.likesNumber,
+                                            commentsNumber: post.commentsNumber,
+                                            isSelfLiking: post.isSelfLiking,
                                           ),
                                         ));
                                     Navigator.pop(context2);
@@ -199,7 +204,10 @@ class Header extends StatelessWidget {
                                       SizedBox(
                                         width: 8,
                                       ),
-                                      Text('Edit this post'),
+                                      Text(
+                                        'Edit this post',
+                                        style: BOLD_STYLE,
+                                      ),
                                       Spacer()
                                     ],
                                   ),
@@ -209,20 +217,29 @@ class Header extends StatelessWidget {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    getIt<DeletePostUseCase>().call(
-                                        DeletePostParams(
-                                            token: SessionUser.token!,
-                                            postId: post.postId));
-                                    context
-                                        .read<ListPostNotify>()
-                                        .deletePost(index, type);
-                                    Navigator.pop(context2);
-                                    ScaffoldMessenger.of(context)
-                                        .hideCurrentSnackBar();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content:
-                                                Text("Delete post success!")));
+                                    showDeleteDialog(
+                                      context,
+                                      title: 'DELETE WARNING',
+                                      content: 'Do you want delete this post?',
+                                      onYesClick: () {
+                                        getIt<DeletePostUseCase>().call(
+                                            DeletePostParams(
+                                                token: SessionUser.token!,
+                                                postId: post.postId));
+                                        context
+                                            .read<ListPostNotify>()
+                                            .deletePost(index, type);
+                                        Navigator.pop(context2);
+                                        ScaffoldMessenger.of(context)
+                                            .hideCurrentSnackBar();
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                                content: Text(
+                                          "Delete post success!",
+                                          style: BOLD_STYLE,
+                                        )));
+                                      },
+                                    );
                                   },
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
@@ -230,11 +247,17 @@ class Header extends StatelessWidget {
                                       SizedBox(
                                         width: 8,
                                       ),
-                                      Icon(Icons.delete),
+                                      Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
                                       SizedBox(
                                         width: 8,
                                       ),
-                                      Text('Delete this post'),
+                                      Text(
+                                        'Delete this post',
+                                        style: BOLD_STYLE,
+                                      ),
                                       Spacer()
                                     ],
                                   ),
@@ -248,9 +271,12 @@ class Header extends StatelessWidget {
                           onTap: () {
                             Navigator.pop(context2);
                             ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text("Report post success!")));
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                                    content: Text(
+                              "Report post success!",
+                              style: BOLD_STYLE,
+                            )));
                           },
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
@@ -262,7 +288,10 @@ class Header extends StatelessWidget {
                               SizedBox(
                                 width: 8,
                               ),
-                              Text('Report this post'),
+                              Text(
+                                'Report this post',
+                                style: BOLD_STYLE,
+                              ),
                               Spacer()
                             ],
                           ),

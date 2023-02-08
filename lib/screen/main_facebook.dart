@@ -1,3 +1,4 @@
+import 'package:facebook_auth/data/repository/post_repository_impl.dart';
 import 'package:facebook_auth/firebase/register_token.dart';
 import 'package:facebook_auth/icon/loupe_icons.dart';
 import 'package:facebook_auth/screen/chat_screen/chat_screen.dart';
@@ -172,6 +173,7 @@ class MainFacebookScreenState extends State<MainFacebookScreen>
                           context,
                           MaterialPageRoute(
                             builder: (context) => const AddPostView(
+                              postType: PostType.home,
                               isEditing: false,
                             ),
                           )),
